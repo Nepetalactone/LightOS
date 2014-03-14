@@ -1,17 +1,52 @@
+
+#include "../address.h"
+
+//RAM exception vectors p. 3438
+#define ISR_IRQ_ADDRESS (address) 0x4020FFF8
+#define FIQ_IRQ_ADDRESS (address) 0x4020FFFC
+
+//static address irq_table[MAX_INTERRUPT_VECTORS];
+
+
+
 /*
- * interrupt.c
- *
- *  Created on: 08.03.2014
- *      Author: Chris
+ * IRQ Interrupt Service Routine
  */
+uint32_t irq_isr(void){
+	//uint8_t activeIRQ = *get_bits(IRQ_LINE, 7);
 
-
-
-
-
-void inline __enable_interrupts__() {
-	_enable_interrupts();
+	// active irq number -> first 7 bits from ACTIVE_IRQ
 }
+
+/*
+ * FIQ Interrupt Service Routine
+ */
+uint32_t fiq_isr(void) {
+	//uint8_t activeFIQ = (uint8_t) (ACTIVE_FIQ);
+
+}
+
+void get_irq_line(uint8_t line){
+	//*(IRQ_LINE) = line;
+}
+
+
+void clear_irq_line(uint8_t line) {
+
+}
+
+static void init_isr_handler(void){
+	(*ISR_IRQ_ADDRESS) = (uint32_t) &irq_isr;
+	(*FIQ_IRQ_ADDRESS) = (uint32_t) &fiq_isr;
+}
+
+
+
+
+//void inline __enable_interrupts__() {
+//	_enable_interrupts();
+//}
+
 
 /* number of lists of IRQ hooks, one list per supported line. */
 //static irq_hook_t* irq_handlers[NR_IRQ_VECTORS] = { 0 };

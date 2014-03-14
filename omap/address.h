@@ -1,8 +1,9 @@
 #ifndef ADDRESS_H
 #define ADDRESS_H
 
+#include <stdint.h>
 //address of a register
-typedef volatile unsigned int* address;
+typedef volatile uint32_t *address;
 
 //base address
 typedef volatile unsigned char* base_address;

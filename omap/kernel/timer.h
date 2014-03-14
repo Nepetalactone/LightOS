@@ -1,31 +1,44 @@
-/*
- * timer.h
- *
- *  Created on: 08.03.2014
- *      Author: Chris
- */
 
 #ifndef TIMER_H_
 #define TIMER_H_
 
-/*
- *General Purpose Timer Register Map S. 2632
- *4K Bytes
- */
-typedef volatile unsigned int* address;
+#include "../address.h"
 
-#define GPTimer1 (address) 0x48318000
-#define GPTimer2 (address) 0x49032000
-#define GPTimer3 (address) 0x49034000
-#define GPTimer4 (address) 0x49036000
-#define GPTimer5 (address) 0x49038000
-#define GPTimer6 (address) 0x4903A000
-#define GPTimer7 (address) 0x4903C000
-#define GPTimer8 (address) 0x4903E000
-#define GPTimer9 (address) 0x49040000
-#define GPTimer10 (address) 0x48086000
-#define GPTimer11 (address) 0x48088000
+#define GPTIMER1 (base_address) 0x48318000
+#define GPTIMER2 (base_address) 0x49032000
+#define GPTIMER3 (base_address) 0x49034000
+#define GPTIMER4 (base_address) 0x49036000
+#define GPTIMER5 (base_address) 0x49038000
+#define GPTIMER6 (base_address) 0x4903A000
+#define GPTIMER7 (base_address) 0x4903C000
+#define GPTIMER8 (base_address) 0x4903E000
+#define GPTIMER9 (base_address) 0x49040000
+#define GPTIMER10 (base_address) 0x48086000
+#define GPTIMER11 (base_address) 0x48088000
 
+
+/* REGISTERS */
+#define TIDR (offset)0x000 //This register contains the IP revision code p.2636
+#define TIOCP_CFG (offset) 0x010 //This register controls the various parameters of the GP timer L4 interface p.2637
+#define TISTAT (offset) 0x014 //This register provides status information about the module, excluding the interrupt status information p. 2639
+#define TISR (offset) 0x018 //This register shows which interrupt events are pending inside the module p.2640
+#define TIER (offset) 0x01C //This register controls (enable/disable) the interrupt events
+#define TWER (offset) 0x020 //This register controls (enable/disable) the wake-up feature on specific interrupt events p.2642
+#define TCLR (offset) 0x028 //This register controls optional features specific to the timer functionality. p.2643
+#define TCRR (offset) 0x02C //Enable/disable IRQ generation p.3407
+#define TLDR (offset) 0x030 //Controls the clock gating functionality p.3408
+#define TTGR (offset) 0x034 //Used to enable the pins output capabilities. It's only function is to carry the pads configuration. p.3409
+#define TWPS (offset) 0x038 //Register data that is read from the pin p.3409
+#define TMAR (offset) 0x03C //Used to set output value of the pin p.3410
+#define TCAR1 (offset) 0x040 //Enable/disable low-level detection for interrupt request generation p.3411
+#define TSICR (offset) 0x044 //Enable/disable high-level detection for interrupt request generation p.3411
+#define TCAR2 (offset) 0x048 //Enable/disable rising-edge (0=>1 transition) detection for interrupt request and wake-up generation p.3412
+#define TPIR (offset) 0x04C //Enable/disable falling-edge (1=>0 transition) detection for interrupt request and wake-up generation p.3413
+#define TNIR (offset) 0x050 //Enable/disable the debouncing feature for each input line p.3413
+#define TCVR (offset) 0x054 //Controls debouncint time (value is global for all ports!) p.3414
+#define TOCR (offset) 0x060 //Set the corresponding GPIO_IRQENABLE1 register to 0 p.3415
+#define TOWR (offset) 0x064 //Set the corresponding GPIO_IRQENABLE1 register to 0 p.3415
+/* REGISTERS END */
 
 
 
