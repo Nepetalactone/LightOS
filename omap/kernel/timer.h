@@ -40,6 +40,20 @@
 #define TOWR (offset) 0x064 //Set the corresponding GPIO_IRQENABLE1 register to 0 p.3415
 /* REGISTERS END */
 
+typedef struct gptimer {
+	int id;
+	int irq;	//interrupt request line
+	base_address base_address;	//base address of the GPTIMER
+} gptimer_t;
 
+gptimer_t * request_timer(void);
+gptimer_t* request_timer_by_id(int id);
+gptimer_t* get_timer_by_id(int id);
+void request_timer_irq(gptimer_t *timer);
+void write_timer_counter(gptimer_t *timer, unsigned int count);
+void stop_timer(gptimer_t *timer);
+void start_timer(gptimer_t *timer);
+void disable_timer_interrupt(gptimer_t *timer);
+void enable_timer_interrupt(gptimer_t *timer);
 
 #endif /* TIMER_H_ */

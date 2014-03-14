@@ -1,13 +1,8 @@
 #include "timer.h"
+#include <stdlib.h>
 
 #define MAX_TIMER 12 //max number of GPTimer on the beagleboard
-#define NULL (void*) 0 //maybe type.h?
-
-typedef struct gptimer {
-	int id;
-	int irq;	//interrupt request line
-	base_address base_address;	//base address of the GPTIMER
-} gptimer_t;
+//#define NULL (void*) 0 //maybe type.h?
 
 static gptimer_t timers[MAX_TIMER];
 
@@ -15,27 +10,27 @@ static gptimer_t timers[MAX_TIMER];
  * Initialize id and base address of GPTIMER module
  */
 static gptimer_t* init_timer(int id, base_address address) {
-	gptimer_t *timer;
+	gptimer_t *timer = (gptimer_t*)malloc(sizeof(gptimer_t));
 	timer->id = id;
 	timer->base_address = address;
 	return timer;
 }
 
 void enable_timer_interrupt(gptimer_t *timer) {
-	*(timer->base_address + TIER) |= 0x1;
+	*((address)(timer->base_address + TIER)) |= 0x1;
 }
 
 void disable_timer_interrupt(gptimer_t *timer) {
-	*(timer->base_address + TIER) &= 0x0;
+	*((address)(timer->base_address + TIER)) &= 0x0;
 }
 
 void start_timer(gptimer_t *timer){
-	*(timer->base_address + TCLR) |= 0x1;
+	*((address)(timer->base_address + TCLR)) |= 0x1;
 }
 
 void stop_timer(gptimer_t *timer) {
 	disable_timer_interrupt(timer);
-	*(timer->base_address + TCLR) &= 0x0;
+	*((address)(timer->base_address + TCLR)) &= 0x0;
 }
 
 void write_timer_counter(gptimer_t *timer, unsigned int count) {

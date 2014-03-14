@@ -33,4 +33,6 @@
 #define IRQ_LINE (address)	MPU_INTC + SIR_IRQ
 #define FIQ_LINE (address)	MPU_INTC + SIR_FIQ
 
+void init_isr_handler(void);
+
 #endif /* INTERRUPT_H_ */

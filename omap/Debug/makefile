@@ -4,7 +4,7 @@
 
 SHELL = cmd.exe
 
-CG_TOOL_ROOT := C:/ti/ccsv5/tools/compiler/arm_5.1.1
+CG_TOOL_ROOT := E:/ti/ccsv5/tools/compiler/arm_5.1.1
 
 ORDERED_OBJS += \
 $(GEN_CMDS__FLAG) \
@@ -120,7 +120,7 @@ all: omap.out
 omap.out: $(OBJS) $(CMD_SRCS) $(GEN_CMDS)
 	@echo 'Building target: $@'
 	@echo 'Invoking: ARM Linker'
-	"C:/ti/ccsv5/tools/compiler/arm_5.1.1/bin/armcl" -mv7A8 --code_state=32 --abi=eabi -me -g --define=omap3530 --diag_warning=225 --display_error_number --diag_wrap=off -z -m"omap.map" --heap_size=0x800 --stack_size=0x800 -i"C:/ti/ccsv5/tools/compiler/arm_5.1.1/lib" -i"C:/ti/ccsv5/tools/compiler/arm_5.1.1/include" --reread_libs --warn_sections --display_error_number --diag_wrap=off --xml_link_info="omap_linkInfo.xml" --rom_model -o "omap.out" $(ORDERED_OBJS)
+	"E:/ti/ccsv5/tools/compiler/arm_5.1.1/bin/armcl" -mv7A8 --code_state=32 --abi=eabi -me -g --define=omap3530 --diag_warning=225 --display_error_number --diag_wrap=off -z -m"omap.map" --heap_size=0x800 --stack_size=0x800 -i"E:/ti/ccsv5/tools/compiler/arm_5.1.1/lib" -i"E:/ti/ccsv5/tools/compiler/arm_5.1.1/include" --reread_libs --warn_sections --display_error_number --diag_wrap=off --xml_link_info="omap_linkInfo.xml" --rom_model -o "omap.out" $(ORDERED_OBJS)
 	@echo 'Finished building target: $@'
 	@echo ' '
 

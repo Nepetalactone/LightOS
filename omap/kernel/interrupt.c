@@ -1,5 +1,8 @@
 
 #include "../address.h"
+#include "interrupt.h"
+//Ich gehöre weg
+#include <stdio.h>
 
 //RAM exception vectors p. 3438
 #define ISR_IRQ_ADDRESS (address) 0x4020FFF8
@@ -16,6 +19,7 @@ uint32_t irq_isr(void){
 	//uint8_t activeIRQ = *get_bits(IRQ_LINE, 7);
 
 	// active irq number -> first 7 bits from ACTIVE_IRQ
+	return 0;
 }
 
 /*
@@ -23,7 +27,7 @@ uint32_t irq_isr(void){
  */
 uint32_t fiq_isr(void) {
 	//uint8_t activeFIQ = (uint8_t) (ACTIVE_FIQ);
-
+	return 0;
 }
 
 void get_irq_line(uint8_t line){
@@ -35,8 +39,8 @@ void clear_irq_line(uint8_t line) {
 
 }
 
-static void init_isr_handler(void){
-	(*ISR_IRQ_ADDRESS) = (uint32_t) &irq_isr;
+void init_isr_handler(void){
+	*(ISR_IRQ_ADDRESS) = (uint32_t) &irq_isr;
 	(*FIQ_IRQ_ADDRESS) = (uint32_t) &fiq_isr;
 }
 
