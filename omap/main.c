@@ -2,7 +2,7 @@
  * main.c
  */
 
-#include "./kernel/interrupt.h"
+#include "./kernel/interrupts/interrupt.h"
 #include "kernel/timer.h"
 
 int main(void) {

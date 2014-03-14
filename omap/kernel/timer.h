@@ -2,7 +2,7 @@
 #ifndef TIMER_H_
 #define TIMER_H_
 
-#include "../address.h"
+#include "arch/address.h"
 
 #define GPTIMER1 (base_address) 0x48318000
 #define GPTIMER2 (base_address) 0x49032000
