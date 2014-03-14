@@ -32,3 +32,6 @@ local.properties
 #Tobi adds
 Debug/
 .settings/
+
+#Chris adds
+**/Debug/
