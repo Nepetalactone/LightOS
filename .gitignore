@@ -28,3 +28,7 @@ local.properties
 
 # TeXlipse plugin
 .texlipse
+
+#Tobi adds
+Debug/
+.settings/
