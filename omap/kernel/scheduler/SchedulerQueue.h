@@ -12,7 +12,7 @@
 #include "ProcessHeader.h"
 
 /*Return a specific Element of the Queue*/
-Process* getProcess(QueueElement *queue, ProcessID ID);
+Process* getProcess(QueueElement *queue, ProcessID PID) ;
 /*Printing the Queue*/
 void PrintProcessQueue(QueueElement *queue);//more for testing purpose
 
