@@ -6,6 +6,7 @@
  */
 
 #include "binary.h"
+#include "../kernel/arch/address.h"
 
 
 static inline uint64_t S_to_binary_(const char *s)
@@ -20,7 +21,9 @@ static inline uint64_t S_to_binary_(const char *s)
 
 uint32_t getBitValue(address a, offset o, position p){
 	int mask = (1 << p);
-	int toCheck =  *(a + o) & mask ;
+	address location = __CONCRETE_ADDRESS((base_address)a, o);
+	int regValue = *location;
+	int toCheck =  regValue & mask ;
 	return toCheck && mask;
 }
 

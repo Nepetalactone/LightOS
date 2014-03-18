@@ -55,10 +55,12 @@ typedef enum
 } eBaud;
 
 
+// prototypes
 void ser_init( eBaud baud);
 void ser_putc(signed char outChar);
-
 void ser_puts( const signed char * outString);
+char ser_getc();
+char* ser_gets(char* string, int size);
 
 
 #endif /* SERIAL_H_ */
