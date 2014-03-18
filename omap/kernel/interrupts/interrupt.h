@@ -2,8 +2,13 @@
 #ifndef INTERRUPT_H_
 #define INTERRUPT_H_
 
+#include "../arch/address.h"
+
 #define MAX_INTERRUPT_VECTORS 96
 
+//RAM exception vectors p. 3438
+#define ISR_IRQ_ADDRESS (address) 0x4020FFDC
+#define FIQ_IRQ_ADDRESS (address) 0x4020FFE0
 
 /* Page 1079 */
 #define MPU_INTC (base_address) 0x48200000
@@ -34,5 +39,9 @@
 #define FIQ_LINE (address)	MPU_INTC + SIR_FIQ
 
 void init_isr_handler(void);
+void unmask_mir0(void);
+void mask_mir0(void);
+void mir0_clear(void);
+void mir0_set(void);
 
 #endif /* INTERRUPT_H_ */

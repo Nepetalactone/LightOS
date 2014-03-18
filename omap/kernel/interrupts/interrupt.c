@@ -4,10 +4,6 @@
 //Ich gehöre weg
 #include <stdio.h>
 
-//RAM exception vectors p. 3438
-#define ISR_IRQ_ADDRESS (address) 0x4020FFF8
-#define FIQ_IRQ_ADDRESS (address) 0x4020FFFC
-
 //static address irq_table[MAX_INTERRUPT_VECTORS];
 
 
@@ -17,7 +13,7 @@
  */
 uint32_t irq_isr(void){
 	//uint8_t activeIRQ = *get_bits(IRQ_LINE, 7);
-
+	printf("Woah voll guat");
 	// active irq number -> first 7 bits from ACTIVE_IRQ
 	return 0;
 }
@@ -44,8 +40,21 @@ void init_isr_handler(void){
 	(*FIQ_IRQ_ADDRESS) = (uint32_t) &fiq_isr;
 }
 
+void unmask_mir0(void){
+	*((address)(MPU_INTC + MIR0)) &= 0x0;
+}
 
+void mask_mir0(void){
+	*((address)(MPU_INTC + MIR0)) |= 0x1;
+}
 
+void mir0_clear(void){
+	*((address)(MPU_INTC + MIR_CLEAR0)) &= 0x0;
+}
+
+void mir0_set(void){
+	*((address)(MPU_INTC + MIR_SET0)) |= 0x1;
+}
 
 //void inline __enable_interrupts__() {
 //	_enable_interrupts();

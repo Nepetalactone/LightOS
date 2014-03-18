@@ -3,6 +3,7 @@
 #define TIMER_H_
 
 #include "arch/address.h"
+#include "type.h"
 
 #define GPTIMER1 (base_address) 0x48318000
 #define GPTIMER2 (base_address) 0x49032000
@@ -24,20 +25,20 @@
 #define TISR (offset) 0x018 //This register shows which interrupt events are pending inside the module p.2640
 #define TIER (offset) 0x01C //This register controls (enable/disable) the interrupt events
 #define TWER (offset) 0x020 //This register controls (enable/disable) the wake-up feature on specific interrupt events p.2642
-#define TCLR (offset) 0x028 //This register controls optional features specific to the timer functionality. p.2643
-#define TCRR (offset) 0x02C //Enable/disable IRQ generation p.3407
-#define TLDR (offset) 0x030 //Controls the clock gating functionality p.3408
-#define TTGR (offset) 0x034 //Used to enable the pins output capabilities. It's only function is to carry the pads configuration. p.3409
-#define TWPS (offset) 0x038 //Register data that is read from the pin p.3409
-#define TMAR (offset) 0x03C //Used to set output value of the pin p.3410
-#define TCAR1 (offset) 0x040 //Enable/disable low-level detection for interrupt request generation p.3411
-#define TSICR (offset) 0x044 //Enable/disable high-level detection for interrupt request generation p.3411
-#define TCAR2 (offset) 0x048 //Enable/disable rising-edge (0=>1 transition) detection for interrupt request and wake-up generation p.3412
-#define TPIR (offset) 0x04C //Enable/disable falling-edge (1=>0 transition) detection for interrupt request and wake-up generation p.3413
-#define TNIR (offset) 0x050 //Enable/disable the debouncing feature for each input line p.3413
-#define TCVR (offset) 0x054 //Controls debouncint time (value is global for all ports!) p.3414
-#define TOCR (offset) 0x060 //Set the corresponding GPIO_IRQENABLE1 register to 0 p.3415
-#define TOWR (offset) 0x064 //Set the corresponding GPIO_IRQENABLE1 register to 0 p.3415
+#define TCLR (offset) 0x024 //This register controls optional features specific to the timer functionality. p.2643
+#define TCRR (offset) 0x028 //This register holds the value of the internal counter p.2645
+#define TLDR (offset) 0x02C //This register holds the timer load values p.2646
+#define TTGR (offset) 0x030 //This register triggers a counter reload of timer by writing any value in it p.2647
+#define TWPS (offset) 0x034 //This register indicates if a Write-Posted is pending p.2648
+#define TMAR (offset) 0x038 //This register holds the value to be compared with the counter value p.2650
+#define TCAR1 (offset) 0x03C //This register holds the first captured value of the counter register p.2651
+#define TSICR (offset) 0x040 //This register contains the bits that control the interface between the L4 interface and functional clock domains-posted mode and functional SW reset p.2652
+#define TCAR2 (offset) 0x044 //This register holds the second captured value of the counter register p.2653
+#define TPIR (offset) 0x048 //This register is used for 1 ms tick generation. The TPIR register holds the value of the positive increment. The value of this register is added with the value of the TCVR to define whether next value loaded in TCRR will be the sub-period value or the over-period value. p.2654
+#define TNIR (offset) 0x04C //This register is used for 1 ms tick generation. The TNIR register holds the value of the negative increment. The value of this register is added with the value of the TCVR to define whether next value loaded in TCRR will be the sub-period value or the over-period value. p.2654
+#define TCVR (offset) 0x050 //This register is used for 1 ms tick generation. The TCVR register defines whether next value loaded in TCRR will be the sub-period value or the over-period value p.2655
+#define TOCR (offset) 0x054 //This register is used to mask the tick interrupt for a selected number of ticks p.2656
+#define TOWR (offset) 0x058 //This register holds the number of masked overflow interrupts p.2656
 /* REGISTERS END */
 
 typedef struct gptimer {
@@ -47,7 +48,7 @@ typedef struct gptimer {
 } gptimer_t;
 
 gptimer_t * request_timer(void);
-gptimer_t* request_timer_by_id(int id);
+gptimer_t* request_new_timer_by_id(int id);
 gptimer_t* get_timer_by_id(int id);
 void request_timer_irq(gptimer_t *timer);
 void write_timer_counter(gptimer_t *timer, unsigned int count);
@@ -55,5 +56,8 @@ void stop_timer(gptimer_t *timer);
 void start_timer(gptimer_t *timer);
 void disable_timer_interrupt(gptimer_t *timer);
 void enable_timer_interrupt(gptimer_t *timer);
+void set_match(gptimer_t *timer, uint32_t value);
+void clear_match(gptimer_t *timer);
+void reset_timer_counter(gptimer_t *timer);
 
 #endif /* TIMER_H_ */
