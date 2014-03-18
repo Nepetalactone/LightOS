@@ -31,3 +31,8 @@ local.properties
 
 #Tobi adds
 Debug/
+omap/.settings/
+*.prefs
+
+#Chris adds
+**/Debug/

@@ -1,1 +1,0 @@
-"./kernel/timer.obj" "./kernel/interrupt.obj" "./main.obj" "./executor.obj" "../beagle.cmd" -l"libc.a" 

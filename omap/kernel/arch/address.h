@@ -9,7 +9,7 @@
 typedef volatile uint32_t* address;
 
 //base address
-typedef volatile uint8_t base_address;
+typedef volatile uint32_t base_address;
 
 //offset to base address
 typedef volatile uint16_t offset;
