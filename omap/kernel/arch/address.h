@@ -14,8 +14,6 @@ typedef volatile uint32_t base_address;
 //offset to base address
 typedef volatile uint16_t offset;
 
-//bit/byte position in a register
-typedef volatile uint16_t position;
 
 address __CONCRETE_ADDRESS(base_address b, offset o);
 
