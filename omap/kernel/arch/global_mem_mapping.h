@@ -101,3 +101,5 @@ General information
 
 /* SDRC/SMS */
 //SDRC/SMS virtual address space 1, size = 512MB
+#define VIRTUAL_ADDR_SPACE_S (address) 0xE0000000
+#define VIRTUAL_ADDR_SPACE_E (address) 0xFFFFFFFF
