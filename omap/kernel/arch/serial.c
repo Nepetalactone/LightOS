@@ -10,6 +10,7 @@
 #include <stdlib.h>
 #include "serial.h"
 #include "uart.h"
+#include "command.h"
 #include "../../utils/binary.h"
 
 
@@ -17,10 +18,14 @@
 void ser_init(eBaud baud) {
 	unsigned int efr, mcr, lcr;
 
+	//command(UADT03, DLL, REG_CLEAR, 0x0);
+	//command(UADT03, DLH, REG_CLEAR, 0x0);
+
 	*((address)(UART03 + DLL)) = 0x0;
 	*((address)(UART03 + DLH)) = 0x0;
 
 	// Software Reset
+	//command(UADT03, SYSC, BIT_SET, 1);
 	*((address)(UART03 + SYSC)) |= (1 << 1);
 
 	while(getBitValue(UART03, SYSS, 0) == 0x0) {
@@ -30,26 +35,35 @@ void ser_init(eBaud baud) {
 	// FIFOs and DMA Settings
 	// Swich to mode B
 	lcr=*((address)(UART03 + LCR)); // save lcr
+	//command(UADT03, LCR, REG_SET, 0xBF);
 	*((address)(UART03 + LCR)) = 0xBF;
 
 	// Save EFR_REG register
 	efr = *((address)(UART03 + EFR));
 	// Enable enhanced features
+	//command(UADT03, EFR, BIT_SET, 4);
 	*((address)(UART03 + EFR)) |= 0x10;
 
 	// Switch to mode A
+	//command(UADT03, LCR, REG_SET, 0x80);
 	*((address)(UART03 + LCR)) = 0x80;
 
 	// Set loopback mode
+	//command(UADT03, MCR, BIT_SET, 4);
+	//command(UADT03, MCR, BIT_SET, 1);
+	//command(UADT03, MCR, BIT_SET, 0);
 	*((address)(UART03 + MCR)) |= 0x13;
 
+	//command(UADT03, WER, BIT_SET, 0);
 	*((address)(UART03 + WER)) |= 0x1;
 
 	// Save MCR Register
 	mcr = *((address)(UART03 + MCR));
+	//command(UADT03, MCR, BIT_SET, 6);
 	*((address)(UART03 + MCR)) |= 0x40;
 
 	// Enable Fifo, set trigger levels p2696. Trigger levels are ignored for now.
+	//command(UADT03, FCR, REG_SET, 0x7);
 	*((address)(UART03 + FCR)) = 0x7;
 	//TODO bit value never change!!! -> fix
 	while(getBitValue(UART03, FCR, 1) != 0x0 && getBitValue(UART03, FCR, 2) != 0x0){

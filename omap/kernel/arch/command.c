@@ -16,7 +16,7 @@ uint32_t command(base_address a, offset o, command c,uint32_t value){
 			*(a + o) = value;
 			break;
 		case REG_CLEAR:
-			*(a + o) = 0;
+			*(a + o) = 0x0;
 			break;
 		case UART_WRITE:
 			*(a + o) = (char)value;
