@@ -9,7 +9,7 @@
 #define TYPE_H_
 
 typedef struct irq_hook {
-	struct irq_hook *next;
+	//struct irq_hook *next;
 	uint32_t (*handler)(struct irq_hook *);
 	uint8_t irq;
 	uint8_t id;

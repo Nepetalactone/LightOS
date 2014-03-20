@@ -41,7 +41,7 @@ void write_timer_counter(gptimer_t *timer, unsigned int count) {
 }
 
 void request_timer_irq(gptimer_t *timer) {
-
+	//put_irq_handler(timer->irq);
 }
 
 gptimer_t* get_timer_by_id(int id){
