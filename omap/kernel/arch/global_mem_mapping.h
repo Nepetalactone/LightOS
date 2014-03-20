@@ -90,14 +90,16 @@ General information
 
 /* SDRC/SMS */
 //CS0-SDRAM, size = 512MB
-#define _S (address) 0x80000000
-#define _E (address) 0x9FFFFFFF
+#define CS0_SDRAM_S (address) 0x80000000
+#define CS0_SDRAM_E (address) 0x9FFFFFFF
 
 //CS1-SDRAM, size = 512MB
-#define _S (address) 0xA0000000
-#define _E (address) 0xBFFFFFFF
+#define CS1_SDRAM_S (address) 0xA0000000
+#define CS1_SDRAM_E (address) 0xBFFFFFFF
 
 /*  Q3 total size = 1GB  */
 
 /* SDRC/SMS */
 //SDRC/SMS virtual address space 1, size = 512MB
+#define VIRTUAL_ADDR_SPACE_S (address) 0xE0000000
+#define VIRTUAL_ADDR_SPACE_E (address) 0xFFFFFFFF

@@ -10,6 +10,7 @@
 #include <stdlib.h>
 #include "serial.h"
 #include "uart.h"
+#include "command.h"
 #include "../../utils/binary.h"
 
 
@@ -17,88 +18,104 @@
 void ser_init(eBaud baud) {
 	unsigned int efr, mcr, lcr;
 
+	//command(UADT03, DLL, REG_CLEAR, 0x0);
+	//command(UADT03, DLH, REG_CLEAR, 0x0);
+
 	*((address)(UART03 + DLL)) = 0x0;
-	*(UART03 + DLH) = 0x0;
+	*((address)(UART03 + DLH)) = 0x0;
 
 	// Software Reset
-	*(UART03 + SYSC) |= (1 << 1);
+	//command(UADT03, SYSC, BIT_SET, 1);
+	*((address)(UART03 + SYSC)) |= (1 << 1);
 
-	while(getBitValue(UART03, SYSS, 0) != 0x0) {
+	while(getBitValue(UART03, SYSS, 0) == 0x0) {
 		// wait till reset is done
 	}
 
 	// FIFOs and DMA Settings
 	// Swich to mode B
-	lcr=*(UART03 + LCR); // save lcr
-	*(UART03 + LCR) = 0xBF;
+	lcr=*((address)(UART03 + LCR)); // save lcr
+	//command(UADT03, LCR, REG_SET, 0xBF);
+	*((address)(UART03 + LCR)) = 0xBF;
 
 	// Save EFR_REG register
-	efr = *(UART03 + EFR);
+	efr = *((address)(UART03 + EFR));
 	// Enable enhanced features
-	*(UART03 + EFR) |= 0x10;
+	//command(UADT03, EFR, BIT_SET, 4);
+	*((address)(UART03 + EFR)) |= 0x10;
 
 	// Switch to mode A
-	*(UART03 + LCR) = 0x80;
+	//command(UADT03, LCR, REG_SET, 0x80);
+	*((address)(UART03 + LCR)) = 0x80;
 
 	// Set loopback mode
-	*(UART03 + MCR) |= 0x13;
+	//command(UADT03, MCR, BIT_SET, 4);
+	//command(UADT03, MCR, BIT_SET, 1);
+	//command(UADT03, MCR, BIT_SET, 0);
+	*((address)(UART03 + MCR)) |= 0x13;
 
-	*(UART03 + WER) |= 0x1;
+	//command(UADT03, WER, BIT_SET, 0);
+	*((address)(UART03 + WER)) |= 0x1;
 
 	// Save MCR Register
-	mcr = *(UART03 + MCR);
-	*(UART03 + MCR) |= 0x40;
+	mcr = *((address)(UART03 + MCR));
+	//command(UADT03, MCR, BIT_SET, 6);
+	*((address)(UART03 + MCR)) |= 0x40;
 
 	// Enable Fifo, set trigger levels p2696. Trigger levels are ignored for now.
-	*(UART03 + FCR) = 0x7;
-	//while((getBitValue(UART03, FCR, 1) != 0x0)  (getBitValue(UART03, FCR, 2) != 0x0)){}
+	//command(UADT03, FCR, REG_SET, 0x7);
+	*((address)(UART03 + FCR)) = 0x7;
+	//TODO bit value never change!!! -> fix
+	while(getBitValue(UART03, FCR, 1) != 0x0 && getBitValue(UART03, FCR, 2) != 0x0){
+
+	}
 
 
-	*(UART03 + FCR) = 0x0;
+	*((address)(UART03 + FCR)) = 0x0;
 
 	// Switch to mode B
-	*(UART03 + LCR) = 0xBF;
+	*((address)(UART03 + LCR)) = 0xBF;
 
 	// Setup trigger levels for interrupt generation to 0. p2710
-	*(UART03 + TLR) = 0x0;
-	*(UART03 + SCR) |= 0x3F;
+	*((address)(UART03 + TLR)) = 0x0;
+	*((address)(UART03 + SCR)) |= 0x3F;
 
 	// Restore efr value
-	*(UART03 + EFR) = efr;
+	*((address)(UART03 + EFR)) = efr;
 
 	// Switch to mode A
-	*(UART03 + LCR) = 0x80;
+	*((address)(UART03 + LCR)) = 0x80;
 
 	// Restore MCR register
-	*(UART03 + MCR) = mcr;
+	*((address)(UART03 + MCR)) = mcr;
 
 	// Restore LCR
-	*(UART03 + LCR) = lcr;
+	*((address)(UART03 + LCR)) = lcr;
 
-	*(UART03 + RHR) = 0;
-	*(UART03 + THR) = 0;
+	*((address)(UART03 + RHR)) = 0;
+	*((address)(UART03 + THR)) = 0;
 	//*(UART03 + LSR);
-	*(UART03 + MSR);
+	//*((address)(UART03 + MSR));
 	//*(UART03 + IIR);
 
 	// Disable UART access
-	*(UART03 + MDR1) |= 0x7;
+	*((address)(UART03 + MDR1)) |= 0x7;
 
 	// Switch to mode B
-	*(UART03 + LCR) = 0xBF;
+	*((address)(UART03 + LCR)) = 0xBF;
 
 	// Enable access to IER_REG
-	efr = *(UART03 + EFR);
-	*(UART03 + EFR) |= 0x10;
+	efr = *((address)(UART03 + EFR));
+	*((address)(UART03 + EFR)) |= 0x10;
 
 	// Switch to register operational mode
-	*(UART03 + LCR) = 0x0;
+	*((address)(UART03 + LCR)) = 0x0;
 
 	// Set IER register to 0x0000
-	*(UART03 + IER) = 0x0;
+	*((address)(UART03 + IER)) = 0x0;
 
 	// Switch to mode B
-	*(UART03 + LCR) = 0xBF;
+	*((address)(UART03 + LCR)) = 0xBF;
 
 	// Protocol, Baud Rate, and Interrupt Settings
 
@@ -182,40 +199,39 @@ void ser_init(eBaud baud) {
 			break;
 	}
 	// set registers for divider and baudrate
-	*(UART03 + DLL) = dll;
-	*(UART03 + DLH) = dlh;
+	*((address)(UART03 + DLL)) = dll;
+	*((address)(UART03 + DLH)) = dlh;
 
 	// Switch to operational mode
-	*(UART03 + LCR) = 0x0;
+	*((address)(UART03 + LCR)) = 0x0;
 
 	// Load Interrupt Configuration
-	*(UART03 + IER) = 0x3;
+	*((address)(UART03 + IER)) = 0x3;
 
 	// Switch to mode B
-	*(UART03 + LCR) = 0xBF;
+	*((address)(UART03 + LCR)) = 0xBF;
 
 	// Restore EFR
-	*(UART03 + EFR) = efr;
+	*((address)(UART03 + EFR)) = efr;
 
 	/* Load Protocol Format
 	 * 8 bits length
 	 * 1 stop bit
 	 * no parity
 	 */
-	*(UART03 + LCR) = 0x3;
+	*((address)(UART03 + LCR)) = 0x3;
 
 	// Load new mode
-	*(UART03 + MDR1) = 0x0;
+	*((address)(UART03 + MDR1)) = 0x0;
 
 }
 
 
 void ser_putc(signed char outChar) {
-	*(UART03 + THR) = outChar;
+	*((address)(UART03 + THR)) = outChar;
 }
 
-void ser_puts( const signed char * outString)
-{
+void ser_puts( const signed char * outString) {
 	signed char *pxNext;
 
 	/* Send each character in the string, one at a time. */
@@ -227,6 +243,30 @@ void ser_puts( const signed char * outString)
 	}
 }
 
+// poll char over serial port
+char ser_getc() {
+	char null = '\0';
+	char rec = null;
+	while(rec == null) {
+		while(getBitValue(UART03, LSR, 0) == 0);
+		rec = (char) *((address)(UART03 + RHR));
+	}
 
+	return rec;
+}
 
-
+// read a line and returns the start-address
+// size... max length
+char* ser_gets(char* string, int size) {
+	char* ptr = string;
+	while(size > 1) {
+		*ptr = ser_getc();
+		if(*ptr == '\n') {
+			break;
+		}
+		ptr++;
+		size--;
+	}
+	*ptr = 0; // null-terminated string
+	return string;
+}

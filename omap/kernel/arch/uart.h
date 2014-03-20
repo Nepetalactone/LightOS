@@ -35,7 +35,7 @@ UART1-3 size = 1k bytes
 #define LCR (offset) 0x00C // p.2752
 #define MCR (offset) 0x010 // p.2753
 #define XON1_ADDR1 (offset) 0x010 // p.2754
-#define LSR_REG (offset) 0x014 // p.2756
+#define LSR (offset) 0x014 // p.2756
 #define XON2_ADDR2 (offset) 0x014 // p.2757
 #define MSR (offset) 0x018 // p.2759
 #define TCR (offset) 0x018 // p.2758
