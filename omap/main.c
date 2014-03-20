@@ -6,8 +6,12 @@
 #include "kernel/timer.h"
 
 int main(void) {
+
 	_enable_interrupts();
+
 	init_isr_handler();
+
+	
 	gptimer_t * timer = request_new_timer_by_id(2);
 	enable_timer_interrupt(timer);
 	clear_match(timer);
@@ -18,9 +22,13 @@ int main(void) {
 
 	//
 	mir0_clear();
-
-
 	start_timer(timer);
+
+
+	// serial
+	void serial_test(void); // prototype
+	serial_test();
+
 	while(1)
 	{
 	}
