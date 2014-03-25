@@ -15,6 +15,6 @@ typedef volatile unsigned int byte;
 */
 static inline uint64_t S_to_binary_(const char *s);
 
-unsigned int getBitValue(address a, offset o, position p);
+uint8_t getBitValue(address a, offset o, uint32_t p);
 
 #endif

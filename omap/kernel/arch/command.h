@@ -24,7 +24,7 @@ typedef volatile unsigned char command;
 	value = position of the bit, or value to write into register
 	returns values if command was a read command
 */
-uint32_t command(base_address a, offset o, command c, uint32_t value);
+uint32_t exec_command(base_address a, offset o, command c, uint32_t value);
 
 /*
 	a = base address

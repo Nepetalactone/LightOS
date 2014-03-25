@@ -59,5 +59,6 @@ void enable_timer_interrupt(gptimer_t *timer);
 void set_match(gptimer_t *timer, uint32_t value);
 void clear_match(gptimer_t *timer);
 void reset_timer_counter(gptimer_t *timer);
+void set_trigger_output_mode();
 
 #endif /* TIMER_H_ */

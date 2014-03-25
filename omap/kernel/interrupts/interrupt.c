@@ -37,7 +37,11 @@ void clear_irq_line(uint8_t line) {
 
 void init_isr_handler(void){
 	*(ISR_IRQ_ADDRESS) = (uint32_t) &irq_isr;
-	(*FIQ_IRQ_ADDRESS) = (uint32_t) &fiq_isr;
+	*(FIQ_IRQ_ADDRESS) = (uint32_t) &fiq_isr;
+}
+
+void clear_CPSR_IRQ_FIQ_DISABLE(void){
+
 }
 
 void unmask_mir0(void){

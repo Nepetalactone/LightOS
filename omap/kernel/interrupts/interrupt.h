@@ -35,6 +35,9 @@
 #define PENDING_FIQ0 (offset) 	0x09C /* FIQ status post-masking */
 #define ILR0 (offset)        	0x100 /* Priority for interrupts */
 
+//TODO REMOVE ME
+#define CPSR (address) 			0x00
+
 #define IRQ_LINE (address)	MPU_INTC + SIR_IRQ
 #define FIQ_LINE (address)	MPU_INTC + SIR_FIQ
 
@@ -43,5 +46,6 @@ void unmask_mir0(void);
 void mask_mir0(void);
 void mir0_clear(void);
 void mir0_set(void);
+void clear_CPSR_IRQ_FIQ_DISABLE(void);
 
 #endif /* INTERRUPT_H_ */

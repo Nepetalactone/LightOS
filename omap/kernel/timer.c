@@ -1,8 +1,8 @@
 #include "timer.h"
 #include <stdlib.h>
+#include "arch/command.h"
 
 #define MAX_TIMER 12 //max number of GPTimer on the beagleboard
-//#define NULL (void*) 0 //maybe type.h?
 
 static gptimer_t timers[MAX_TIMER];
 
@@ -17,6 +17,11 @@ static gptimer_t* init_timer(int id, base_address address, int line) {
 	stop_timer(timer);
 	reset_timer_counter(timer);
 	return timer;
+}
+
+void set_trigger_output_mode(gptimer_t * timer){
+	exec_command(timer->base_address, TCLR, BIT_CLEAR, 10);
+	exec_command(timer->base_address, TCLR, BIT_SET, 11);
 }
 
 void enable_timer_interrupt(gptimer_t *timer) {
