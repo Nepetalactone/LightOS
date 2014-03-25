@@ -6,14 +6,14 @@
 
 //static address irq_table[MAX_INTERRUPT_VECTORS];
 
-static irq_hook_t* irq_lines[MAX_INTERRUPT_VECTORS];
+
 
 /*
  * IRQ Interrupt Service Routine
  */
 uint32_t irq_isr(void){
 	//uint8_t activeIRQ = *get_bits(IRQ_LINE, 7);
-	printf("test");
+	printf("Woah voll guat");
 	// active irq number -> first 7 bits from ACTIVE_IRQ
 	return 0;
 }
@@ -27,7 +27,7 @@ uint32_t fiq_isr(void) {
 }
 
 void get_irq_line(uint8_t line){
-
+	//*(IRQ_LINE) = line;
 }
 
 
@@ -38,7 +38,10 @@ void clear_irq_line(uint8_t line) {
 void init_isr_handler(void){
 	*(ISR_IRQ_ADDRESS) = (uint32_t) &irq_isr;
 	*(FIQ_IRQ_ADDRESS) = (uint32_t) &fiq_isr;
-	uint32_t asdf = *(ISR_IRQ_ADDRESS);
+}
+
+void clear_CPSR_IRQ_FIQ_DISABLE(void){
+
 }
 
 void unmask_mir0(void){
@@ -56,27 +59,6 @@ void mir0_clear(void){
 void mir0_set(void){
 	*((address)(MPU_INTC + MIR_SET0)) |= 0x1;
 }
-
-
-void enable_irq_line(void) {
-
-}
-
-void isr_clear(void) {
-	*((address)(MPU_INTC + ISR_CLEAR0)) &= 0x0;
-}
-
-/*
-  void put_irq_handler(irq_hookt_t *line, int irq, uint_32 (*handler)(struct irq_hook)) {
-	if (irq > MAX_INTERRUPT_VECTORS) {
-		return;
-	}
-	line->handler = handler;
-	irq_lines[irq] = line;
-}
- */
-
-
 
 //void inline __enable_interrupts__() {
 //	_enable_interrupts();

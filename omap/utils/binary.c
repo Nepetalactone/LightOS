@@ -19,9 +19,9 @@ static inline uint64_t S_to_binary_(const char *s)
         return i;
 }
 
-uint32_t getBitValue(address a, offset o, uint16_t p){
+uint8_t getBitValue(address a, offset o, uint32_t p){
 	int mask = (1 << p);
-	address location = __CONCRETE_ADDRESS((base_address)a, o);
+	address location = address((base_address)a, o);
 	int regValue = *location;
 	int toCheck =  regValue & mask ;
 	return toCheck && mask;
