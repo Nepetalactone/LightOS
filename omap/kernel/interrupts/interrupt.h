@@ -3,6 +3,7 @@
 #define INTERRUPT_H_
 
 #include "../arch/address.h"
+#include "../type.h"
 
 #define MAX_INTERRUPT_VECTORS 96
 
