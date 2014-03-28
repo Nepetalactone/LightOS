@@ -6,6 +6,7 @@
 #include "kernel/timer.h"
 
 int main(void) {
+	_disable_interrupts();
 	_enable_interrupts();
 	init_isr_handler();
 	gptimer_t * timer = request_new_timer_by_id(2);

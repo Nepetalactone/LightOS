@@ -1,76 +1,60 @@
-;****************************************************************************
-	.armfunc _c_int00	;c_int00: 1. switches to the appropriate mode, reserves space for the run-time stack and sets up the initial value of the stack pointer. in EABI mode, the stack is aligned on a 64- bit boundary.
-	;Calls the function __TI_auto_init to perform the C/C++ autoinitialization
+	.armfunc _c_int00	;switches to the appropriate mode, reserves space for the run-time stack and sets up the initial value
+						;of the stack pointer. In EABI mode, the stack is aligned on a 64-bit boundary.
+						;Calls the function __TI_auto_init to perform the C/C++ autoinitialization
 	.global _c_int00
 
-;****************************************************************************
-; Accomodate different lowerd names in different ABIs
-;****************************************************************************
-    .asg	_args_main,   	ARGS_MAIN_RTN
-    .asg	exit,         	EXIT_RTN
-    .asg    main_func_sp,	MAIN_FUNC_SP
+;TI includes
 
-;****************************************************************************
-;*  32 BIT STATE BOOT ROUTINE                                               *
-;****************************************************************************
-
-	.global	_stack
-	.global	_irqstack
-	.global	_abortstack
-	.global	_intvecsaddr
+	.asg __args_main, ARGS_MAIN_RTN
+	.global ARGS_MAIN_RTN
 	.global __TI_auto_init
 
-;***************************************************************
-;* DEFINE THE USER MODE STACK (DEFAULT SIZE IS 512)
-;***************************************************************
-stack:.usect			"._stack", 0, 4
-irqstack:.usect			"._irqstack", 512, 4
-abortstack:.usect		"._abortstack", 512, 4
-intvecsaddr:.usect		"._intvecs", 0, 4
+;Included addresses from the Linker
 
-IRQ_STACK_SIZE 		.long 	0x1000
-ABORT_STACK_SIZE 	.long 	0x1000
+	.global irqStack
+	.global kernelStack
+	.global abortStack
+	.global systemStack
 
-_irq_stack		.long	irqStack
-_intevecs_addr	.long	intvecsaddr
-_abort_stack	.long	abortstack
+;Constants used by this module
 
-;***************************************************************
-;* FUNCTION DEF: _c_int00
-;***************************************************************
+c_r13_irq		.long	irqStack
+c_r13_kernel	.long	kernelStack
+c_r13_abt		.long	abortStack
+c_r13_system	.long	systemStack
+
+;Function def: _c_int00
+
 _c_int00: .asmfunc
-	;*------------------------------------------------------
-	;* : SET TO IRQ MODE
-    ;*------------------------------------------------------
-	CPS		#0x12
 
-	;*------------------------------------------------------
-    ;* : INITIALIZE THE IRQ MODE STACK
-    ;*------------------------------------------------------
-	LDR		sp, _irq_stack
-	LDR		r0, IRQ_STACK_SIZE
-	ADD		sp, sp, r0
+	;Set IRQ-Stack
+	CPS 0x12
+	LDR sp, c_r13_irq
 
-	;*------------------------------------------------------
-	;* : SET TO ABORT MODE
-    ;*------------------------------------------------------
-	CPS		#0x17
+	;Set SWI-Stack / Kernel-stack
+	CPS 0x13
+	LDR sp, c_r13_kernel
 
-	;*------------------------------------------------------
-    ;* : INITIALIZE THE ABORT MODE STACK
-    ;*------------------------------------------------------
-	LDR		sp, _abort_stack
-	LDR		r0, ABORT_STACK_SIZE
-	ADD		sp, sp, r0
+		;Set ABT-Stack
+		CPS 0x17
+		LDR sp, c_r13_abt
 
-	LDR		r0, _intevecs_addr
-	MCR		p15, #0, r0, c12, c0, #0
+	;Set System-Stack
+	CPS 0x1F
+	LDR sp, c_r13_system
 
+	;Disable Interrupts
+	MRS R12, CPSR
+	BIC R12, R12, #192
+	MSR CPSR_cf, R12
 
-    ;*------------------------------------------------------
-	;* SET TO SYSTEM MODE
-    ;*------------------------------------------------------
-	CPS		#0x1F
+	;Perform all the required initializations
+	; - Process BINIT Table
+	; - Perform C auto initialization
+	; - Call global constructors
+	BL __TI_auto_init
 
-	BL	__TI_auto_init
+	;Call application
+	BL ARGS_MAIN_RTN
+
 .end
