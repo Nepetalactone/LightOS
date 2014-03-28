@@ -7,7 +7,6 @@
 
 int main(void) {
 	_disable_interrupts();
-	_enable_interrupts();
 	init_isr_handler();
 	gptimer_t * timer = request_new_timer_by_id(2);
 	clear_match(timer);
@@ -21,6 +20,16 @@ int main(void) {
 	unmask_mir0();
 	enable_timer_interrupt(timer);
 
+	_enable_interrupts();
+
+	int asdfasdf = 100;
+	while(asdfasdf > 0){
+		asdfasdf--;
+		if(asdfasdf == 1){
+			volatile int qwe =0;
+		}
+	}
+
 
 	start_timer(timer);
 	volatile int x=0;
@@ -28,7 +37,6 @@ int main(void) {
 	{
 		volatile int i=0;
 		int x=i;
-		int y =x;
 	}
 	return 0;
 }

@@ -1,4 +1,3 @@
-	.global _c_int00
 	.global udef_handler
 	.global swi_handler
 	.global pabt_handler
@@ -7,7 +6,7 @@
 	.global fiq_handler
 
 	.sect ".intvecs"
-		;B _c_int00
+		.word 0
 		B udef_handler
 		B swi_handler
 		B pabt_handler
