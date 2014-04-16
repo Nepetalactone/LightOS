@@ -12,7 +12,6 @@ uint8_t get_timer_nr(base_address timer_addr);
 void _enable(base_address timer);
 void _disable(base_address timer);
 
-
 void reset_timer(base_address timer){
 	BIT_SET(timer,TSICR,1);
 	BIT_SET(timer,TISR,0);
@@ -23,7 +22,7 @@ void reset_timer(base_address timer){
 	BIT_CLEAR(timer,TIER,2);
 }
 
-void init_timer(base_address timer, uint32_t millisec ,interrupt_handler handler){
+void init_timer(base_address timer, uint32_t millisec, interrupt_handler handler, trigger_mode mode){
 	if(is_timer_running(timer) || handler == NULL){
 		return;
 	}
@@ -31,6 +30,8 @@ void init_timer(base_address timer, uint32_t millisec ,interrupt_handler handler
 	REG_SET(timer,TMAR, millisec);
 	//TODO get real interrupt ID
 	set_interrupt_handler(0,handler);
+	timer_set_trigger_mode(timer, mode);
+
 }
 
 void start_timer(base_address timer){
@@ -39,11 +40,14 @@ void start_timer(base_address timer){
 	}
 	_enable(timer);
 	BIT_SET(timer,TCLR,0);
+	enable_timer_interrupt(timer);
+	timer_enable_compare(timer);
 }
 
 void stop_timer(base_address timer) {
 	_disable(timer);
 	BIT_CLEAR(timer,TCLR,0);
+	disable_timer_interrupt(timer);
 }
 
 void reset_timer_counter(base_address timer){
@@ -54,24 +58,15 @@ void timer_enable_compare(base_address timer){
 	BIT_SET(timer,TCLR,6);
 }
 
-
-
-void timer_set_trigger_mode(base_address timer, trigger_mode mode){
-	//TODO implement differend modes
-	BIT_CLEAR(timer, TCLR, 10);
-	BIT_SET(timer, TCLR, 11);
+void set_compare_value(base_address timer, uint32_t millisec) {
+	REG_SET(timer,TMAR, millisec);
 }
 
-
-
-
-/*
- *
- *
- *
- *
- *
- */
+void timer_set_trigger_mode(base_address timer, trigger_mode mode){
+	BIT_CLEAR(timer, TCLR, 10);
+	BIT_CLEAR(timer, TCLR, 11);
+	BIT_SET(timer, TCLR, mode);
+}
 
 uint8_t is_timer_running(base_address timer){
 	uint8_t timer_nr = get_timer_nr(timer);
@@ -86,6 +81,16 @@ void _disable(base_address timer){
 	timers[get_timer_nr(timer)] = 0;
 }
 
+void enable_timer_interrupt(base_address timer) {
+	//TODO: TIER Modes..
+	BIT_SET(GPTIMER4,TIER,0);
+	BIT_SET(GPTIMER4,TIER,1);
+	BIT_SET(GPTIMER4,TIER,2);
+}
+
+void disable_timer_interrupt(base_address timer) {
+	BIT_CLEAR(timer, TIER, 0);
+}
 
 uint8_t get_timer_nr(base_address timer_addr){
 	switch(timer_addr){

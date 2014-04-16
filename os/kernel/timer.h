@@ -44,18 +44,20 @@
 
 
 typedef enum {
-	trigger_1 = 1,
-	trigger_2 = 2
-	//TODO add trigger modes
-
+	trigger_Overflow = 10,
+	trigger_OverflowMatch = 11
 } trigger_mode;
 
-void init_timer(base_address timer, uint32_t millisec ,interrupt_handler handler);
+void init_timer(base_address timer, uint32_t millisec, interrupt_handler handler, trigger_mode mode);
+void set_compare_value(base_address timer, uint32_t millisec);
 void start_timer(base_address timer);
 void stop_timer(base_address timer);
 void reset_timer(base_address timer);
 void reset_timer_counter(base_address timer);
-void set_trigger_mode(base_address timer, trigger_mode mode);
+void timer_set_trigger_mode(base_address timer, trigger_mode mode);
+void enable_timer_interrupt(base_address timer);
+void disable_timer_interrupt(base_address timer);
 uint8_t is_timer_running(base_address timer);
+void timer_enable_compare(base_address timer);
 
 #endif /* TIMER_H_ */
