@@ -15,7 +15,6 @@ Process* getProcess(QueueElement *queue, ProcessID PID) {
 		}else {
 			return (Process*) queue->element;
 		}
-		return NULL;
 	}
 	return NULL;
 }

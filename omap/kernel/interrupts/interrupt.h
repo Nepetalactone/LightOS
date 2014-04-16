@@ -1,9 +1,8 @@
+#ifndef LIGHT_TYPES_H_
+#define LIGHT_TYPES_H_
 
-#ifndef INTERRUPT_H_
-#define INTERRUPT_H_
 
-#include "../arch/address.h"
-#include "../type.h"
+#define NR_INTERRUPTS (126)
 
 #define MAX_INTERRUPT_VECTORS 96
 
@@ -28,7 +27,7 @@
 #define THRESHOLD (offset)   	0x068 /* Priority threshold */
 #define ITR0 (offset)       	0x080 /* Raw pre-masking interrupt status */
 #define MIR0 (offset)        	0x084 /* Interrupt mask */
-#define MIR_CLEAR0 (offset)  	0x088 /* Clear interrupt mask bits */
+#define MIR_CLEAR(n) (offset)  	0x088 + (0x20 * n)/* Clear interrupt mask bits */
 #define MIR_SET0 (offset)    	0x08C /* Set interrupt mask bits */
 #define ISR_SET0 (offset)    	0x090 /* Set software int bits */
 #define ISR_CLEAR0 (offset)  	0x094 /* Clear software int bits */
@@ -42,11 +41,6 @@
 #define IRQ_LINE (address)	MPU_INTC + SIR_IRQ
 #define FIQ_LINE (address)	MPU_INTC + SIR_FIQ
 
-void init_isr_handler(void);
-void unmask_mir0(void);
-void mask_mir0(void);
-void mir0_clear(void);
-void mir0_set(void);
-void clear_CPSR_IRQ_FIQ_DISABLE(void);
 
-#endif /* INTERRUPT_H_ */
+
+#endif

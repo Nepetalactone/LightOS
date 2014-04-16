@@ -2,8 +2,10 @@
 #ifndef TIMER_H_
 #define TIMER_H_
 
-#include "arch/address.h"
-#include "type.h"
+#include "./arch/address.h"
+#include "./interrupts/interrupt.h"
+#include "./interrupts/interrupt_controller.h"
+
 
 #define GPTIMER1 (base_address) 0x48318000
 #define GPTIMER2 (base_address) 0x49032000
@@ -41,24 +43,20 @@
 #define TOWR (offset) 0x058 //This register holds the number of masked overflow interrupts p.2656
 /* REGISTERS END */
 
-typedef struct gptimer {
-	int id;
-	int irq;	//interrupt request line
-	base_address base_address;	//base address of the GPTIMER
-} gptimer_t;
 
-gptimer_t * request_timer(void);
-gptimer_t* request_new_timer_by_id(int id);
-gptimer_t* get_timer_by_id(int id);
-void request_timer_irq(gptimer_t *timer);
-void write_timer_counter(gptimer_t *timer, unsigned int count);
-void stop_timer(gptimer_t *timer);
-void start_timer(gptimer_t *timer);
-void disable_timer_interrupt(gptimer_t *timer);
-void enable_timer_interrupt(gptimer_t *timer);
-void set_match(gptimer_t *timer, uint32_t value);
-void clear_match(gptimer_t *timer);
-void reset_timer_counter(gptimer_t *timer);
-void set_trigger_output_mode();
+typedef enum {
+	trigger_1 = 1,
+	trigger_2 = 2
+	//TODO add trigger modes
+
+} trigger_mode;
+
+void init_timer(base_address timer, uint32_t millisec ,interrupt_handler handler);
+void start_timer(base_address timer);
+void stop_timer(base_address timer);
+void reset_timer(base_address timer);
+void reset_timer_counter(base_address timer);
+void set_trigger_mode(base_address timer, trigger_mode mode);
+uint8_t is_timer_running(base_address timer);
 
 #endif /* TIMER_H_ */
