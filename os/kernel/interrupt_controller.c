@@ -1,5 +1,6 @@
 #include "interrupt_controller.h"
 #include "command.h"
+#include "address.h"
 #include <stdio.h>
 
 
@@ -49,7 +50,7 @@ void enable_mir_(uint32_t mir_nr){
 }
 
 void disable_mir_(uint32_t mir_nr){
-	//TODO
+	//TODO disable mir
 }
 
 void set_interrupt_handler(uint32_t int_nr, interrupt_handler handler){
@@ -61,13 +62,27 @@ void remove_interrupt_handler(uint32_t int_nr){
 	handlers[int_nr] = dummy_handler;
 }
 
-void handle_current_interrupt(uint32_t interrupt_nr){
-	//get active interrupt nr
-	//call handler
+void _handle_current_interrupt(){
+	uint32_t interrupt_nr = get_active_interrupt();
 	handlers[interrupt_nr]();
 	//reset interrupt pending bit
 
 }
+
+
+uint32_t get_active_interrupt(void){
+
+
+	//TODO use BIT_READ
+	uint32_t bit_mask = 1;
+	address fiq = address(MPU_INTC, SIR_FIQ);
+
+	uint32_t asdf = *fiq & bit_mask;
+
+
+	return 0; //TODO INTCPS_SIR_IRQ/FIQ (active interrupt) oder INTCPS_PENDING_IRQn (pending interrupt) lesen
+}
+
 
 #pragma INTERRUPT(udef_handler, UDEF)
 interrupt void udef_handler() {
@@ -91,13 +106,13 @@ interrupt void dabt_handler() {
 
 #pragma INTERRUPT(irq_handler, IRQ)
 interrupt void irq_handler() {
-	handle_current_interrupt(BIT_READ(MPU_INTC,SIR_IRQ, (32-7), 7));
+	_handle_current_interrupt();
 	printf("irq_handler interrupt\n");
 }
 
 #pragma INTERRUPT(fiq_handler, FIQ)
 interrupt void fiq_handler() {
-	handle_current_interrupt(BIT_READ(MPU_INTC,SIR_FIQ, (32-7), 7));
+	_handle_current_interrupt();
 	printf("fiq_handler interrupt\n");
 }
 

@@ -22,6 +22,7 @@ void set_interrupt_mode(uint32_t interrupt_nr, uint8_t mode){
 }
 
 uint8_t get_interrupt_nr(base_address addr){
+	//TODO add all interrupt numbers by address
 	switch(addr){
 		case GPTIMER1:
 			return 37;

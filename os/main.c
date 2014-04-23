@@ -11,13 +11,13 @@
 
 void asdf(void);
 void asdf(){
-	exit(1);
+	printf("asdasd");
+
 }
 
 int main(void) {
 	//SCHEISS VERFICKTES BIT - READ
 	volatile uint8_t y =  BIT_READ(MPU_INTC, SIR_FIQ, (32-7), 7);
-
 	_disable_interrupts();
 
 

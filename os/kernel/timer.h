@@ -44,6 +44,7 @@
 
 
 typedef enum {
+	trigger_none = 00,
 	trigger_Overflow = 10,
 	trigger_OverflowMatch = 11
 } trigger_mode;
