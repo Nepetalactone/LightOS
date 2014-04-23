@@ -10,14 +10,49 @@
 QueueElement* all_processes;
 QueueElement* ready_processes;
 Process* current_process;
+static uint32_t nextProcessId;
 
-ProcessID scheduler_startProcess(PRFunc proc){return NULL;}
+void Scheduler_init(){
+	nextProcessId = 0;
+	//mmu und timer starten
+}
 
-void scheduler_runNextProcess(){}
+ProcessID scheduler_startProcess(PRFunc proc, unsigned int virtual_address, unsigned int physical_address) {
+	Process* process = malloc(sizeof(Process));
+		if (process == NULL) {
+			return NULL;
+		}
+
+		//mmu and ipc stuff
+		process->state = READY;
+		process->ID = nextProcessId++;
+		process->context = proc;
+		Enqueue(all_processes, process);
+		Enqueue(ready_processes, process);
+		return process->ID;
+}
+
+Process* scheduler_runNextProcess() {
+
+	while (ready_processes != NULL) {
+		QueueElement node = Dequeue(&ready_processes);
+		if (node != NULL) {
+			Process* p = node->element;
+			if (p->state == READY || p->state == RUNNING) {
+				Enqueue(&ready_processes, node);
+				return node->element;
+			} else {
+				p->in_ready_queue = 0;
+				free(node);
+			}
+		}
+	}
+	return NULL;
+}
 
 /*if the process state is blocked, change it to ready
  * then add the process to the ready process queue*/
-void set_to_ready(Process* proc){
+void set_to_ready(Process* proc) {
 	if (proc->state != BLOCKED) {
 		return;
 	}
@@ -31,14 +66,14 @@ void set_to_ready(Process* proc){
 
 /*checking if the current process is not blocked,
  *  and set it to blocked*/
-void set_current_to_blocked(void){
-	if(current_process->state == BLOCKED){
+void set_current_to_blocked(void) {
+	if (current_process->state == BLOCKED) {
 		return;
 	}
 	current_process->state = BLOCKED;
 }
 
-void end_process(ProcessID pid, int exit_code){
+void end_process(ProcessID pid, int exit_code) {
 	Process* p = getProcess(all_processes, pid);
 	if (p == NULL) {
 		return;
