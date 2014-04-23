@@ -13,7 +13,7 @@ uint32_t BIT_READ(base_address a, offset o, uint8_t start, uint8_t range){
 
 	//TODO: BIT_READ bit_mask (command.h) as inputparam
 	//uint32_t bitmask = BIT_MASK(01111111);
-	//uint32_t full = *(a+o);
+	//uint32_t full = *(IRQ_LINE);
 	//uint32_t withmask = qwer & bitmask;
 
 	return (*((address)(a + o)) >> 0) & ((1 << range)-1);
