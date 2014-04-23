@@ -13,21 +13,17 @@ void asdf(void);
 void asdf(){
 	exit(1);
 }
-#define MPU_INTC (base_address) 0x48200000
-#define MIR0 (offset)        	0x084 /* Interrupt mask */
-#define MIR_CLEAR0 (offset)  	0x088 /* Clear interrupt mask bits */
-#define MIR_CLEAR1 (offset)  	0x0A8 /* Clear interrupt mask bits */
-#define MIR_CLEAR2 (offset)  	0x0C8 /* Clear interrupt mask bits */
-#define ILR0 (offset)        	0x100 /* Priority for interrupts */
-#define ILR4 (offset)        	0x110 /* Priority for interrupts */
 
 int main(void) {
+	//SCHEISS VERFICKTES BIT - READ
+	volatile uint8_t y =  BIT_READ(MPU_INTC, SIR_FIQ, (32-7), 7);
 
 	_disable_interrupts();
 
 
 	init_interrupt_controller();
-	set_interrupt_handler(0, asdf);
+	uint32_t interrupt_nr = get_interrupt_nr(GPTIMER4);
+	set_interrupt_handler(interrupt_nr, asdf);
 
 
 	//TODO p.2619
@@ -38,7 +34,6 @@ int main(void) {
 
 
 	//interrupt mode fiq
-	uint32_t interrupt_nr = get_interrupt_nr(GPTIMER4);
 	set_interrupt_mode(interrupt_nr,FIQ);
 
 	//unmask_mir

@@ -18,6 +18,7 @@ uint32_t exec_command(base_address a, offset o, command c, uint32_t value);
 
 void BIT_SET(base_address a, offset o, uint32_t value);
 void BIT_CLEAR(base_address a, offset o, uint32_t value);
+uint32_t BIT_READ(base_address a, offset o, uint8_t start, uint8_t range);
 void BIT_TOGGLE(base_address a, offset o, uint32_t value);
 void REG_SET(base_address a, offset o, uint32_t value);
 void REG_CLEAR(base_address a, offset o);

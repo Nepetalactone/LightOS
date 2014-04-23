@@ -61,14 +61,13 @@ void remove_interrupt_handler(uint32_t int_nr){
 	handlers[int_nr] = dummy_handler;
 }
 
-void handle_current_interrupt(){
+void handle_current_interrupt(uint32_t interrupt_nr){
 	//get active interrupt nr
 	//call handler
-	handlers[0]();
+	handlers[interrupt_nr]();
 	//reset interrupt pending bit
 
 }
-
 
 #pragma INTERRUPT(udef_handler, UDEF)
 interrupt void udef_handler() {
@@ -92,13 +91,13 @@ interrupt void dabt_handler() {
 
 #pragma INTERRUPT(irq_handler, IRQ)
 interrupt void irq_handler() {
-	handle_current_interrupt();
+	handle_current_interrupt(BIT_READ(MPU_INTC,SIR_IRQ, (32-7), 7));
 	printf("irq_handler interrupt\n");
 }
 
 #pragma INTERRUPT(fiq_handler, FIQ)
 interrupt void fiq_handler() {
-	handle_current_interrupt();
+	handle_current_interrupt(BIT_READ(MPU_INTC,SIR_FIQ, (32-7), 7));
 	printf("fiq_handler interrupt\n");
 }
 
