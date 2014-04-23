@@ -1,0 +1,36 @@
+_________________________________
+Scheduling
+_________________________________
+- PCB
+
+_________________________________
+
+
+_________________________________
+MMU
+_________________________________
+- new context
+- change context --> context switch
+- Übersetzungstabllen "wechseln"
+- Page Table update
+- Page Fault --> Page einlagern
+
+
+
+
+
+Example: ARM sys dev guide 14.10
+
+We use seven steps to set up the MMU for the demonstration:
+1. Define the fixed system software regions; this fixed area is shown in Figure 14.5.
+2. Define the three virtual memory maps for the three tasks; the general layout of these
+maps is shown in Figure 14.4.
+3. Locate the regions listed in steps 1 and 2 into the physical memory map; this is an
+implementation of what is shown on the right side of Figure 14.5.
+4. Define and locate the page tables within the page table region.
+5. Define the data structures needed to create and manage the regions and page tables.
+These structures are implementation dependent and are defined specifically for the
+example. However, the general form of the structures is a good starting point for most
+simple systems.
+6. Initialize the MMU, caches, and write buffer.
+7. Set up a context switch routine to gracefully transition from one task to the next.
