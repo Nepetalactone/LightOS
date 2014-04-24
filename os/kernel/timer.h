@@ -2,8 +2,8 @@
 #ifndef TIMER_H_
 #define TIMER_H_
 
-#include "address.h"
-#include "interrupt.h"
+#include "arch/address.h"
+#include "interrupts/interrupt.h"
 
 
 #define GPTIMER1 (base_address) 0x48318000

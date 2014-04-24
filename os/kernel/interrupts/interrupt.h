@@ -1,7 +1,7 @@
 #ifndef LIGHT_TYPES_H_
 #define LIGHT_TYPES_H_
 
-#include "address.h"
+#include "../arch/address.h"
 
 typedef void (*interrupt_handler)(void);
 

@@ -1,8 +1,8 @@
 
 
 #include "interrupt.h"
-#include "timer.h"
-#include "command.h"
+#include "../timer.h"
+#include "../arch/command.h"
 
 void unmask_interrupts (base_address INTC_REG, uint32_t interrupt_nr) {
 

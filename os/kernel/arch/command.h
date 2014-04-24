@@ -3,7 +3,7 @@
 
 #include <stdint.h>
 #include "address.h"
-#include "binary.h"
+#include "../../utils/binary.h"
 
 
 #define BIT_MASK(x) S_to_binary_(#x)

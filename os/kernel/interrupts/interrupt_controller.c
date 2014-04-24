@@ -1,6 +1,6 @@
 #include "interrupt_controller.h"
-#include "command.h"
-#include "address.h"
+#include "../arch/command.h"
+#include "../arch/address.h"
 #include <stdio.h>
 
 

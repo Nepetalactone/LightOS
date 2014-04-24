@@ -3,11 +3,11 @@
  */
 #include <stdlib.h>
 #include "kernel/timer.h"
-#include "kernel/interrupt_controller.h"
-#include "kernel/interrupt.h"
+#include "kernel/interrupts/interrupt_controller.h"
+#include "kernel/interrupts/interrupt.h"
 #include <stdio.h>
-#include "kernel/command.h"
-#include "kernel/address.h"
+#include "kernel/arch/command.h"
+#include "kernel/arch/address.h"
 
 void asdf(void);
 void asdf(){

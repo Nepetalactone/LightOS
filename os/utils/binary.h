@@ -2,7 +2,7 @@
 #define BINARY_H
 
 #include <stdint.h>
-#include "address.h"
+#include "../kernel/arch/address.h"
 
 #define binary(x) S_to_binary_(#x)
 

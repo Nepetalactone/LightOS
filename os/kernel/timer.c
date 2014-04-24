@@ -1,7 +1,7 @@
 #include "timer.h"
 #include <stdlib.h>
-#include "command.h"
-#include "interrupt_controller.h"
+#include "arch/command.h"
+#include "interrupts/interrupt_controller.h"
 
 
 #define NR_TIMERS 12 //max number of GPTimer on the beagleboard is 11
