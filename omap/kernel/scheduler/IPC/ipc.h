@@ -19,7 +19,7 @@
 #define OK					 0
 #define OTHER_NOT_FOUND		-1
 #define DEAD				-2
-#define NOTHING_RECEIVED	-3
+//#define NOTHING_RECEIVED	-3
 
 uint32_t syscall(ProcessID dst, uint32_t callingtype, Message* msg);
 

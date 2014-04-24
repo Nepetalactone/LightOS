@@ -10,6 +10,6 @@
 
 #include <stdint.h>
 
-typedef void (*PRFunc)(void); //Functionsdefintions for the real function of the process
+//typedef void (*PRFunc)(void); //Functionsdefintions for the real function of the process
 typedef uint32_t ProcessID;
 #endif /* PROCESSDEFS_H_ */

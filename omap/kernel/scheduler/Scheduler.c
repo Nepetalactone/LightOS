@@ -11,7 +11,9 @@ QueueElement* all_processes;
 QueueElement* ready_processes;
 Process* current_process;
 
-ProcessID scheduler_startProcess(PRFunc proc){}
+ProcessID scheduler_startProcess(Process proc){
+
+}
 
 void scheduler_runNextProcess(){}
 

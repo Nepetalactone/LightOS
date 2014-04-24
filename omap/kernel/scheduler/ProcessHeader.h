@@ -30,4 +30,6 @@ typedef struct {
 	}ipc;
 } Process;
 
+int main(...);
+
 #endif /* PROCESSHEADER_H_ */

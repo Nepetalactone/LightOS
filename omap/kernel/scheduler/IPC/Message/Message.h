@@ -15,7 +15,7 @@
 #define DATASIZE (BUFFERSIZE/ sizeof( uint32_t ))
 
 typedef struct{
-	char buffer[BUFFERSIZE];
+	//char buffer[BUFFERSIZE];
 	uint32_t data[DATASIZE];
 }value_t;
 
