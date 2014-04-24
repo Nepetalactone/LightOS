@@ -16,5 +16,4 @@ Process* getProcess(QueueElement *queue, ProcessID PID) ;
 /*Printing the Queue*/
 void PrintProcessQueue(QueueElement *queue);//more for testing purpose
 
-
 #endif /* SCHEDULERQUEUE_H_ */

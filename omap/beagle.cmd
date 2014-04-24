@@ -18,16 +18,19 @@ SECTIONS
    .const      > ext_ddr
    .bss        > ext_ddr
    .far        > ext_ddr
-   
+
    .stack      > ext_ddr
    .data       > ext_ddr
    .cinit      > ext_ddr
    .cio        > ext_ddr
-   
+
    .text       > ext_ddr
    .sysmem     > ext_ddr
    .switch     > ext_ddr
 
-   ._irq_stack > int_ram
-   ._abort_stack > int_ram
+   ._irq_stack > ext_ddr
+   ._abort_stack > ext_ddr
+   ._intvecs_addr > int_ram
+   ._kernel_stack > ext_ddr
+   ._system_stack > ext_ddr
 }
