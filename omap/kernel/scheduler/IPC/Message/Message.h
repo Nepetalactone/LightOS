@@ -9,7 +9,7 @@
 #define MESSAGE_H_
 
 #include <stdint.h>
-#include "../../Process/ProcessDefs.h"
+//#include "../../Process/ProcessDefs.h"
 
 #define BUFFERSIZE 1024
 #define DATASIZE (BUFFERSIZE/ sizeof( uint32_t ))
@@ -20,8 +20,8 @@ typedef struct{
 }value_t;
 
 typedef struct{
-	ProcessID source;
-	ProcessID destination;
+	//ProcessID source;
+	//ProcessID destination;
 	value_t value;
 	uint32_t size;
 } Message;

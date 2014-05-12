@@ -9,7 +9,7 @@
 #define SCHEDULER_H_
 
 
-ProcessID scheduler_startProcess(PRFunc proc);
+processID scheduler_startProcess(PRFunc proc);
 void scheduler_runNextProcess();
 void set_to_ready(Process* proc);
 void set_current_to_blocked(void);

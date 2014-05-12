@@ -9,27 +9,26 @@
 #define PROCESSHEADER_H_
 
 
-#include "Process/ProcessDefs.h"
-#include "SchedulerQueue.h"
-#include "IPC/Message/Message.h"
+#include "ipc/message/message.h"
+
+typedef int processID;
 
 typedef enum {
 	 RUNNING, READY, BLOCKED, WAIT, ZOMBIE
-} Processstate; //what kind of states can a thread have
+} processstate; //what kind of states can a thread have
 
 typedef struct {
-	ProcessID ID;
-	Processstate state;
+	processID ID;
+	processstate state;
 	//PRFunc function;
 	void* context;
 	uint32_t in_ready_queue;
 	struct{
-		ProcessID OtherProcess;
+		processID OtherProcess;
 		Message* msg;
 		QueueElement sender;
 	}ipc;
-} Process;
+} process_t;
 
-int main(...);
 
 #endif /* PROCESSHEADER_H_ */

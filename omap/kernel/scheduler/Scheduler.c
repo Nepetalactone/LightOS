@@ -5,39 +5,39 @@
  *      Author: phil
  */
 #include <stdlib.h>
-#include "SchedulerQueue.h"
+#include "process.h"
 
-QueueElement* all_processes;
-QueueElement* ready_processes;
-Process* current_process;
+static process_t* curProcess;
 static uint32_t nextProcessId;
+
 
 void Scheduler_init(){
 	nextProcessId = 0;
 	//mmu und timer starten
 }
 
-ProcessID scheduler_startProcess(PRFunc proc, unsigned int virtual_address, unsigned int physical_address) {
-	Process* process = malloc(sizeof(Process));
-		if (process == NULL) {
-			return NULL;
-		}
+processID scheduler_startProcess(unsigned int virtual_address, unsigned int physical_address) {
+	process_t* process = malloc(sizeof(process_t));
 
-		//mmu and ipc stuff
-		process->state = READY;
-		process->ID = nextProcessId++;
-		process->context = proc;
-		Enqueue(all_processes, process);
-		Enqueue(ready_processes, process);
-		return process->ID;
+	if (process == NULL) {
+		return NULL;
+	}
+
+	//mmu and ipc stuff
+	process->state = READY;
+	process->ID = nextProcessId++;
+	//process->context = proc;
+	//Enqueue(all_processes, process);
+	//Enqueue(ready_processes, process);
+	return process->ID;
 }
 
-Process* scheduler_runNextProcess() {
+process_t* scheduler_runNextProcess() {
 
 	while (ready_processes != NULL) {
 		QueueElement node = Dequeue(&ready_processes);
 		if (node != NULL) {
-			Process* p = node->element;
+			process_t* p = node->element;
 			if (p->state == READY || p->state == RUNNING) {
 				Enqueue(&ready_processes, node);
 				return node->element;
@@ -52,7 +52,7 @@ Process* scheduler_runNextProcess() {
 
 /*if the process state is blocked, change it to ready
  * then add the process to the ready process queue*/
-void set_to_ready(Process* proc) {
+void set_to_ready(process_t* proc) {
 	if (proc->state != BLOCKED) {
 		return;
 	}
@@ -67,14 +67,14 @@ void set_to_ready(Process* proc) {
 /*checking if the current process is not blocked,
  *  and set it to blocked*/
 void set_current_to_blocked(void) {
-	if (current_process->state == BLOCKED) {
+	if (curProcess->state == BLOCKED) {
 		return;
 	}
-	current_process->state = BLOCKED;
+	curProcess->state = BLOCKED;
 }
 
 void end_process(ProcessID pid, int exit_code) {
-	Process* p = getProcess(all_processes, pid);
+	process_t* p = getProcess(all_processes, pid);
 	if (p == NULL) {
 		return;
 	}
