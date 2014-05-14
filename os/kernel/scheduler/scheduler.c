@@ -15,32 +15,44 @@ scheduler_t* scheduler;
 queue_t* processes;
 static uint16_t process_count;
 
+static process_t* get_idle_process() {
+	process_t* idleProcess = malloc(sizeof(process_t));
+	idleProcess->procId = 0;
+	idleProcess->name = "idle";
+	idleProcess->state = READY;
+	return idleProcess;
+}
+
+
 void initScheduler() {
 	scheduler_t* newScheduler = (scheduler_t*) malloc(sizeof(scheduler_t));
-
-	newScheduler->curProcess = NULL;
+	process_t* idle_proc = get_idle_process();
+	newScheduler->curProcess = idle_proc;
 	newScheduler->processes = createQueue();
+	newScheduler->processes->enqueue(newScheduler->processes, idle_proc);
 	scheduler = newScheduler;
 }
 
-void createIdleProcess() {
-	process_t* idleProcess;
-	idleProcess->procId;
-}
 
 
-void fork() {
-
+void fork(char* procName, uint32_t *pc) {
+	process_t* proc;
+	proc->name = procName;
+	proc->pc = pc;
+	proc->state = READY;
+	//asm("NOP");
+	//asm ()
+	scheduler->processes->enqueue(scheduler->processes, proc);
 }
 
 
 
 //Reads the main stack pointer
 static inline int rd_stack_ptr(void){
-  unsigned int stack_pointer;
-  stack_pointer = HWREG("SP");
-  //asm ("MOV %0, SP\n\t" : "=r"	(stack_pointer)	);
-  return stack_pointer;
+	unsigned int stack_pointer;
+	stack_pointer = HWREG("SP");
+	//asm ("MOV %0, SP\n\t" : "=r"	(stack_pointer)	);
+	return stack_pointer;
 }
 
 /*
@@ -62,19 +74,17 @@ static inline void load_context(void){
 
 void context_switch(process_t * nextProcess) {
 	process_t * curProcess = (process_t *) scheduler->curProcess;
-	context_switch_asm();
+	store_context_asm();
+	load_context_asm();
+
+
 
 }
 
 
-void addProcess(process_t* process) {
-	queue_t* queue = scheduler->processes;
-	process->procId = queue->size;
-	process->state = READY;
-	scheduler->processes->enqueue(queue, process);
-}
 
-void runNextProcess() {
+
+void run_next_process() {
 	queue_t* queue = scheduler->processes;
 	int i;
 
@@ -84,6 +94,8 @@ void runNextProcess() {
 			context_switch(process);
 			process->state = RUNNING;
 			scheduler->curProcess = process;
+
+
 		} else {
 			queue->enqueue(queue, process);
 		}

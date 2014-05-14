@@ -12,17 +12,11 @@ typedef enum process_state {
 } process_state_t;
 
 typedef struct {
+	uint32_t cpsr;
 	uint32_t r0;
 	uint32_t r1;
 	uint32_t r2;
 	uint32_t r3;
-	uint32_t r12;
-	uint32_t lr;
-	uint32_t pc;
-	uint32_t psr;
-} hw_stack_frame_t;
-
-typedef struct {
 	uint32_t r4;
 	uint32_t r5;
 	uint32_t r6;
@@ -31,7 +25,10 @@ typedef struct {
 	uint32_t r9;
 	uint32_t r10;
 	uint32_t r11;
-} sw_stack_frame_t;
+	uint32_t r12;
+	uint32_t r13;
+	uint32_t r14; //pc
+} pcb_t;
 
 
 typedef struct {
@@ -40,11 +37,12 @@ typedef struct {
 	int flags; // status flags includes activity status
 } process_table_t;
 
-typedef struct process {
+typedef struct  {
 	process_id procId;
 	process_state_t state;
-	hw_stack_frame_t hw_stack;
-	sw_stack_frame_t sw_stack;
+	char* name;
+	uint32_t* pc;
+	pcb_t pcb;
 	process_table_t proc_table;
 } process_t;
 

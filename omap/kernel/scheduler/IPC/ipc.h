@@ -8,7 +8,8 @@
 #ifndef IPC_H_
 #define IPC_H_
 
-#include "Message/Message.h"
+#include "./Message/Message.h"
+
 
 #define NOOPERATION			0
 #define SEND 				1
@@ -21,6 +22,6 @@
 #define DEAD				-2
 //#define NOTHING_RECEIVED	-3
 
-uint32_t syscall(ProcessID dst, uint32_t callingtype, Message* msg);
+uint32_t syscall(processID dst, uint32_t callingtype, Message* msg);
 
 #endif /* IPC_H_ */
