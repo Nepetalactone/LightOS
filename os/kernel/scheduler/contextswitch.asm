@@ -11,6 +11,9 @@
 ;    NOP
 ;    SUBSNE pc, lr, #4              ; and return and restore CPSR.
                                     ; Insert "no next process code" here.
+	.global store_context_asm
+	.global load_context_asm
+	.global get_stack_pointer_asm
 
 store_context_asm:
 	MRS	R12, SPSR
@@ -32,4 +35,10 @@ load_context_asm:
 
 	LDMIA	R1, {R0-R14}^
 	NOP
+	MOV		R0, R14
 	MOVS	PC, R14
+
+
+
+get_stack_pointer_asm:
+	MOV		R0, R14

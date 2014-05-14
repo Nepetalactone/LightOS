@@ -6,8 +6,8 @@
 typedef uint32_t process_id;
 
 typedef enum process_state {
-	RUNNING,
 	READY,
+	RUNNING,
 	BLOCKED
 } process_state_t;
 
@@ -41,7 +41,8 @@ typedef struct  {
 	process_id procId;
 	process_state_t state;
 	char* name;
-	uint32_t* pc;
+	void* pc;
+	int * sp;
 	pcb_t pcb;
 	process_table_t proc_table;
 } process_t;
