@@ -15,7 +15,7 @@
 
 void asdf(void);
 void asdf(){
-	//XXX ohne instruktion wirfts a pabt und mit zB printf wirfts a dabt. vor jedem interrupt an art context_save machen und hinterher wieder laden?
+	//XXX ohne instruktion wirfts a pabt und mit zB printf wirfts a dabt.
 	//printf("asdf");
 	//run_next_process();
 }

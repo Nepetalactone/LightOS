@@ -106,13 +106,17 @@ interrupt void dabt_handler() {
 
 #pragma INTERRUPT(irq_handler, IRQ)
 interrupt void irq_handler() {
-	_handle_current_interrupt();
+	//_handle_current_interrupt();
 	printf("irq_handler interrupt\n");
 }
 
+
 #pragma INTERRUPT(fiq_handler, FIQ)
 interrupt void fiq_handler() {
-	_handle_current_interrupt();
+	//XXX HIER CONTEXT SAVE!
+	//_handle_current_interrupt();
+	//XXX HIER CONTEXT LOAD!
 	printf("fiq_handler interrupt\n");
 }
+
 
