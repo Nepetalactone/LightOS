@@ -72,7 +72,7 @@ void _handle_current_interrupt(){
 
 uint32_t get_active_interrupt(void){
 
-
+	volatile uint32_t i = 10;
 	//TODO use BIT_READ
 	/*uint32_t bit_mask = 1;
 	address fiq = address(MPU_INTC, SIR_FIQ);

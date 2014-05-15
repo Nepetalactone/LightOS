@@ -58,5 +58,6 @@ void reset_timer(base_address timer);
 void reset_timer_counter(base_address timer);
 void timer_set_trigger_mode(base_address timer, trigger_mode mode);
 uint8_t is_timer_running(base_address timer);
+void timer_enable_compare(base_address timer);
 
 #endif /* TIMER_H_ */
