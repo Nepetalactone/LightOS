@@ -12,13 +12,17 @@
 #include "kernel/scheduler/scheduler.h"
 
 //extern void run_next_process(void);
+void asdf();
 
-void asdf(void);
 void asdf(){
 	//XXX ohne instruktion wirfts a pabt und mit zB printf wirfts a dabt.
-	//printf("asdf");
+	printf("asdf");
 	//run_next_process();
 }
+
+
+
+
 /*
 void timer_init(void) {
 	volatile uint8_t y =  BIT_READ(MPU_INTC, SIR_FIQ, (32-7), 7);
@@ -56,21 +60,22 @@ int main(void) {
 	//fork("procB", &proc_led_off);
 
 	//initialize timer
-		//timer_init();
+	//timer_init();
 
 
-	//volatile uint8_t y =  BIT_READ(MPU_INTC, SIR_FIQ, (32-7), 7);
+	volatile uint8_t y =  BIT_READ(MPU_INTC, SIR_FIQ, (32-7), 7);
 	_disable_interrupts();
 
 
 	init_interrupt_controller();
 	uint32_t interrupt_nr = get_interrupt_nr(GPTIMER4);
-	//set_interrupt_handler(interrupt_nr, asdf);
+	set_interrupt_handler(interrupt_nr, asdf);
 
 	//TODO p.2619
 	//software reset, only use timer when TISTAT[0] bit is set(?)
 	//enable compare irgendwo unterbringen BIT_SET(GPTIMER4,TCLR,6);
 	reset_timer(GPTIMER4);
+
 	init_timer(GPTIMER4,0x20000000,asdf,trigger_OverflowMatch);
 
 
