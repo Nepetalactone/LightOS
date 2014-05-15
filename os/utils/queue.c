@@ -39,7 +39,7 @@ void* dequeue (queue_t* queue) {
     void* element = node->element;
 
     queue->first = node->next;
-    queue->size--;
+    queue->size = queue->size - 1;
 
     free(node);
     return element;

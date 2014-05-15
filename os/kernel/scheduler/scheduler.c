@@ -9,44 +9,12 @@
 #include <stdlib.h>
 #include "../timer.h"
 
-
-
 scheduler_t* scheduler;
 queue_t* processes;
-static uint16_t process_count;
+static uint16_t process_count = 0;
+static unsigned int stack_base;
 
-static process_t* get_idle_process() {
-	process_t* idleProcess = malloc(sizeof(process_t));
-	idleProcess->procId = 0;
-	idleProcess->name = "idle";
-	idleProcess->state = READY;
-	return idleProcess;
-}
-
-
-void initScheduler() {
-	scheduler_t* newScheduler = (scheduler_t*) malloc(sizeof(scheduler_t));
-	process_t* idle_proc = get_idle_process();
-	newScheduler->curProcess = idle_proc;
-	newScheduler->processes = createQueue();
-	newScheduler->processes->enqueue(newScheduler->processes, idle_proc);
-	scheduler = newScheduler;
-}
-
-
-
-void fork(char* procName, uint32_t *pc) {
-	process_t* proc;
-	proc->name = procName;
-	proc->pc = pc;
-	proc->state = READY;
-	//asm("NOP");
-	//asm ()
-	scheduler->processes->enqueue(scheduler->processes, proc);
-}
-
-
-
+/*
 //Reads the main stack pointer
 static inline int rd_stack_ptr(void){
 	unsigned int stack_pointer;
@@ -54,52 +22,71 @@ static inline int rd_stack_ptr(void){
 	//asm ("MOV %0, SP\n\t" : "=r"	(stack_pointer)	);
 	return stack_pointer;
 }
-
-/*
-//This saves the context on the PSP, the Cortex-M3 pushes the other registers using hardware
-static inline void save_context(void){
-  uint32_t scratch;
-  asm ("MRS %0, psp\n\t STMDB %0!, {r4-r11}\n\t MSR psp, %0\n\t"  : "=r" (scratch) );
-}
-
-
-//This loads the context from the PSP, the Cortex-M3 loads the other registers using hardware
-static inline void load_context(void){
-  uint32_t scratch;
-  asm ("MRS %0, psp\n\t LDMFD %0!, {r4-r11}\n\t MSR psp, %0\n\t"  : "=r" (scratch) );
-}
 */
+static process_t* init_idle_process() {
+	process_t* idleProcess = (process_t*)malloc(sizeof(process_t));
+	idleProcess->procId = 0;
+	idleProcess->name = "idle";
+	idleProcess->state = READY;
+	//stack_base = rd_stack_ptr();
+	//uint32_t* pSp = &stack_base;
+	idleProcess->sp = (int*)get_stack_pointer_asm();
+	//idleProcess->proc_table->sp =  ;
+
+	++process_count;
+	return idleProcess;
+}
+
+void init_scheduler(base_address timer) {
+	scheduler_t* newScheduler = (scheduler_t*) malloc(sizeof(scheduler_t));
+	process_t* idle_proc = init_idle_process();
+	newScheduler->curProcess = idle_proc;
+	newScheduler->processes = createQueue();
+	newScheduler->processes->enqueue(newScheduler->processes, idle_proc);
+	newScheduler->timer = timer;
+	scheduler = newScheduler;
+}
+
+void start_scheduling() {
+	run_next_process();
+}
 
 
+void fork(char* procName, void* pc) {
+	process_t* proc = malloc(sizeof(process_t));
+	proc->name = procName;
+	proc->procId = process_count;
+	proc->pc = &pc;
+	proc->state = READY;
+	proc->sp = (uint32_t*)(stack_base + (process_count*256));
+
+	scheduler->processes->enqueue(scheduler->processes, proc);
+	++process_count;
+}
 
 void context_switch(process_t * nextProcess) {
-	process_t * curProcess = (process_t *) scheduler->curProcess;
+	//process_t * nextProcess = (process_t *) scheduler->curProcess;
+	process_t * curProc = scheduler->curProcess;
 	store_context_asm();
-	load_context_asm();
-
-
-
+	void* sp = (void*) load_context_asm();
 }
-
-
-
 
 void run_next_process() {
 	queue_t* queue = scheduler->processes;
+	printf("test");
 	int i;
+	int size = queue->size;
 
-	for (i = 0; i < queue->size; i++) {
+	for (i = 0; i < size; i++) {
 		process_t* process = (process_t*) queue->dequeue;
 		if (process->state == READY) {
 			context_switch(process);
 			process->state = RUNNING;
 			scheduler->curProcess = process;
-
-
 		} else {
 			queue->enqueue(queue, process);
 		}
 	}
 
-	//reset_timer();
+	reset_timer_counter(scheduler->timer);
 }

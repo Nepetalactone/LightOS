@@ -9,13 +9,17 @@
 #include "kernel/arch/command.h"
 #include "kernel/arch/address.h"
 #include "kernel/scheduler/process.h"
+#include "kernel/scheduler/scheduler.h"
 
-void timer_interrupt(void);
-void timer_interrupt(){
+//extern void run_next_process(void);
+
+void asdf(void);
+void asdf(){
 	printf("test");
+	//run_next_process();
 }
-
-int main(void) {
+/*
+void timer_init(void) {
 	volatile uint8_t y =  BIT_READ(MPU_INTC, SIR_FIQ, (32-7), 7);
 	_disable_interrupts();
 
@@ -38,10 +42,50 @@ int main(void) {
 	//unmask_mir
 	unmask_interrupts(MPU_INTC, interrupt_nr);
 
+}*/
+
+int main(void) {
+
+
+	//initialize Scheduler
+	//init_scheduler(GPTIMER4);
+
+	//add processes to scheduler
+	//fork("procA", &proc_led_on);
+	//fork("procB", &proc_led_off);
+
+	//initialize timer
+		//timer_init();
+
+
+	volatile uint8_t y =  BIT_READ(MPU_INTC, SIR_FIQ, (32-7), 7);
+	_disable_interrupts();
+
+
+	init_interrupt_controller();
+	uint32_t interrupt_nr = get_interrupt_nr(GPTIMER4);
+	set_interrupt_handler(interrupt_nr, asdf);
+
+
+	//TODO p.2619
+	//software reset, only use timer when TISTAT[0] bit is set(?)
+	//enable compare irgendwo unterbringen BIT_SET(GPTIMER4,TCLR,6);
+	reset_timer(GPTIMER4);
+	init_timer(GPTIMER4,0x20000000,asdf,trigger_OverflowMatch);
+
+
+	//interrupt mode fiq
+	set_interrupt_mode(interrupt_nr,FIQ);
+
+	//unmask_mir
+	unmask_interrupts(MPU_INTC, interrupt_nr);
+
+
 	//*((address)(MPU_INTC + MIR_CLEAR0)) &= 0x0;
 	start_timer(GPTIMER4);
-	_enable_interrupts();
 
+	_enable_interrupts();
+	//run_next_process();
 	volatile int x=0;
 	while(1)
 	{
