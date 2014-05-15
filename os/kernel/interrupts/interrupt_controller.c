@@ -9,6 +9,7 @@ interrupt_handler handlers[NR_INTERRUPTS];
 void dummy_handler(void);
 void dummy_handler(void){
 	//no handler set
+	volatile int i = 1;
 }
 
 void init_interrupt_controller(){
