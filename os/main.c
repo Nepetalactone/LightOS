@@ -85,6 +85,8 @@ int main(void) {
 	//unmask_mir
 	unmask_interrupts(MPU_INTC, interrupt_nr);
 
+	timer_enable_compare(GPTIMER4);
+
 
 	//*((address)(MPU_INTC + MIR_CLEAR0)) &= 0x0;
 	start_timer(GPTIMER4);
