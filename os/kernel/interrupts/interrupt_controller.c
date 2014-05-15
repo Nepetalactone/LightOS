@@ -65,7 +65,7 @@ void remove_interrupt_handler(uint32_t int_nr){
 
 void _handle_current_interrupt(){
 	uint32_t interrupt_nr = get_active_interrupt();
-	handlers[interrupt_nr]();
+	handlers[40]();
 	//reset interrupt pending bit
 }
 
@@ -74,13 +74,13 @@ uint32_t get_active_interrupt(void){
 
 
 	//TODO use BIT_READ
-	uint32_t bit_mask = 1;
+	/*uint32_t bit_mask = 1;
 	address fiq = address(MPU_INTC, SIR_FIQ);
 
 	uint32_t asdf = *fiq & bit_mask;
+	*/
 
-
-	return 0; //TODO INTCPS_SIR_IRQ/FIQ (active interrupt) oder INTCPS_PENDING_IRQn (pending interrupt) lesen
+	return 40; //TODO INTCPS_SIR_IRQ/FIQ (active interrupt) oder INTCPS_PENDING_IRQn (pending interrupt) lesen
 }
 
 
