@@ -15,7 +15,8 @@
 
 void asdf(void);
 void asdf(){
-	printf("test");
+	//XXX ohne instruktion wirfts a pabt und mit zB printf wirfts a dabt. vor jedem interrupt an art context_save machen und hinterher wieder laden?
+	//printf("asdf");
 	//run_next_process();
 }
 /*
@@ -58,14 +59,13 @@ int main(void) {
 		//timer_init();
 
 
-	volatile uint8_t y =  BIT_READ(MPU_INTC, SIR_FIQ, (32-7), 7);
+	//volatile uint8_t y =  BIT_READ(MPU_INTC, SIR_FIQ, (32-7), 7);
 	_disable_interrupts();
 
 
 	init_interrupt_controller();
 	uint32_t interrupt_nr = get_interrupt_nr(GPTIMER4);
-	set_interrupt_handler(interrupt_nr, asdf);
-
+	//set_interrupt_handler(interrupt_nr, asdf);
 
 	//TODO p.2619
 	//software reset, only use timer when TISTAT[0] bit is set(?)

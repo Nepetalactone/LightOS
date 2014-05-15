@@ -27,9 +27,10 @@ void init_timer(base_address timer, uint32_t millisec, interrupt_handler handler
 		return;
 	}
 	reset_timer_counter(timer);
-	REG_SET(timer,TMAR, millisec);
+	set_compare_value(timer,millisec);
 	//TODO get real interrupt ID
-	set_interrupt_handler(0,handler);
+	uint32_t interrupt_nr = get_interrupt_nr(GPTIMER4);
+	set_interrupt_handler(interrupt_nr,handler);
 	timer_set_trigger_mode(timer, mode);
 
 }
