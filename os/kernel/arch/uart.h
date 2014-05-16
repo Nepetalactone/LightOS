@@ -18,9 +18,9 @@ UART1-3 size = 1k bytes
 
 
 /* UART */
-#define UART01 (address) 0x4806A000
-#define UART02 (address) 0x4806C000
-#define UART03 (address) 0x49020000
+#define UART01 (base_address) 0x4806A000
+#define UART02 (base_address) 0x4806C000
+#define UART03 (base_address) 0x49020000
 /* UART END */
 
 /* REGISTER */
