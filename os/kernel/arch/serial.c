@@ -28,7 +28,7 @@ void ser_init(eBaud baud) {
 	//BIT_SET(UART03,SYSC,1);
 
 
-	while(getBitValue(UART03, SYSS, 0) == 0x0) {
+	while(getBitValue((address)UART03, SYSS, 0) == 0x0) {
 		// wait till reset is done
 	}
 
@@ -65,7 +65,7 @@ void ser_init(eBaud baud) {
 	//command(UADT03, FCR, REG_SET, 0x7);
 	*((address)(UART03 + FCR)) = 0x7;
 	//TODO bit value never change!!! -> fix
-	while(getBitValue(UART03, FCR, 1) != 0x0 && getBitValue(UART03, FCR, 2) != 0x0){
+	while(getBitValue((address)UART03, FCR, 1) != 0x0 && getBitValue((address)UART03, FCR, 2) != 0x0){
 
 	}
 
@@ -247,7 +247,7 @@ char ser_getc() {
 	char null = '\0';
 	char rec = null;
 	while(rec == null) {
-		while(getBitValue(UART03, LSR, 0) == 0);
+		while(getBitValue((address)UART03, LSR, 0) == 0);
 		rec = (char) *((address)(UART03 + RHR));
 	}
 

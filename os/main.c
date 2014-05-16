@@ -10,6 +10,8 @@
 #include "kernel/arch/address.h"
 #include "kernel/scheduler/process.h"
 
+#include "hal/common/mmu/hal_mmu.h"
+
 void timer_interrupt(void);
 void timer_interrupt(){
 	printf("test");
@@ -41,6 +43,8 @@ int main(void) {
 	//*((address)(MPU_INTC + MIR_CLEAR0)) &= 0x0;
 	start_timer(GPTIMER4);
 	_enable_interrupts();
+
+	hal_mmu_start();
 
 	volatile int x=0;
 	while(1)
