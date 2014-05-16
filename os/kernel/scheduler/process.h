@@ -1,7 +1,8 @@
 #ifndef PROCESS_H_
 #define PROCESS_H_
 
-#include "stdint.h"
+#include <stdint.h>
+#include <stdio.h>
 
 typedef uint32_t process_id;
 

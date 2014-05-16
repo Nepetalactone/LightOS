@@ -1,3 +1,5 @@
+#include "process.h"
+
 typedef volatile unsigned int* address;
 
 #define GPIO05_DIR (address) 0x49056034
