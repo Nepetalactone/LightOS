@@ -30,7 +30,7 @@ static process_t* init_idle_process() {
 	idleProcess->state = READY;
 	//stack_base = rd_stack_ptr();
 	//uint32_t* pSp = &stack_base;
-	idleProcess->sp = (int*)get_stack_pointer_asm();
+	idleProcess->sp = (uint_32*)get_stack_pointer_asm();
 	//idleProcess->proc_table->sp =  ;
 
 	++process_count;

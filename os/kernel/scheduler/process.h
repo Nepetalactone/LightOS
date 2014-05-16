@@ -34,7 +34,7 @@ typedef struct {
 
 typedef struct {
 	void * sp; //stack pointer..
-	uint32_t page_table; // virutal memory.. mmu
+	uint32_t page_table; // virtual memory.. mmu
 	int flags; // status flags includes activity status
 } process_table_t;
 
@@ -43,7 +43,7 @@ typedef struct  {
 	process_state_t state;
 	char* name;
 	void* pc;
-	int * sp;
+	uint32_t * sp;
 	pcb_t pcb;
 	process_table_t proc_table;
 } process_t;
