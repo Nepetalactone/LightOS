@@ -67,7 +67,7 @@ void _handle_current_interrupt(){
 	uint32_t interrupt_nr = get_active_interrupt();
 	handlers[40]();
 	//reset interrupt pending bit
-}
+	}
 
 
 uint32_t get_active_interrupt(void){
