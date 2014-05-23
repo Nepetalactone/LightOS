@@ -7,13 +7,8 @@
 
 typedef uint8_t byte;
 
-static inline uint64_t S_to_binary_(const char *s){
-        uint32_t i = 0;
-        while (*s) {
-                i <<= 1;
-                i += *s++ - '0';
-        }
-        return i;
-}
+uint8_t getBitValue(address a, offset o, uint32_t p);
+
+static inline uint64_t S_to_binary_(const char *s);
 
 #endif
