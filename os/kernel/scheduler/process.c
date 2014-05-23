@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include "process.h"
 
 typedef volatile unsigned int* address;
@@ -16,7 +17,6 @@ void proc_led_on() {
 
 	while (1) {
 		for(i=0; i < 300000; i++) {
-
 		}
 		*(GPIO05_OUT) ^= (USR0 | USR1);
 	}
@@ -30,9 +30,7 @@ void proc_led_off() {
 	printf("Process B is running");
 	while (1) {
 		for(i=0; i < 300000; i++) {
-
 		}
 		*(GPIO05_OUT) ^= (USR0 | USR1);
 	}
-
 }

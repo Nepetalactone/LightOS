@@ -5,7 +5,7 @@
  */
 #include "process.h"
 #include "scheduler.h"
-#include "../timer.h"
+#include "../timer/gptimer.h"
 #include <stdio.h>
 #include <stdlib.h>
 

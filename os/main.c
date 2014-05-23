@@ -2,7 +2,7 @@
  * main.c
  */
 #include <stdlib.h>
-#include "kernel/timer.h"
+#include "kernel/timer/gptimer.h"
 #include "kernel/interrupts/interrupt_controller.h"
 #include "kernel/interrupts/interrupt.h"
 #include <stdio.h>
