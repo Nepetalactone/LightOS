@@ -1,15 +1,17 @@
+#include <stdio.h>
 #include "interrupt_controller.h"
+#include "interrupt.h"
 #include "../arch/command.h"
 #include "../arch/address.h"
-#include <stdio.h>
 
 
-interrupt_handler handlers[NR_INTERRUPTS];
+#include "../timer/gptimer.h" //FIXME remove
+
+interrupt_handler handlers[MAX_INTERRUPT_VECTORS];
 
 void dummy_handler(void);
 void dummy_handler(void){
 	//no handler set
-	volatile int i = 1;
 }
 
 void init_interrupt_controller(){
@@ -17,7 +19,6 @@ void init_interrupt_controller(){
 	for(i = 0; i < NR_INTERRUPTS; i++){
 		handlers[i] = dummy_handler;
 	}
-
 	//TODO initialize interrupt handling
 
 }
@@ -56,7 +57,6 @@ void disable_mir_(uint32_t mir_nr){
 
 void set_interrupt_handler(uint32_t int_nr, interrupt_handler handler){
 	handlers[int_nr] = handler;
-
 }
 
 void remove_interrupt_handler(uint32_t int_nr){
@@ -65,22 +65,27 @@ void remove_interrupt_handler(uint32_t int_nr){
 
 void _handle_current_interrupt(){
 	uint32_t interrupt_nr = get_active_interrupt();
-	handlers[40]();
-	//reset interrupt pending bit
+	handlers[interrupt_nr]();
 }
 
 
 uint32_t get_active_interrupt(void){
+	return BIT_READ_RANGE(MPU_INTC,SIR_IRQ,BIT_MASK(1111111)); //TODO INTCPS_SIR_IRQ/FIQ (active interrupt) oder INTCPS_PENDING_IRQn (pending interrupt) lesen
+}
 
-	volatile uint32_t i = 10;
-	//TODO use BIT_READ
-	/*uint32_t bit_mask = 1;
-	address fiq = address(MPU_INTC, SIR_FIQ);
+void __identify_and_clear_source(){
+	// bit 0-6 of MPU_INTC SIR_IRQ Register is the # of the current active IRQ interrupt
+	int intr_nr = get_active_interrupt();
+	//TODO handle appropriate interrupt source
 
-	uint32_t asdf = *fiq & bit_mask;
-	*/
 
-	return 40; //TODO INTCPS_SIR_IRQ/FIQ (active interrupt) oder INTCPS_PENDING_IRQn (pending interrupt) lesen
+	//src == GPTIMER4
+	BIT_CLEAR(GPTIMER4,TISR,0);
+	BIT_CLEAR(GPTIMER4,TISR,1);
+	reset_interrupt_module(); //workaround
+	re_init_interrupt_module(); //workaround
+	timer_reset_counter(GPTIMER4);
+	//end gptimer4
 }
 
 
@@ -104,19 +109,20 @@ interrupt void dabt_handler() {
 	printf("dabt_handler interrupt\n");
 }
 
-#pragma INTERRUPT(irq_handler, IRQ)
-interrupt void irq_handler() {
-	//_handle_current_interrupt();
-	printf("irq_handler interrupt\n");
+
+//#pragma INTERRUPT(irq_handler, IRQ)
+//interrupt
+void irq_handler() {
+	_handle_current_interrupt();
+	reset_irq();
 }
 
 
-#pragma INTERRUPT(fiq_handler, FIQ)
-interrupt void fiq_handler() {
-	//XXX HIER CONTEXT SAVE!
+//#pragma INTERRUPT(fiq_handler, FIQ)
+//interrupt
+void fiq_handler() {
 	//_handle_current_interrupt();
-	//XXX HIER CONTEXT LOAD!
-	printf("fiq_handler interrupt\n");
+	//printf("fiq_handler interrupt\n");
 }
 
 

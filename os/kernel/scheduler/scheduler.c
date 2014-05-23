@@ -7,7 +7,7 @@
 #include "scheduler.h"
 #include <stdio.h>
 #include <stdlib.h>
-#include "../timer.h"
+#include "../timer/gptimer.h"
 
 scheduler_t* scheduler;
 queue_t* processes;
@@ -30,7 +30,7 @@ static process_t* init_idle_process() {
 	idleProcess->state = READY;
 	//stack_base = rd_stack_ptr();
 	//uint32_t* pSp = &stack_base;
-	idleProcess->sp = (uint_32*)get_stack_pointer_asm();
+	idleProcess->sp = (uint32_t*)get_stack_pointer_asm();
 	//idleProcess->proc_table->sp =  ;
 
 	++process_count;
@@ -88,5 +88,5 @@ void run_next_process() {
 		}
 	}
 
-	reset_timer_counter(scheduler->timer);
+	timer_reset_counter(scheduler->timer);
 }

@@ -1,7 +1,6 @@
-#ifndef EXECUTOR_H
-#define EXECUTOR_H
+#ifndef COMMAND_H
+#define COMMAND_H
 
-#include <stdint.h>
 #include "address.h"
 #include "../../utils/binary.h"
 
@@ -9,17 +8,34 @@
 #define BIT_MASK(x) S_to_binary_(#x)
 
 
+/*
+ *
+ * base = base_address
+ * off = offset
+ * pos = bit position (0 is lowest)
+ * val = value to write to register
+ *
+ */
+#define BIT_SET(base,off,pos)		*((address)(base + off))  |= (1 << pos);
+#define BIT_CLEAR(base,off,pos)		*((address)(base + off))  &= ~(1 << pos);
+#define BIT_TOGGLE(base,off,pos)	*((address)(base + off)) ^= (1 << position);
+#define BIT_READ(base,off,pos)		*((address)(base + off)) & (1 << pos);
+#define BIT_READ_RANGE(base,off,range) *((address)(base + off)) &= range
 
-void BIT_SET(base_address a, offset o, uint32_t value);
-void BIT_CLEAR(base_address a, offset o, uint32_t value);
-uint32_t BIT_READ(base_address a, offset o, uint8_t start, uint8_t range);
-void BIT_TOGGLE(base_address a, offset o, uint32_t value);
-void REG_SET(base_address a, offset o, uint32_t value);
-void REG_CLEAR(base_address a, offset o);
-char UART_READ(base_address a, offset o, char character);
-void UART_WRITE(base_address a, offset o, char character);
+
+#define REG_SET(base,off,val)		*((address)(base + off)) = val;
+#define REG_CLEAR(base,off)			*((address)(base + off)) = 0x0;
 
 
-void WAIT_FOR_WRITE(base_address a, offset o, uint32_t position);
+/*
+ * WFW = WAIT FOR WRITE
+ * WFC = WAIT FOR CLEAR
+ */
+#define WFW_BIT(base,off,pos)		while((*address(base,off) & (1 << pos)) != 1 ){/*WAIT UNTIL BIT IS SET*/}
+#define WFC_BIT(base,off,pos)		while(*address(base,off) & (1 << pos)){/*WAIT UNTIL BIT IS CLEARED*/}
+#define WFW_REG(base,off,val)		while(*address(base,off) != val){/*WAIT UNTIL REGISTER IS SET*/}
+#define WFC_REG(base,off)			while(*address(base,off) != 0){/*WAIT UNTIL REGISTER IS CLEARED*/}
+
+
 
 #endif
