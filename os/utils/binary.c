@@ -6,10 +6,8 @@
  */
 
 #include "binary.h"
-#include "../kernel/arch/address.h"
 
-
-static inline uint64_t S_to_binary_(const char *s){
+uint64_t S_to_binary_(const char *s){
         uint32_t i = 0;
         while (*s) {
                 i <<= 1;
