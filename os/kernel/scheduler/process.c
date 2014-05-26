@@ -10,27 +10,28 @@ typedef volatile unsigned int* address;
 
 
 void proc_led_on() {
-	*(GPIO05_DIR) &= ~(USR0 | USR1);
-	*(GPIO05_OUT) &= ~USR1;
+	//*(GPIO05_DIR) &= ~(USR0 | USR1);
+	//*(GPIO05_OUT) &= ~USR1;
 	volatile int i = 0;
-	printf("Process A is running");
 
 	while (1) {
 		for(i=0; i < 300000; i++) {
+			printf("Process A is running");
 		}
-		*(GPIO05_OUT) ^= (USR0 | USR1);
+		//*(GPIO05_OUT) ^= (USR0 | USR1);
 	}
 }
 
 void proc_led_off() {
-	*(GPIO05_DIR) &= ~(USR0 | USR1);
-	*(GPIO05_OUT) &= ~USR1;
+	//*(GPIO05_DIR) &= ~(USR0 | USR1);
+	//*(GPIO05_OUT) &= ~USR1;
 
 	volatile int i = 0;
-	printf("Process B is running");
+
 	while (1) {
 		for(i=0; i < 300000; i++) {
+			printf("Process B is running");
 		}
-		*(GPIO05_OUT) ^= (USR0 | USR1);
+		//*(GPIO05_OUT) ^= (USR0 | USR1);
 	}
 }

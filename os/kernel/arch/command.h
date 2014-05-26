@@ -20,7 +20,7 @@
 #define BIT_CLEAR(base,off,pos)		*((address)(base + off))  &= ~(1 << pos);
 #define BIT_TOGGLE(base,off,pos)	*((address)(base + off)) ^= (1 << position);
 #define BIT_READ(base,off,pos)		*((address)(base + off)) & (1 << pos);
-#define BIT_READ_RANGE(base,off,range) *((address)(base + off)) &= range
+#define BIT_READ_MASK(base,off,range) *((address)(base + off)) &= range
 
 
 #define REG_SET(base,off,val)		*((address)(base + off)) = val;

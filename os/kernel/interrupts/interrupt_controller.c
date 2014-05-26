@@ -70,7 +70,9 @@ void _handle_current_interrupt(){
 
 
 uint32_t get_active_interrupt(void){
-	return BIT_READ_RANGE(MPU_INTC,SIR_IRQ,BIT_MASK(1111111)); //TODO INTCPS_SIR_IRQ/FIQ (active interrupt) oder INTCPS_PENDING_IRQn (pending interrupt) lesen
+	//return BIT_READ_MASK(MPU_INTC,SIR_IRQ,BIT_MASK(1111111)); //TODO INTCPS_SIR_IRQ/FIQ (active interrupt) oder INTCPS_PENDING_IRQn (pending interrupt) lesen
+	volatile int i = 40;
+	return i;
 }
 
 void __identify_and_clear_source(){
@@ -113,6 +115,7 @@ interrupt void dabt_handler() {
 //#pragma INTERRUPT(irq_handler, IRQ)
 //interrupt
 void irq_handler() {
+	_disable_interrupts();
 	_handle_current_interrupt();
 	reset_irq();
 }

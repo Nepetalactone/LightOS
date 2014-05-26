@@ -15,7 +15,7 @@ static uint16_t process_count = 0;
 static unsigned int stack_base;
 static scheduler_t* scheduler;
 void run_idle_process(void);
-static uint32_t proc_mem_space[] = {0x80020000, 0x80040000, 0x80060000};
+static uint32_t proc_mem_space[] = {0x82003000, 0x82006000, 0x82009000};
 
 static void switch_user_mode() {
 	asm("CPS	#16");
@@ -37,10 +37,16 @@ static inline int rd_stack_ptr(void){
 
 
 inline void context_switch(process_t* curProc , process_t * nextProc) {
-	context_switch_asm(curProc->pcb.cpsr, nextProc->pcb.cpsr, nextProc->pcb.r14); //, nextProc->pcb.r14
-	_enable_interrupts();
+	if (nextProc->times_loaded > 1) {
+		context_switch2_asm(curProc->pcb.cpsr, nextProc->pcb.cpsr);
+	} else {
+		context_switch_asm(curProc->pcb.cpsr, nextProc->pcb.cpsr, nextProc->pcb.r14); //, nextProc->pcb.r14
+	}
 
-	curProc->state = READY;
+	//store_context_asm(curProc->pcb.cpsr);
+	//load_context_asm(nextProc->pcb.cpsr, nextProc->pcb.r14);
+	//
+	//curProc->state = READY;
 }
 
 inline void run_next_process() {
@@ -54,16 +60,18 @@ inline void run_next_process() {
 	for (i = 0; i < size; i++) {
 		process_t* nextProc = (process_t*) queue->dequeue(queue);
 		if (nextProc->state == READY) {
-			context_switch(curProc, nextProc);
-			nextProc->state = RUNNING;
-			scheduler->curProcess = nextProc;
 			++nextProc->times_loaded;
+			nextProc->state = RUNNING;
+			timer_reset_counter(GPTIMER4);
+			_enable_interrupts();
+			context_switch(curProc, nextProc);
+			scheduler->curProcess = nextProc;
 			break;
 		} else {
 			queue->enqueue(queue, nextProc);
 		}
 	}
-	timer_reset_counter(GPTIMER4);
+
 }
 
 static process_t* init_idle_process() {
@@ -90,7 +98,7 @@ void init_scheduler(base_address timer) {
 	//newScheduler->processes->enqueue(newScheduler->processes, idle_proc);
 	newScheduler->timer = timer;
 	//init scheduling timer
-	timer_quick_init(timer,0x00300000, run_next_process,trigger_OverflowMatch);
+	timer_quick_init(timer,0x05000000, run_next_process,trigger_OverflowMatch);
 	scheduler = newScheduler;
 }
 
@@ -119,6 +127,22 @@ void fork(char* procName, pFunc asdf) {
 
 	proc->pcb.cpsr = proc_mem_space[process_count];
 	proc->pcb.r14 = (uint32_t) asdf;
+	proc->pcb.r13 = (uint32_t) asdf;
+	proc->pcb.r12 = (uint32_t) asdf;
+	proc->pcb.r11 = (uint32_t) asdf;
+	proc->pcb.r10 = (uint32_t) asdf;
+	proc->pcb.r9 = (uint32_t) asdf;
+	proc->pcb.r8 = (uint32_t) asdf;
+	proc->pcb.r7 = (uint32_t) asdf;
+	proc->pcb.r6 = (uint32_t) asdf;
+	proc->pcb.r5 = (uint32_t) asdf;
+	proc->pcb.r4 = (uint32_t) asdf;
+	proc->pcb.r3 = (uint32_t) asdf;
+	proc->pcb.r2 = (uint32_t) asdf;
+	proc->pcb.r1 = (uint32_t) asdf;
+	proc->pcb.r0 = (uint32_t) asdf;
+
+
 	printf("%p", asdf);
 	//proc->pc = &pc;
 	proc->state = READY;
