@@ -20,7 +20,6 @@ void init_interrupt_controller(){
 		handlers[i] = dummy_handler;
 	}
 	//TODO initialize interrupt handling
-
 }
 
 void enable_all_interrupts(){
@@ -70,9 +69,9 @@ void _handle_current_interrupt(){
 
 
 uint32_t get_active_interrupt(void){
-	//return BIT_READ_MASK(MPU_INTC,SIR_IRQ,BIT_MASK(1111111)); //TODO INTCPS_SIR_IRQ/FIQ (active interrupt) oder INTCPS_PENDING_IRQn (pending interrupt) lesen
-	volatile int i = 40;
-	return i;
+	return BIT_READ_MASK(MPU_INTC,SIR_IRQ,BIT_MASK(1111111)); //TODO INTCPS_SIR_IRQ/FIQ (active interrupt) oder INTCPS_PENDING_IRQn (pending interrupt) lesen
+	//volatile int i = 40;
+	//return i;
 }
 
 void __identify_and_clear_source(){
@@ -86,7 +85,7 @@ void __identify_and_clear_source(){
 	BIT_CLEAR(GPTIMER4,TISR,1);
 	reset_interrupt_module(); //workaround
 	re_init_interrupt_module(); //workaround
-	timer_reset_counter(GPTIMER4);
+	//timer_reset_counter(GPTIMER4);
 	//end gptimer4
 }
 

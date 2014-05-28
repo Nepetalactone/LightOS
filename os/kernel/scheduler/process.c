@@ -16,7 +16,8 @@ void proc_led_on() {
 
 	while (1) {
 		for(i=0; i < 300000; i++) {
-			printf("Process A is running");
+			i = 1;
+			//printf("Process A is running");
 		}
 		//*(GPIO05_OUT) ^= (USR0 | USR1);
 	}
@@ -30,7 +31,8 @@ void proc_led_off() {
 
 	while (1) {
 		for(i=0; i < 300000; i++) {
-			printf("Process B is running");
+			i  = 1;
+			//printf("Process B is running");
 		}
 		//*(GPIO05_OUT) ^= (USR0 | USR1);
 	}
