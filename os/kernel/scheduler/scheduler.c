@@ -38,6 +38,7 @@ static inline int rd_stack_ptr(void){
 
 inline void context_switch(process_t* curProc , process_t * nextProc) {
 	if (nextProc->times_loaded > 1) {
+
 		context_switch2_asm(curProc->pcb.cpsr, nextProc->pcb.cpsr);
 	} else {
 		context_switch_asm(curProc->pcb.cpsr, nextProc->pcb.cpsr, nextProc->pcb.r14); //, nextProc->pcb.r14
@@ -60,7 +61,7 @@ inline void run_next_process() {
 	for (i = 0; i < size; i++) {
 		process_t* nextProc = (process_t*) queue->dequeue(queue);
 		if (nextProc->state == READY) {
-			++nextProc->times_loaded;
+			nextProc->times_loaded = nextProc->times_loaded + 1;
 			nextProc->state = RUNNING;
 			timer_reset_counter(GPTIMER4);
 			_enable_interrupts();
