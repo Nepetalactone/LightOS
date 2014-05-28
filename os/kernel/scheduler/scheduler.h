@@ -21,7 +21,7 @@ typedef struct scheduler {
 typedef void (*pFunc)(void);
 
 void start_scheduling(void);
-void fork(char* procName, pFunc asdf);
+void create_new_process(char* procName, pFunc asdf);
 void run_next_process(void);
 void killProcess(process_t* process);
 void init_scheduler(base_address timer);

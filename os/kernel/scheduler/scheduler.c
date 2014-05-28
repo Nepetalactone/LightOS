@@ -10,6 +10,8 @@
 #include <stdlib.h>
 
 
+void run_idle_process();
+
 //static queue_t* processes;
 static uint16_t process_count = 0;
 static unsigned int stack_base;
@@ -76,27 +78,28 @@ inline void run_next_process() {
 
 }
 
-static process_t* init_idle_process() {
-	process_t* idleProcess = (process_t*)malloc(sizeof(process_t));
-	idleProcess->pID = process_count;
-	idleProcess->name = "idle";
-	idleProcess->state = READY;
-	idleProcess->times_loaded = 0;
+//static process_t* init_idle_process() {
+//	process_t* idleProcess = (process_t*)malloc(sizeof(process_t));
+//	idleProcess->pID = process_count;
+//	idleProcess->name = "idle";
+//	idleProcess->state = READY;
+//	idleProcess->times_loaded = 0;
 
-	//idleProcess->sp = (unsigned int*) stack_base;
-	idleProcess->pc = run_idle_process;
+//	//idleProcess->sp = (unsigned int*) stack_base;
+//	idleProcess->pc = run_idle_process;
 
-	idleProcess->pcb.cpsr = proc_mem_space[process_count];
+//	idleProcess->pcb.cpsr = proc_mem_space[process_count];
 
-	++process_count;
-	return idleProcess;
-}
+//	++process_count;
+//	return idleProcess;
+//}
 
 void init_scheduler(base_address timer) {
 	scheduler_t* newScheduler = (scheduler_t*) malloc(sizeof(scheduler_t));
-	process_t* idle_proc = init_idle_process();
-	newScheduler->curProcess = idle_proc;
+	process_t* idle_proc = create_new_process("init", &run_idle_process);
+	//newScheduler->curProcess = idle_proc;
 	newScheduler->processes = createQueue();
+	newScheduler->processes->enqueue(newScheduler->processes, idle_proc);
 	//newScheduler->processes->enqueue(newScheduler->processes, idle_proc);
 	newScheduler->timer = timer;
 	//init scheduling timer
@@ -122,7 +125,7 @@ void start_scheduling() {
 }
 
 
-void fork(char* procName, pFunc asdf) {
+void create_new_process(char* procName, pFunc asdf) {
 	process_t* proc = malloc(sizeof(process_t));
 	proc->name = procName;
 	proc->pID = process_count;

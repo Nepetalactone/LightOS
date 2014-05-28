@@ -27,8 +27,8 @@ int main(){
 		i++;
 	}
 	init_scheduler(GPTIMER4);
-	fork("procA", &proc_led_on);
-	fork("procB", &proc_led_off);
+	create_new_process("procA", &proc_led_on);
+	create_new_process("procB", &proc_led_off);
 
 	timer_start(GPTIMER4);
 	start_scheduling();
