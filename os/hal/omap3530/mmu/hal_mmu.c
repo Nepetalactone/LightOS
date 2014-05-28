@@ -5,45 +5,8 @@
  *      Author: Christian
  */
 
-#include "../../common/mmu/hal_mmu.h"
+#include "../../omap3530/mmu/hal_mmu_omap3530.h"
 
-/* declare asm functions */
-extern void hal_mmu_activate_asm();
-extern void hal_mmu_enable_write_buffer_asm();
-extern void hal_mmu_set_ttbr_ctrl_bits_asm();
-extern void hal_mmu_set_ttbr_0_asm();
-extern void hal_mmu_set_ttbr_1_asm();
-
-
-/* master pagetable base-address */
-unsigned int MASTER_PT_START;
-
-/* task pagetables base-address */
-unsigned int TASKS_PT_START;
-
-/* pagetable definitions */
-unsigned int PT_START;
-unsigned int PT_SIZE;
-unsigned int PT_PAGE_SIZE;
-
-unsigned int VM_START;
-
-/* task definitions */
-unsigned int TASK_PT_SIZE;
-unsigned int TASK_PAGE_SIZE;
-unsigned int TASK_SIZE;
-unsigned int TASKS_START;
-
-/* hw definitions */
-unsigned int HW_START;
-unsigned int HW_PAGE_SIZE;
-unsigned int HW_SIZE;
-unsigned int HW_START;
-
-/* os definitions */
-unsigned int OS_START;
-unsigned int OS_PAGE_SIZE;
-unsigned int OS_SIZE;
 
 
 
@@ -66,6 +29,7 @@ void hal_mmu_init(void) {
 
 	initTablesAndRegions();
 
+	/* the master-pagetable base-address is referenced in the ttbr1 and has always a size of 16kB */
 	uint32_t ttbr1 = MASTER_PT_START & 0xFFFFC000;
 	ttbr1 |= (WB & 0x3) << 3;
 	ttbr1 |= 0x1; //caching activate

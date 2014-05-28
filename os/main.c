@@ -18,11 +18,13 @@ void timer_interrupt(){
 }
 
 int main(void) {
-	volatile uint8_t y =  BIT_READ(MPU_INTC, SIR_FIQ, (32-7), 7);
+	//volatile uint8_t y =  BIT_READ(MPU_INTC, SIR_FIQ, (32-7), 7);
 	_disable_interrupts();
 
 
 	init_interrupt_controller();
+
+	/*
 	uint32_t interrupt_nr = get_interrupt_nr(GPTIMER4);
 	set_interrupt_handler(interrupt_nr, timer_interrupt);
 
@@ -42,6 +44,8 @@ int main(void) {
 
 	//*((address)(MPU_INTC + MIR_CLEAR0)) &= 0x0;
 	start_timer(GPTIMER4);
+
+	*/
 	_enable_interrupts();
 
 	mmu_activate();

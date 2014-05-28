@@ -31,26 +31,6 @@ typedef struct {
 } mmu_region_t;
 
 
-#define FAULT 0
-#define COARSE 1
-#define MASTER 2
-#define FINE 3
-
-#define NANA 0x00
-#define RWNA 0x01
-#define RWRO 0x02
-#define RWRW 0x03
-/*	NA	=	no	access,	RO	=	read	only,	RW	=	read/write	*/
-
-#define	cb	0x0
-#define	cB	0x1
-#define	WT	0x2
-#define	WB	0x3
-/*	cb	=	not	cached/not	buffered	*/
-/*	cB	=	not	Cached/Buffered	*/
-/*	Cb	=	Cached/not Buffered	*/
-/*	WT	=	write	through	cache	*/
-/*	WB	=	write	back	cache	*/
 
 void hal_mmu_activate(void);
 void hal_mmu_init(void);

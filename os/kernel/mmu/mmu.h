@@ -14,9 +14,10 @@
 void mmu_activate(void);
 void mmu_init(void);
 
-process_t mmu_init_process(void);
-process_t mmu_start_process(process_t);
-process_t mmu_kill_process(process_t);
+/* mmu process handling */
+void mmu_init_process(uint16_t processId);
+void mmu_start_process(uint16_t processId);
+void mmu_kill_process(uint16_t processId);
 
 
 
