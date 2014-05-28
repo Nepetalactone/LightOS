@@ -5,6 +5,7 @@
 #include <stdio.h>
 
 typedef uint32_t process_id;
+typedef void (*pFunc)(void);
 
 typedef enum process_state {
 	READY,
@@ -44,6 +45,7 @@ typedef struct  {
 	uint16_t times_loaded;
 	char* name;
 	void* pc;
+	pFunc mainFunc;
 	unsigned int * sp;
 	pcb_t pcb;
 	process_table_t proc_table;

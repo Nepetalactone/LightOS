@@ -18,7 +18,6 @@ typedef struct scheduler {
 	queue_t* processes;
 	base_address timer;
 } scheduler_t;
-typedef void (*pFunc)(void);
 
 void start_scheduling(void);
 void create_new_process(char* procName, pFunc asdf);

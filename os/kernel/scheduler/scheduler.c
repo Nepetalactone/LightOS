@@ -9,15 +9,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-
-void run_idle_process();
-
-//static queue_t* processes;
 static uint16_t process_count = 0;
 static unsigned int stack_base;
 static scheduler_t* scheduler;
 void run_idle_process(void);
-static uint32_t proc_mem_space[] = {0x82003000, 0x82006000, 0x82009000};
+static uint32_t proc_mem_space[] = { 0x82003000, 0x82006000, 0x82009000 };
 
 static void switch_user_mode() {
 	asm("CPS	#16");
@@ -27,23 +23,22 @@ static void switch_system_mode() {
 	asm("CPS	#0x1f");
 }
 
-
 /*
-//Reads the main stack pointer
-static inline int rd_stack_ptr(void){
-	unsigned int stack_pointer;
-	//stack_pointer = HWREG("SP");
-	__asm__ volatile ("MOV %0, SP\n\t" : "=r"	(stack_pointer)	);
-	return stack_pointer;
-}*/
+ //Reads the main stack pointer
+ static inline int rd_stack_ptr(void){
+ unsigned int stack_pointer;
+ //stack_pointer = HWREG("SP");
+ __asm__ volatile ("MOV %0, SP\n\t" : "=r"	(stack_pointer)	);
+ return stack_pointer;
+ }*/
 
-
-inline void context_switch(process_t* curProc , process_t * nextProc) {
+inline void context_switch(process_t* curProc, process_t * nextProc) {
 	if (nextProc->times_loaded > 1) {
 
 		context_switch2_asm(curProc->pcb.cpsr, nextProc->pcb.cpsr);
 	} else {
-		context_switch_asm(curProc->pcb.cpsr, nextProc->pcb.cpsr, nextProc->pcb.r14); //, nextProc->pcb.r14
+		context_switch_asm(curProc->pcb.cpsr, nextProc->pcb.cpsr,
+				nextProc->pcb.r14); //, nextProc->pcb.r14
 	}
 
 	//store_context_asm(curProc->pcb.cpsr);
@@ -53,17 +48,19 @@ inline void context_switch(process_t* curProc , process_t * nextProc) {
 }
 
 inline void run_next_process() {
+
 	process_t* curProc = (process_t*) scheduler->curProcess;
 	queue_t* queue = scheduler->processes;
 	int i;
 	int size = queue->size;
+
+	//First time the method is entered
 
 	for (i = 0; i < size; i++) {
 		process_t* nextProc = (process_t*) queue->dequeue(queue);
 		if (nextProc->state == READY) {
 			nextProc->times_loaded = nextProc->times_loaded + 1;
 			nextProc->state = RUNNING;
-
 
 			queue->enqueue(queue, nextProc);
 			timer_reset_counter(GPTIMER4);
@@ -75,40 +72,19 @@ inline void run_next_process() {
 			queue->enqueue(queue, nextProc);
 		}
 	}
-
 }
-
-//static process_t* init_idle_process() {
-//	process_t* idleProcess = (process_t*)malloc(sizeof(process_t));
-//	idleProcess->pID = process_count;
-//	idleProcess->name = "idle";
-//	idleProcess->state = READY;
-//	idleProcess->times_loaded = 0;
-
-//	//idleProcess->sp = (unsigned int*) stack_base;
-//	idleProcess->pc = run_idle_process;
-
-//	idleProcess->pcb.cpsr = proc_mem_space[process_count];
-
-//	++process_count;
-//	return idleProcess;
-//}
 
 void init_scheduler(base_address timer) {
-	scheduler_t* newScheduler = (scheduler_t*) malloc(sizeof(scheduler_t));
-	process_t* idle_proc = create_new_process("init", &run_idle_process);
-	//newScheduler->curProcess = idle_proc;
-	newScheduler->processes = createQueue();
-	newScheduler->processes->enqueue(newScheduler->processes, idle_proc);
-	//newScheduler->processes->enqueue(newScheduler->processes, idle_proc);
-	newScheduler->timer = timer;
-	//init scheduling timer
-	timer_quick_init(timer,0x05000000, run_next_process,trigger_OverflowMatch);
-	scheduler = newScheduler;
+	scheduler = (scheduler_t*) malloc(sizeof(scheduler_t));
+	scheduler->processes = createQueue();
+	create_new_process("init", &run_idle_process);
+	scheduler->curProcess = (process_t*) scheduler->processes->dequeue(scheduler->processes);
+	scheduler->timer = timer;
+	timer_quick_init(timer, 0x05000000, run_next_process,
+			trigger_OverflowMatch);
 }
 
-
-void run_idle_process(){
+void run_idle_process() {
 	volatile int i = 0;
 
 	while (1) {
@@ -117,13 +93,10 @@ void run_idle_process(){
 }
 
 void start_scheduling() {
-	//run_next_process();
 	_enable_interrupts();
 	timer_start(GPTIMER4);
-
-	run_idle_process();
+	scheduler->curProcess->mainFunc();
 }
-
 
 void create_new_process(char* procName, pFunc asdf) {
 	process_t* proc = malloc(sizeof(process_t));
@@ -147,11 +120,9 @@ void create_new_process(char* procName, pFunc asdf) {
 	proc->pcb.r1 = (uint32_t) asdf;
 	proc->pcb.r0 = (uint32_t) asdf;
 
-
 	printf("%p", asdf);
-	//proc->pc = &pc;
 	proc->state = READY;
-	//proc->sp = (unsigned int*)(stack_base + (process_count*STACK_SIZE));
+	proc->mainFunc = asdf;
 	proc->times_loaded = 0;
 	scheduler->processes->enqueue(scheduler->processes, proc);
 	++process_count;
