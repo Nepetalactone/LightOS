@@ -22,3 +22,10 @@ timer.c:
 	funktion "fast_init" wo _alles_ konfiguriert sodass nurnoch start_timer aufgerufen werden muss
 	enums für sachen wie compare_mode
 	
+	
+	
+MMU
+regions-pagesize in kb
+aktiviere pagetables --> master-page-table-pointer in TTB eitnragen
+alles mit fault entries füllen
+	init (slide 28)

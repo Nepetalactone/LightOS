@@ -10,9 +10,9 @@
 
 #include "../scheduler/process.h"
 
-/* functions */
+/* mmu startup */
+void mmu_activate(void);
 void mmu_init(void);
-void mmu_start(void);
 
 process_t mmu_init_process(void);
 process_t mmu_start_process(process_t);

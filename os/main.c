@@ -2,15 +2,15 @@
  * main.c
  */
 #include <stdlib.h>
+#include <stdio.h>
 #include "kernel/timer.h"
 #include "kernel/interrupts/interrupt_controller.h"
 #include "kernel/interrupts/interrupt.h"
-#include <stdio.h>
 #include "kernel/arch/command.h"
 #include "kernel/arch/address.h"
 #include "kernel/scheduler/process.h"
 
-#include "hal/common/mmu/hal_mmu.h"
+#include "kernel/mmu/mmu.h"
 
 void timer_interrupt(void);
 void timer_interrupt(){
@@ -44,7 +44,8 @@ int main(void) {
 	start_timer(GPTIMER4);
 	_enable_interrupts();
 
-	hal_mmu_start();
+	mmu_activate();
+	mmu_init();
 
 	volatile int x=0;
 	while(1)

@@ -1,12 +1,15 @@
 /*
- * mmu.h
+ * hal_mmu.h
  *
  *  Created on: 08.05.2014
  *      Author: Christian
  */
 
-#ifndef MMU_H_
-#define MMU_H_
+#ifndef HAL_MMU_H_
+#define HAL_MMU_H_
+
+#include <inttypes.h>
+
 
 
 typedef struct {
@@ -49,9 +52,14 @@ typedef struct {
 /*	WT	=	write	through	cache	*/
 /*	WB	=	write	back	cache	*/
 
+void hal_mmu_activate(void);
 void hal_mmu_init(void);
-void hal_mmu_start(void);
+
+void hal_mmu_addProcess(uint16_t processId);
+void hal_mmu_removeProcess(uint16_t processId) ;
 
 
 
-#endif /* MMU_H_ */
+
+
+#endif /* HAL_MMU_H_ */
