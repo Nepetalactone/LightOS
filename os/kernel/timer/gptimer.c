@@ -17,6 +17,7 @@ void timer_quick_init(base_address timer, uint32_t millisec, interrupt_handler h
 	if(is_timer_running(timer) || handler == NULL){
 			return;
 	}
+
 	_timer_enable(timer);
 	timer_reset_state(timer);
 	timer_reset_counter(timer);
@@ -32,6 +33,7 @@ void timer_init(base_address timer, uint32_t millisec, trigger_mode mode){
 	if(is_timer_running(timer)){
 		return;
 	}
+
 	timer_reset_state(timer);
 	timer_reset_counter(timer);
 	timer_set_compare_value(timer,millisec);

@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include "process.h"
 
-typedef volatile unsigned int* address;
 
 #define GPIO05_DIR (address) 0x49056034
 #define USR0 (1<<21)

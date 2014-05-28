@@ -3,10 +3,10 @@
 #include "kernel/interrupts/interrupt_controller.h"
 #include "kernel/interrupts/interrupt.h"
 #include "kernel/scheduler/process.h"
-#include "kernel/scheduler/scheduler.h"
+#include "kernel/scheduler/test.h"
 
 void asdf(){
-
+	timer_reset_counter(GPTIMER4);
 }
 
 
@@ -15,11 +15,11 @@ int main(){
 
 
 	_disable_interrupts();
-	init_interrupt_controller();
 	reset_interrupt_module();
+	init_interrupt_controller();
 
 
-	timer_quick_init(GPTIMER4,0x20000000,asdf,trigger_OverflowMatch);
+
 
 	uint32_t i = 0;
 	while(i < 95){
@@ -27,9 +27,9 @@ int main(){
 		i++;
 	}
 	init_scheduler(GPTIMER4);
-	fork("procA", &proc_led_on);
-	fork("procB", &proc_led_off);
+	process_create("procA", &proc_led_on);
+	process_create("procB", &proc_led_off);
 
-	timer_start(GPTIMER4);
+	_enable_interrupts();
 	start_scheduling();
 }

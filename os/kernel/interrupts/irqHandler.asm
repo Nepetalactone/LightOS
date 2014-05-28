@@ -3,26 +3,36 @@
 	.global __identify_and_clear_source
 
 irq_handler_asm:
-    SUB     lr, lr, #4                ; Use SRS to save LR_irq and SPSP_irq
-    SRSFD   sp!, #0x13                ;   on to the SVC mode stack
+	STMFD	SP, { R0 - R14 }^			; store user-registers on stack
+	SUB		SP, SP, #60					; decrement stack-pointer: 15 * 4 bytes = 60bytes
 
-    CPS     #0x13                     ; Switch to SVC mode
-    PUSH    {r0-r3, r12}              ; Store AAPCS regs on to SVC stack
+	STMFD	SP!, { LR }					; store LR in stack to either restore it after BL to allow scheduler change it (and restore it after return from BL)
 
-    MOV     r1, sp
-    AND     r1, r1, #4                ; Ensure 8-byte stack alignment…
-    SUB     sp, sp, r1                ; …adjust stack as necessary
-    PUSH    {r1, lr}                  ; Store adjustment and LR_svc
+	MRS		R1, SPSR					; fetch user-cpsr (SPSR) value to R1
+	STMFD	SP!, { R1 }					; store SPSR in stack to allow scheduler change it
 
-    BL      __identify_and_clear_source ; Clear IRQ source
-    CPSIE   i                         ; Enable IRQ
-    BL      irq_handler             ; Branch to 2nd level handler
-    CPSID   i                         ; Disable IRQ
+	MOV 	R0, SP						; pointer to SP in R0, to point to UserContext-struct
 
-    POP     {r1, lr}                  ; Restore LR_svc
-    ADD     sp, sp, r1                ; Un-adjust stack
+	; irqHandler( UserContext* ctx )
+	BL		__identify_and_clear_source
+	BL		irq_handler					; branch AND link to irq parent handler
 
-    POP     {r0-r3, r12}              ; Restore AAPCS registers
-    RFEFD   sp!                       ; Return from the SVC mode stack
+	; TODO: do a BEQ on R0:
+	; if R0 == 1 then scheduling was performed
+
+	LDMFD	SP!, { R1 }					; restore SPSR, if changed by scheduler
+	MSR		SPSR_cxsf, R1				; set stored cpsr from user to the current CPSR - will be restored later during SUBS
+
+	LDMFD	SP!, { LR }					; restore LR, if changed by scheduler
+
+	LDMFD	SP, { R0 - R14 }^			; restore user-registers, if changed by scheduler
+	ADD		SP, SP, #60					; increment stack-pointer: 15 * 4 bytes = 60bytes
+
+	; NOTE: at this point SP should be at starting address again
+
+	; TODO: when a process-switch was performed: MOVS	PC, LR should be enough, otherwise we must return to the instruction which was canceled by IRQ thus using SUBS
+
+ 	SUBS	PC, LR, #4					; return from IRQ
+
 
 
