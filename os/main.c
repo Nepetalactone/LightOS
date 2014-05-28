@@ -46,10 +46,10 @@ int main(void) {
 	start_timer(GPTIMER4);
 
 	*/
-	_enable_interrupts();
-
-	mmu_activate();
+	//_enable_interrupts();
 	mmu_init();
+	mmu_activate();
+
 
 	volatile int x=0;
 	while(1)

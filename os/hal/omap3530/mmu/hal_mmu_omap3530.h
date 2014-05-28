@@ -41,11 +41,12 @@ extern void hal_mmu_set_ttbr_1_asm();
 
 
 /* master pagetable base-address */
-#define MASTER_PT_START 0xA0000000
-#define MASTER_PT_SIZE 0x1000 // 16kB
+//#define MASTER_PT_START 0xA0000000
+#define MASTER_PT_START		0x80000000
+#define MASTER_PT_SIZE 		0x1000 // 16kB
 
 /* task pagetables base-address */
-#define TASKS_PT_START MASTER_PT_START + MASTER_PT_SIZE
+#define TASKS_PT_START		MASTER_PT_START + MASTER_PT_SIZE
 
 /* pagetable definitions */
 #define PT_START MASTER_PT_START
@@ -57,7 +58,7 @@ unsigned int VM_START;
 #define TASK_PT_SIZE 0x100
 #define TASK_PAGE_SIZE 0x100
 #define TASK_SIZE 0x100
-#define TASKS_START 0x80000000 /* base address of tasks */
+#define TASKS_START TASKS_PT_START + PT_SIZE /* base address of tasks */
 
 /* hw definitions */
 #define HW_START 0x81000000
