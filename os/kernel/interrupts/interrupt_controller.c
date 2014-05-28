@@ -7,6 +7,8 @@
 
 #include "../timer/gptimer.h" //FIXME remove
 
+static uint32_t active_interrupt_source;
+
 interrupt_handler handlers[MAX_INTERRUPT_VECTORS];
 
 void dummy_handler(void);
@@ -63,8 +65,8 @@ void remove_interrupt_handler(uint32_t int_nr){
 }
 
 void _handle_current_interrupt(){
-	uint32_t interrupt_nr = get_active_interrupt();
-	handlers[interrupt_nr]();
+	//uint32_t interrupt_nr = get_active_interrupt();
+	handlers[active_interrupt_source]();
 }
 
 
@@ -76,17 +78,18 @@ uint32_t get_active_interrupt(void){
 
 void __identify_and_clear_source(){
 	// bit 0-6 of MPU_INTC SIR_IRQ Register is the # of the current active IRQ interrupt
-	int intr_nr = get_active_interrupt();
+	//int intr_nr = get_active_interrupt();
 	//TODO handle appropriate interrupt source
 
-
+	active_interrupt_source = get_active_interrupt();
 	//src == GPTIMER4
 	BIT_CLEAR(GPTIMER4,TISR,0);
 	BIT_CLEAR(GPTIMER4,TISR,1);
 	reset_interrupt_module(); //workaround
 	re_init_interrupt_module(); //workaround
-	//timer_reset_counter(GPTIMER4);
+	timer_reset_counter(GPTIMER4);
 	//end gptimer4
+
 }
 
 
@@ -116,6 +119,8 @@ interrupt void dabt_handler() {
 void irq_handler() {
 	_disable_interrupts();
 	_handle_current_interrupt();
+	//reset_interrupt_module(); //workaround
+	//re_init_interrupt_module(); //workaround
 	reset_irq();
 }
 
