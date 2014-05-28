@@ -1,11 +1,26 @@
 
-#ifndef TIMER_H_
-#define TIMER_H_
+#ifndef GPTIMER_H_
+#define GPTIMER_H_
 
-#include "arch/address.h"
-#include "interrupts/interrupt.h"
+#include "../arch/address.h"
+#include "../interrupts/interrupt.h"
 
 
+/*
+OMAP35x technical reference manual pdf
+Overview p.2632
+*/
+
+
+/*
+General Information
+
+
+
+*/
+
+
+/* GPTIMER BASE ADDRESSES */
 #define GPTIMER1 (base_address) 0x48318000
 #define GPTIMER2 (base_address) 0x49032000
 #define GPTIMER3 (base_address) 0x49034000
@@ -17,9 +32,9 @@
 #define GPTIMER9 (base_address) 0x49040000
 #define GPTIMER10 (base_address) 0x48086000
 #define GPTIMER11 (base_address) 0x48088000
+/* GPTIMER BASE ADDRESSES END*/
 
-
-/* REGISTERS */
+/* REGISTER OFFSETS */
 #define TIDR (offset)0x000 //This register contains the IP revision code p.2636
 #define TIOCP_CFG (offset) 0x010 //This register controls the various parameters of the GP timer L4 interface p.2637
 #define TISTAT (offset) 0x014 //This register provides status information about the module, excluding the interrupt status information p. 2639
@@ -40,7 +55,7 @@
 #define TCVR (offset) 0x050 //This register is used for 1 ms tick generation. The TCVR register defines whether next value loaded in TCRR will be the sub-period value or the over-period value p.2655
 #define TOCR (offset) 0x054 //This register is used to mask the tick interrupt for a selected number of ticks p.2656
 #define TOWR (offset) 0x058 //This register holds the number of masked overflow interrupts p.2656
-/* REGISTERS END */
+/* REGISTER OFFSETS END */
 
 
 typedef enum {
@@ -49,16 +64,20 @@ typedef enum {
 	trigger_OverflowMatch = 11
 } trigger_mode;
 
-void init_timer(base_address timer, uint32_t millisec, interrupt_handler handler, trigger_mode mode);
-void set_compare_value(base_address timer, uint32_t millisec);
-void start_timer(base_address timer);
-void stop_timer(base_address timer);
-void reset_timer(base_address timer);
-void reset_timer_counter(base_address timer);
+
+void timer_init(base_address timer, uint32_t millisec, trigger_mode mode);
+void timer_quick_init(base_address timer, uint32_t millisec, interrupt_handler handler, trigger_mode mode);
+void timer_release(base_address timer);
+void timer_start(base_address timer);
+void timer_stop(base_address timer);
+void timer_set_compare_value(base_address timer, uint32_t millisec);
+void timer_reset_state(base_address timer);
+void timer_reset_counter(base_address timer);
 void timer_set_trigger_mode(base_address timer, trigger_mode mode);
-void enable_timer_interrupt(base_address timer);
-void disable_timer_interrupt(base_address timer);
+void timer_enable_interrupt(base_address timer);
+void timer_disable_interrupt(base_address timer);
 uint8_t is_timer_running(base_address timer);
 void timer_enable_compare(base_address timer);
 
-#endif /* TIMER_H_ */
+
+#endif /* GPTIMER_H_ */

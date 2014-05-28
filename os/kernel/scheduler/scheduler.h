@@ -6,18 +6,23 @@
 #include "../../utils/queue.h"
 #include "../arch/address.h"
 
-#define MAX_PROCESSES 100
+extern unsigned int SPSR;
+extern unsigned int SPSR_fsxc;
 
-typedef void (*proc)(void);
+#define MAX_PROCESSES 100
+#define STACK_SIZE 256
+
 
 typedef struct scheduler {
 	process_t* curProcess;
 	queue_t* processes;
 	base_address timer;
 } scheduler_t;
+typedef void (*pFunc)(void);
 
-void fork(char* procName, void* pc);
-void run_next_process();
+void start_scheduling(void);
+void fork(char* procName, pFunc asdf);
+void run_next_process(void);
 void killProcess(process_t* process);
 void init_scheduler(base_address timer);
 

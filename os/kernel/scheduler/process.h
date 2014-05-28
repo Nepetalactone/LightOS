@@ -39,11 +39,12 @@ typedef struct {
 } process_table_t;
 
 typedef struct  {
-	process_id procId;
+	process_id pID;
 	process_state_t state;
+	uint16_t times_loaded;
 	char* name;
 	void* pc;
-	uint32_t * sp;
+	unsigned int * sp;
 	pcb_t pcb;
 	process_table_t proc_table;
 } process_t;

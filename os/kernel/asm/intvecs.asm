@@ -2,7 +2,7 @@
 	.global swi_handler
 	.global pabt_handler
 	.global dabt_handler
-	.global irq_handler
+	.global irq_handler_asm
 	.global fiq_handler
 
 	.sect ".intvecs"
@@ -12,5 +12,5 @@
 		B pabt_handler
 		B dabt_handler
 		.word 0
-		B irq_handler
+		B irq_handler_asm
 		B fiq_handler
