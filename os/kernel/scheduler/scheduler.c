@@ -52,8 +52,6 @@ inline void context_switch(process_t* curProc , process_t * nextProc) {
 
 inline void run_next_process() {
 	process_t* curProc = (process_t*) scheduler->curProcess;
-
-
 	queue_t* queue = scheduler->processes;
 	int i;
 	int size = queue->size;
@@ -63,6 +61,9 @@ inline void run_next_process() {
 		if (nextProc->state == READY) {
 			nextProc->times_loaded = nextProc->times_loaded + 1;
 			nextProc->state = RUNNING;
+
+
+			queue->enqueue(queue, nextProc);
 			timer_reset_counter(GPTIMER4);
 			_enable_interrupts();
 			context_switch(curProc, nextProc);

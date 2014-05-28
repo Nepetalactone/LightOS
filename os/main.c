@@ -14,19 +14,12 @@ void asdf(){
 int main(){
 
 
-	//FIXME   INTERRUPTS
-	/*
-	 * unmask bits in a zentrale sammlung weil i jedesmol reset_interrupt_module ufruafa muas (oder andren weg finden zum activeirq clearen)
-	 * und jedesmol noch reset alle unmasks wieda machen...
-	 *
-	 */
-
 	_disable_interrupts();
 	init_interrupt_controller();
 	reset_interrupt_module();
 
 
-	//timer_quick_init(GPTIMER4,0x20000000,asdf,trigger_OverflowMatch);
+	timer_quick_init(GPTIMER4,0x20000000,asdf,trigger_OverflowMatch);
 
 	uint32_t i = 0;
 	while(i < 95){
@@ -37,6 +30,6 @@ int main(){
 	fork("procA", &proc_led_on);
 	fork("procB", &proc_led_off);
 
-	//timer_start(GPTIMER4);
+	timer_start(GPTIMER4);
 	start_scheduling();
 }

@@ -27,10 +27,11 @@ void ser_init(eBaud baud) {
 	*((address)(UART03 + SYSC)) |= (1 << 1);
 	//BIT_SET(UART03,SYSC,1);
 
-
-	while(getBitValue((address)UART03, SYSS, 0) == 0x0) {
+	//TODO TEST ME
+	WFW_BIT(UART03,SYSS,0);
+	//while(getBitValue((address)UART03, SYSS, 0) == 0x0) {
 		// wait till reset is done
-	}
+	//}
 
 	// FIFOs and DMA Settings
 	// Swich to mode B
@@ -65,9 +66,13 @@ void ser_init(eBaud baud) {
 	//command(UADT03, FCR, REG_SET, 0x7);
 	*((address)(UART03 + FCR)) = 0x7;
 	//TODO bit value never change!!! -> fix
-	while(getBitValue((address)UART03, FCR, 1) != 0x0 && getBitValue((address)UART03, FCR, 2) != 0x0){
 
-	}
+	//TODO TEST ME
+	WFC_BIT(UART03,FCR,1);
+	WFC_BIT(UART03,FCR,2);
+	//while(getBitValue((address)UART03, FCR, 1) != 0x0 && getBitValue((address)UART03, FCR, 2) != 0x0){
+
+	//}
 
 
 	*((address)(UART03 + FCR)) = 0x0;
@@ -247,7 +252,9 @@ char ser_getc() {
 	char null = '\0';
 	char rec = null;
 	while(rec == null) {
-		while(getBitValue((address)UART03, LSR, 0) == 0);
+		//TODO TEST ME
+		WFW_BIT(UART03,LSR,0);
+		//while(getBitValue((address)UART03, LSR, 0) == 0);
 		rec = (char) *((address)(UART03 + RHR));
 	}
 

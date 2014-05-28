@@ -7,8 +7,6 @@
 
 #include "../timer/gptimer.h" //FIXME remove
 
-static uint32_t active_interrupt_source;
-
 interrupt_handler handlers[MAX_INTERRUPT_VECTORS];
 
 void dummy_handler(void);
@@ -22,6 +20,7 @@ void init_interrupt_controller(){
 		handlers[i] = dummy_handler;
 	}
 	//TODO initialize interrupt handling
+
 }
 
 void enable_all_interrupts(){
@@ -48,14 +47,6 @@ void disable_fiq(){
 	_disable_FIQ();
 }
 
-void enable_mir_(uint32_t mir_nr){
-	//BIT_CLEAR(MPU_INTC,MIR_CLEAR(mir_nr));
-}
-
-void disable_mir_(uint32_t mir_nr){
-	//TODO disable mir
-}
-
 void set_interrupt_handler(uint32_t int_nr, interrupt_handler handler){
 	handlers[int_nr] = handler;
 }
@@ -65,31 +56,31 @@ void remove_interrupt_handler(uint32_t int_nr){
 }
 
 void _handle_current_interrupt(){
-	//uint32_t interrupt_nr = get_active_interrupt();
-	handlers[active_interrupt_source]();
+	uint32_t interrupt_nr = get_active_interrupt();
+	handlers[interrupt_nr]();
 }
 
 
 uint32_t get_active_interrupt(void){
 	return BIT_READ_MASK(MPU_INTC,SIR_IRQ,BIT_MASK(1111111)); //TODO INTCPS_SIR_IRQ/FIQ (active interrupt) oder INTCPS_PENDING_IRQn (pending interrupt) lesen
-	//volatile int i = 40;
-	//return i;
 }
 
 void __identify_and_clear_source(){
 	// bit 0-6 of MPU_INTC SIR_IRQ Register is the # of the current active IRQ interrupt
-	//int intr_nr = get_active_interrupt();
-	//TODO handle appropriate interrupt source
+	int intr_nr = get_active_interrupt();
+	//TODO implement clearing interrupts
+	switch(intr_nr){
+		case 40: //GPTIMER4
+			BIT_CLEAR(GPTIMER4,TISR,0);
+			BIT_CLEAR(GPTIMER4,TISR,1);
+			break;
+		default:
+			// no implementation
+			break;
+	}
 
-	active_interrupt_source = get_active_interrupt();
-	//src == GPTIMER4
-	BIT_CLEAR(GPTIMER4,TISR,0);
-	BIT_CLEAR(GPTIMER4,TISR,1);
 	reset_interrupt_module(); //workaround
 	re_init_interrupt_module(); //workaround
-	timer_reset_counter(GPTIMER4);
-	//end gptimer4
-
 }
 
 
@@ -119,8 +110,6 @@ interrupt void dabt_handler() {
 void irq_handler() {
 	_disable_interrupts();
 	_handle_current_interrupt();
-	//reset_interrupt_module(); //workaround
-	//re_init_interrupt_module(); //workaround
 	reset_irq();
 }
 
