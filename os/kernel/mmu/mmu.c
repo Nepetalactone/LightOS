@@ -15,5 +15,3 @@ void mmu_activate(void) {
 void mmu_init(void) {
 	hal_mmu_init();
 }
-
-

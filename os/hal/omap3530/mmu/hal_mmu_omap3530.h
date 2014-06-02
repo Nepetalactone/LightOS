@@ -36,9 +36,12 @@
 extern void hal_mmu_activate_asm();
 extern void hal_mmu_enable_write_buffer_asm();
 extern void hal_mmu_set_ttbr_ctrl_bits_asm();
-extern void hal_mmu_set_ttbr_0_asm();
-extern void hal_mmu_set_ttbr_1_asm();
+extern void hal_mmu_set_ttbr_0_asm(uint32_t trans_table_base, uint32_t id);
+extern void hal_mmu_set_ttbr_1_asm(uint32_t trans_table_base);
+extern void hal_mmu_set_ttbr_cr_n_asm(uint32_t N);
 
+
+#define N 0x2
 
 /* master pagetable base-address */
 //#define MASTER_PT_START 0xA0000000
@@ -46,7 +49,7 @@ extern void hal_mmu_set_ttbr_1_asm();
 #define MASTER_PT_SIZE 		0x1000 // 16kB
 
 /* task pagetables base-address */
-#define TASKS_PT_START		MASTER_PT_START + MASTER_PT_SIZE
+#define TASKS_PT_START MASTER_PT_START + MASTER_PT_SIZE
 
 /* pagetable definitions */
 #define PT_START MASTER_PT_START

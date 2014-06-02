@@ -12,14 +12,8 @@
 
 #include "kernel/mmu/mmu.h"
 
-void timer_interrupt(void);
-void timer_interrupt(){
-	printf("test");
-}
 
 int main(void) {
-	//volatile uint8_t y =  BIT_READ(MPU_INTC, SIR_FIQ, (32-7), 7);
-	_disable_interrupts();
 
 
 	init_interrupt_controller();
@@ -49,6 +43,7 @@ int main(void) {
 	//_enable_interrupts();
 	mmu_init();
 	mmu_activate();
+
 
 
 	volatile int x=0;
