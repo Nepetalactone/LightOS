@@ -33,18 +33,11 @@ static void switch_system_mode() {
  }*/
 
 inline void context_switch(process_t* curProc, process_t * nextProc) {
-	if (nextProc->times_loaded > 1) {
+	context_switch2_asm(curProc->pcb.cpsr, nextProc->pcb.cpsr);
+}
 
-		context_switch2_asm(curProc->pcb.cpsr, nextProc->pcb.cpsr);
-	} else {
-		context_switch_asm(curProc->pcb.cpsr, nextProc->pcb.cpsr,
-				nextProc->pcb.r14); //, nextProc->pcb.r14
-	}
-
-	//store_context_asm(curProc->pcb.cpsr);
-	//load_context_asm(nextProc->pcb.cpsr, nextProc->pcb.r14);
-	//
-	//curProc->state = READY;
+inline void context_switch_first_time(process_t* curProc, process_t* nextProc){
+	context_switch_asm(curProc->pcb.cpsr, nextProc->pcb.cpsr, nextProc->pcb.r14);
 }
 
 inline void run_next_process() {
@@ -52,21 +45,31 @@ inline void run_next_process() {
 	process_t* curProc = (process_t*) scheduler->curProcess;
 	queue_t* queue = scheduler->processes;
 	int i;
-	int size = queue->size;
 
-	//First time the method is entered
-
-	for (i = 0; i < size; i++) {
+	for (i = 0; i < queue->size; i++) {
 		process_t* nextProc = (process_t*) queue->dequeue(queue);
 		if (nextProc->state == READY) {
-			nextProc->times_loaded = nextProc->times_loaded + 1;
 			nextProc->state = RUNNING;
 
+			scheduler->curProcess->state = READY;
+
+			_disable_interrupts();
 			queue->enqueue(queue, nextProc);
-			timer_reset_counter(GPTIMER4);
-			_enable_interrupts();
-			context_switch(curProc, nextProc);
-			scheduler->curProcess = nextProc;
+
+			if (nextProc->times_loaded > 0){
+				nextProc->times_loaded = nextProc->times_loaded + 1;
+				context_switch(curProc, nextProc);
+				scheduler->curProcess = nextProc;
+				timer_reset_counter(GPTIMER4);
+				_enable_interrupts();
+			} else {
+				nextProc->times_loaded = nextProc->times_loaded + 1;
+				context_switch_first_time(curProc, nextProc);
+				scheduler->curProcess = nextProc;
+				timer_reset_counter(GPTIMER4);
+				_enable_interrupts();
+				scheduler->curProcess->mainFunc();
+			}
 			break;
 		} else {
 			queue->enqueue(queue, nextProc);
@@ -79,6 +82,7 @@ void init_scheduler(base_address timer) {
 	scheduler->processes = createQueue();
 	create_new_process("init", &run_idle_process);
 	scheduler->curProcess = (process_t*) scheduler->processes->dequeue(scheduler->processes);
+	scheduler->processes->enqueue(scheduler->processes, scheduler->curProcess);
 	scheduler->timer = timer;
 	timer_quick_init(timer, 0x05000000, run_next_process,
 			trigger_OverflowMatch);
@@ -95,6 +99,8 @@ void run_idle_process() {
 void start_scheduling() {
 	_enable_interrupts();
 	timer_start(GPTIMER4);
+	scheduler->curProcess->state = RUNNING;
+	scheduler->curProcess->times_loaded = 1;
 	scheduler->curProcess->mainFunc();
 }
 

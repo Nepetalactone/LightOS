@@ -60,6 +60,10 @@ void _handle_current_interrupt(){
 	handlers[interrupt_nr]();
 }
 
+void _handle_current_interrupt2(uint32_t interrupt_nr){
+	handlers[interrupt_nr]();
+}
+
 
 uint32_t get_active_interrupt(void){
 	return BIT_READ_MASK(MPU_INTC,SIR_IRQ,BIT_MASK(1111111)); //TODO INTCPS_SIR_IRQ/FIQ (active interrupt) oder INTCPS_PENDING_IRQn (pending interrupt) lesen
@@ -71,8 +75,11 @@ void __identify_and_clear_source(){
 	//TODO implement clearing interrupts
 	switch(intr_nr){
 		case 40: //GPTIMER4
+			//_handle_current_interrupt();
 			BIT_CLEAR(GPTIMER4,TISR,0);
 			BIT_CLEAR(GPTIMER4,TISR,1);
+			_disable_interrupts();
+			_handle_current_interrupt2(intr_nr);
 			break;
 		default:
 			// no implementation
