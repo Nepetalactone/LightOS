@@ -8,8 +8,6 @@
 #include "../../omap3530/mmu/hal_mmu_omap3530.h"
 
 
-
-
 /*
  * prototypes are static because it's only implementation specific
  *
@@ -34,33 +32,25 @@ void hal_mmu_init(void) {
 	ttbr1 |= (WB & 0x3) << 3;
 	ttbr1 |= 0x1; //caching activate
 
-	hal_mmu_set_ttbr_1_asm(ttbr1); // set the pt base of os
-
-	uint32_t ttbr0_translation_table_base = 0x0; // TODO set correct pt
-	uint32_t ttbr0_procid_asid = 0x0;
-	// 31---------------------------8|7--------0|
-	// |      PROCID                 |    ASID  |
-	// |----------------------------------------|
-
-	hal_mmu_set_ttbr_0_asm(ttbr0_translation_table_base, ttbr0_procid_asid); // set the pt base of the process
-
-	hal_mmu_set_ttbr_cr_n_asm(N);
+	hal_mmu_set_ttbr_1_asm(ttbr1);
 }
+/*
+ * processSize in kB (4kB pages)
+ *
+ */
+void hal_mmu_addProcess(uint16_t processId, uint8_t processSize) {
 
-void hal_mmu_addProcess(uint16_t processId) {
-	/* generate process pagetable */
 	mmu_pagetable_t processTable;
 	processTable.ptAddress = TASKS_PT_START + (uint32_t)processId * TASK_PT_SIZE;
 	processTable.vAddress = VM_START;
 	processTable.masterPtAddress = MASTER_PT_START;
-	processTable.type = FINE;
+	processTable.type = COARSE;
 	processTable.dom = 0;
 
-	/* generate process-region and set pagetable */
 	mmu_region_t processRegion;
 	processRegion.vAddress = VM_START;
 	processRegion.pageSize = TASK_PAGE_SIZE;
-	processRegion.numPages = TASK_SIZE / TASK_PAGE_SIZE;
+	processRegion.numPages = processSize / TASK_PAGE_SIZE;
 	processRegion.AP = RWRW;
 	processRegion.CB = WB;
 	processRegion.pAddress = TASKS_START + processId * TASK_SIZE;
@@ -74,7 +64,6 @@ void hal_mmu_removeProcess(uint16_t processId) {
 }
 
 static void initTablesAndRegions() {
-	/* create master page table */
 	mmu_pagetable_t masterTable;
 	masterTable.ptAddress = MASTER_PT_START;
 	masterTable.vAddress = HW_START;
@@ -82,17 +71,15 @@ static void initTablesAndRegions() {
 	masterTable.type = MASTER;
 	masterTable.dom = 0;
 
-	/* create hw region */
 	mmu_region_t hwRegion;
 	hwRegion.vAddress = HW_START;
-	hwRegion.pageSize = HW_PAGE_SIZE;
+	hwRegion.pageSize = HW_PAGE_SIZE;		//Page size 4KB
 	hwRegion.numPages = HW_SIZE / HW_PAGE_SIZE;
 	hwRegion.AP = RWRW;
 	hwRegion.CB = cb;
 	hwRegion.pAddress = HW_START;
 	hwRegion.PT = &masterTable;
 
-	/* create kernel region */
 	mmu_region_t kernelRegion;
 	kernelRegion.vAddress = OS_START;
 	kernelRegion.pageSize = OS_PAGE_SIZE;
@@ -102,7 +89,6 @@ static void initTablesAndRegions() {
 	kernelRegion.pAddress = OS_START;
 	kernelRegion.PT = &masterTable;
 
-	/* pagetable region n*/
 	mmu_region_t pagetableRegion;
 	pagetableRegion.vAddress = PT_START;
 	pagetableRegion.pageSize = PT_SIZE;
@@ -123,13 +109,13 @@ static void writeSectionToMemory(mmu_region_t* region) {
 	tablePos += region->numPages - 1;
 	tablePos = (uint32_t*)((uint32_t)tablePos & 0xFFFFFFFC);
 
-	uint32_t entry = region->pAddress & 0xFFF00000;
+	uint32_t entry = region->pAddress & 0xFFFF0000;
 	entry |= (region->AP & 0x3) << 10;
 	entry |= region->PT->dom << 5;
 	entry |= (region->CB & 0x3) << 2;
-	entry |= 0x2; //section entry
+	entry |= 0x12; //section entry
 
-	int i;
+	uint32_t i;
 	for (i = region->numPages - 1; i >= 0; i--) {
 		*tablePos-- = entry + (i << 20);
 	}

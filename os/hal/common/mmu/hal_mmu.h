@@ -35,7 +35,7 @@ typedef struct {
 void hal_mmu_activate(void);
 void hal_mmu_init(void);
 
-void hal_mmu_addProcess(uint16_t processId);
+void hal_mmu_addProcess(uint16_t processId, uint8_t processSize);
 void hal_mmu_removeProcess(uint16_t processId) ;
 
 
