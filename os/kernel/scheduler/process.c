@@ -7,10 +7,7 @@
 #define USR1 (1<<22)
 #define GPIO05_OUT (address) 0x4905603C
 
-
 void proc_led_on() {
-	//*(GPIO05_DIR) &= ~(USR0 | USR1);
-	//*(GPIO05_OUT) &= ~USR1;
 	volatile int i = 0;
 
 	while (1) {

@@ -1,59 +1,27 @@
 
 	.global context_switch_asm
-	.global context_switch2_asm
+	.global init_process_asm
+	.global __ctx_switch_cleanup
 
+;r0 = sp old process, r1 = lr old process, r2 = sp new process
 context_switch_asm:
-	MOV		R7, R2						; PC vum neua Prozess ins R7 (es wird ned verändert..)
-	MRS		R12, SPSR 					;Get CPSR of interrupted process
-	;MOV		R12, R0
-	STR		R12, [R0], #8 				;Store CPSR to PCB, point R0 at PCB location for R0 value
+	STMEA 	r0!,{r1-r7} ;user registers							PUSH 7 values
+	MRS		r3, SPSR
+	STMFA 	r0!,{r3,r1} ;CPSR & LR								PUSH 2 values
 
-	LDMFD	R13!, {R2, R3}				;Reload R0/R1 of interrupted process from stack
-
-	STMIA	R0!, {R2, R3}				;Store R0/R1 values to PCB, point R0 at PCB location for R2 value
-
-	LDMFD	R13!, {R2, R3, R12, R14}	;Reload remaining stacked values
-	STR		R14, [R0, #-12]				;Store R14_irq, the interrupted process's restart address
-
-	STMIA	R0, {R2-R14}^				;Store user R2-R14
-
-	; Then load the new process User mode state and return to it
-	;LDMIA	R1!, {R12, R2}				;Put interrupted process's CPSR
-	;MSR		SPSR_fsxc, R2				; and restart address in SPSR_irq and R14_irq
-	;LDMIA	R1, {R8-R14}^				;Load user R0-R14
-	;NOP
-	;bruchts alls ned bem 1. mol lada.. be dera starka optimierung ka da tanenbaum ipacka! ;)
-	MOVS	PC, R7					;Return to address in R14_irq, with SPSR_irq -> CPSR transfer
-
-	; http://infocenter.arm.com/help/index.jsp?topic=/com.arm.doc.dui0489c/CIHGJHHH.html
-	; MRS = move to ARM register from system coprocessor register, MRS{cond} Rn, coproc_register
-	; STR = store with immediate/register offset
-	; STM/LDM = Store/Load multiple
-		;Variations: STMFD/LDMFD, STMFA/LDMFA, STMED/LDMED, STMEA/LDMEA
-			;[D]escending Stack = stack grows downwards, starting with a high address and progressing to a lower one
-			;[A]scending = stack grows upwards, starting from a low address and progressing to a higher address
-			;[F]ull = Stack pointer points to the last item in the stack
-			;[E]mpty = Stack pointer points to the next free space on the stack
+	MOV		r0,r2
+	LDMFD 	r0!, {r3,r4} 	;LR & CPSR							POP 2 values
+	MOV		r8,r3			;LR to R8
+	MSR		SPSR_cxsf, r3
+	LDMFD	r0!,{r1-r7} 	;user registers						POP 7 values
+	BL		__ctx_switch_cleanup
+	MOV 	PC,r8
 
 
-context_switch2_asm:
-	MRS		R12, SPSR 					;Get CPSR of interrupted process
-	;MOV		R12, R0
-	STR		R12, [R0], #8 				;Store CPSR to PCB, point R0 at PCB location for R0 value
+;r0 = process->sp, r1 = process->pc
+init_process_asm:
+	STMEA 	r0!,{r1-r3} ;user registers + LR					PUSH 7 values
+	MRS		r2, SPSR
+	STMFA 	r0!,{r1,r2} ;LR & CPSR								PUSH 2 values
+	MOV 	PC,LR
 
-	LDMFD	R13!, {R2, R3}				;Reload R0/R1 of interrupted process from stack
-
-	STMIA	R0!, {R2, R3}				;Store R0/R1 values to PCB, point R0 at PCB location for R2 value
-
-	LDMFD	R13!, {R2, R3, R12, R14}	;Reload remaining stacked values
-	STR		R14, [R0, #-12]				;Store R14_irq, the interrupted process's restart address
-
-	STMIA	R0, {R2-R14}^				;Store user R2-R14
-
-	; Then load the new process User mode state and return to it
-	LDMIA	R1!, {R12, R2}				;Put interrupted process's CPSR
-	MSR		SPSR_fsxc, R2				; and restart address in SPSR_irq and R14_irq
-	LDMIA	R1, {R8-R14}^				;Load user R0-R14
-	NOP
-
-	MOVS	PC, R14

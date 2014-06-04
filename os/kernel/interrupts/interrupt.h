@@ -3,7 +3,6 @@
 
 #include "../arch/address.h"
 
-
 /*
 OMAP35x technical reference manual pdf
 Overview p.1079
@@ -16,7 +15,7 @@ General Information
 
 */
 
-typedef void (*interrupt_handler)(void);
+typedef void (*irq_interrupt_handler)();
 
 #define IRQ 1
 #define FIQ 0

@@ -3,18 +3,19 @@
 #include "interrupt.h"
 #include "../arch/command.h"
 #include "../arch/address.h"
-
+#include "../scheduler/scheduler.h"
 //includes of modules
 //potential interrupt sources
 #include "../timer/gptimer.h"
 
-interrupt_handler handlers[MAX_INTERRUPT_VECTORS];
+irq_interrupt_handler handlers[MAX_INTERRUPT_VECTORS];
+
 
 uint32_t active_interrupt = 0;
 
 
-void dummy_handler(void);
-void dummy_handler(void){
+void dummy_handler();
+void dummy_handler(){
 	//no handler set
 }
 
@@ -51,7 +52,7 @@ void disable_fiq(){
 	_disable_FIQ();
 }
 
-void set_interrupt_handler(uint32_t int_nr, interrupt_handler handler){
+void set_interrupt_handler(uint32_t int_nr, irq_interrupt_handler handler){
 	handlers[int_nr] = handler;
 }
 
@@ -64,13 +65,19 @@ void _handle_current_interrupt(){
 }
 
 
-uint32_t get_active_interrupt(void){
-	return BIT_READ_MASK(MPU_INTC,SIR_IRQ,BIT_MASK(1111111)); //TODO INTCPS_SIR_IRQ/FIQ (active interrupt) oder INTCPS_PENDING_IRQn (pending interrupt) lesen
+uint32_t get_active_interrupt(int type){
+	if(type == FIQ){
+		return BIT_READ_MASK(MPU_INTC,SIR_FIQ,BIT_MASK(1111111)); //TODO INTCPS_SIR_IRQ/FIQ (active interrupt) oder INTCPS_PENDING_IRQn (pending interrupt) lesen
+	}
+	if(type == IRQ){
+		return BIT_READ_MASK(MPU_INTC,SIR_IRQ,BIT_MASK(1111111)); //TODO INTCPS_SIR_IRQ/FIQ (active interrupt) oder INTCPS_PENDING_IRQn (pending interrupt) lesen
+	}
+	return 0;
 }
 
-void __identify_and_clear_source(){
+void __identify_and_clear_source(int type){
 	// bit 0-6 of MPU_INTC SIR_IRQ Register is the # of the current active IRQ interrupt
-	active_interrupt = get_active_interrupt();
+	active_interrupt = get_active_interrupt(type);
 	//TODO implement clearing interrupts
 	switch(active_interrupt){
 		case 40: //GPTIMER4
@@ -81,8 +88,6 @@ void __identify_and_clear_source(){
 			// no implementation
 			break;
 	}
-	//reset_interrupt_module(); //workaround
-	//re_init_interrupt_module(); //workaround
 }
 
 
@@ -112,16 +117,16 @@ interrupt void dabt_handler() {
 void irq_handler() {
 	_disable_interrupts();
 	_handle_current_interrupt();
-	reset_irq();
-	timer_reset_counter(GPTIMER4);
 }
 
 
 //#pragma INTERRUPT(fiq_handler, FIQ)
 //interrupt
-void fiq_handler() {
-	//_handle_current_interrupt();
-	//printf("fiq_handler interrupt\n");
+void fiq_handler(void* lr) {
+	_disable_interrupts();
+	run_next_process(lr);
+	reset_fiq();
+	timer_reset_counter(GPTIMER4);
 }
 
 

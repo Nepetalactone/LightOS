@@ -1,13 +1,12 @@
+#ifndef TEST_H_
+#define TEST_H_
 
-#ifndef SCHEDULER_H_
-#define SCHEDULER_H_
-
-#include "process.h"
+#include <stdint.h>
+#include "../arch/command.h"
 #include "../../utils/queue.h"
 #include "../arch/address.h"
+#include "process.h"
 
-extern unsigned int SPSR;
-extern unsigned int SPSR_fsxc;
 
 #define MAX_PROCESSES 100
 #define STACK_SIZE 256
@@ -18,12 +17,13 @@ typedef struct scheduler {
 	queue_t* processes;
 	base_address timer;
 } scheduler_t;
-typedef void (*pFunc)(void);
 
-void start_scheduling(void);
-void fork(char* procName, pFunc asdf);
-void run_next_process(void);
-void killProcess(process_t* process);
-void init_scheduler(base_address timer);
 
-#endif /* SCHEDULER_H_ */
+void init_scheduler();
+void start_scheduling();
+process_t* process_create(char* name, void* entry_point);
+void process_kill_name(char* name);
+void process_kill_pid(uint32_t pid);
+void run_next_process(void* lr);
+
+#endif /* TEST_H_ */

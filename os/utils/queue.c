@@ -41,7 +41,7 @@ void* dequeue (queue_t* queue) {
     queue->first = node->next;
     queue->size = queue->size - 1;
 
-    free(node);
+    free(node); //FIXME uncomment
     return element;
 }
 

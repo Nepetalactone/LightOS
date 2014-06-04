@@ -13,7 +13,7 @@ void _timer_enable(base_address timer);
 void _timer_disable(base_address timer);
 
 
-void timer_quick_init(base_address timer, uint32_t millisec, interrupt_handler handler, trigger_mode mode){
+void timer_quick_init(base_address timer, uint32_t millisec, irq_interrupt_handler handler, trigger_mode mode){
 	if(is_timer_running(timer) || handler == NULL){
 			return;
 	}
@@ -23,7 +23,7 @@ void timer_quick_init(base_address timer, uint32_t millisec, interrupt_handler h
 	timer_reset_counter(timer);
 	timer_set_compare_value(timer,millisec);
 	uint32_t interrupt_n = get_interrupt_nr(timer);
-	set_interrupt_mode(interrupt_n,IRQ);
+	set_interrupt_mode(interrupt_n,FIQ);
 	unmask_interrupt(MPU_INTC, interrupt_n);
 	set_interrupt_handler(interrupt_n,handler);
 	timer_set_trigger_mode(timer, mode);

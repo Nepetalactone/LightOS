@@ -1,7 +1,7 @@
 
 #include <stdint.h>
 #include <stdlib.h>
-#include "test.h"
+#include "scheduler.h"
 #include "../timer/gptimer.h"
 #include "../interrupts/interrupt_controller.h"
 
@@ -11,7 +11,6 @@ void __kill(process_t* process);
 
 
 uint16_t process_count = 0;
-uint32_t proc_mem_space[3] = {0x82003000, 0x82006000, 0x82009000};
 queue_t* process_ready_queue;
 queue_t* process_table;
 base_address scheduling_timer = GPTIMER4;
@@ -28,11 +27,8 @@ void init_scheduler(){
 }
 
 void start_scheduling(){
-	process_t* idle_process = (process_t*)malloc(sizeof(process_t));
-	idle_process->pID = process_count;
-	idle_process->name = "idle";
-	idle_process->state = READY;
-	idle_process->pc = &__idle_process;
+	process_t* idle_process = process_create("idle",  &__idle_process);
+	idle_process->state = RUNNING;
 
 	timer_start(scheduling_timer);
 	current_process = idle_process;
@@ -47,15 +43,24 @@ void __idle_process(){
 	}
 }
 
-void process_create(char* process_name, void* entry_point){
-	process_t* process = malloc(sizeof(process_t));
+process_t* process_create(char* process_name, void* entry_point){
+	process_t* process = (process_t*)malloc(sizeof(process_t));
+	process_stack_t* stack = (process_stack_t*)malloc(sizeof(process_stack_t));
+
+
 	process->name = process_name;
 	process->pID = process_count;
+	process->sp = (void*)stack;
 	process->pc = entry_point;
 	process->state = READY;
 
+
 	process_count++;
-	process_table->enqueue(process_ready_queue,process);
+
+	init_process_asm(process->sp,process->pc);
+	process_table->enqueue(process_table,process);
+	process_ready_queue->enqueue(process_ready_queue,process);
+	return process;
 }
 
 void process_kill_name(char* name){
@@ -66,13 +71,21 @@ void process_kill_pid(uint32_t pid){
 
 }
 
+void __ctx_switch_cleanup();
+void __ctx_switch_cleanup(){
+	reset_fiq();
+	timer_reset_counter(GPTIMER4);
+	_enable_interrupts();
+}
+
 void __kill(process_t* process){
 	process->state = ZOMBIE;
 	//TODO kill process
+	//free malloced space
 	//remove process from queue(s)
 }
 
-void run_next_process(){
+void run_next_process(void* lr){
 
 	if(process_ready_queue->size == 0){
 		return; //no other ready processes
@@ -82,6 +95,7 @@ void run_next_process(){
 	process_ready_queue->enqueue(process_ready_queue,current_process);
 
 	process_t* next_process = process_ready_queue->dequeue(process_ready_queue);
-
-	context_switch_asm(current_process, next_process);
+	process_t* temp = current_process;
+	current_process = next_process;
+	context_switch_asm(temp->sp,lr, next_process->sp);
 }

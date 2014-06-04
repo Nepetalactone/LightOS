@@ -66,7 +66,7 @@ typedef enum {
 
 
 void timer_init(base_address timer, uint32_t millisec, trigger_mode mode);
-void timer_quick_init(base_address timer, uint32_t millisec, interrupt_handler handler, trigger_mode mode);
+void timer_quick_init(base_address timer, uint32_t millisec, irq_interrupt_handler handler, trigger_mode mode);
 void timer_release(base_address timer);
 void timer_start(base_address timer);
 void timer_stop(base_address timer);

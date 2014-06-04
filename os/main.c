@@ -3,7 +3,7 @@
 #include "kernel/interrupts/interrupt_controller.h"
 #include "kernel/interrupts/interrupt.h"
 #include "kernel/scheduler/process.h"
-#include "kernel/scheduler/test.h"
+#include "kernel/scheduler/scheduler.h"
 
 void asdf(){
 	timer_reset_counter(GPTIMER4);
