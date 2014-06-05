@@ -24,8 +24,12 @@ void BIT_TOGGLE(base_address b, offset o, uint32_t position){
 	*((address)(b + o)) ^= (1 << position);
 }
 
-void REG_SET(base_address b, offset o, uint32_t position){
-	*((address)(b + o)) = position;
+void REG_SET(base_address b, offset o, uint32_t value){
+	*((address)(b + o)) = value;
+}
+
+void REG_SET_RANGE(base_address b, offset o, uint32_t value, uint8_t startPos, uint8_t size) {
+	*((address)(b+o+startPos)) = value;
 }
 
 void REG_CLEAR(base_address b, offset o){

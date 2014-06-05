@@ -16,6 +16,8 @@
 #define MASTER 0x02 /* 4KB of virtual addresses */
 #define FINE 0x03   /* 1KB of virtual addresses */
 
+#define SDRC_MCFG	0x6D000080
+#define PHYSICAL_MEM_SIZE	256	//256 MB
 #define NANA 0x00
 #define RWNA 0x01
 #define RWRO 0x02
@@ -42,7 +44,7 @@
 
 /* master pagetable base-address */
 //#define MASTER_PT_START 0xA0000000
-#define MASTER_PT_START		0x90B00000
+#define MASTER_PT_START		0x84000000
 #define MASTER_PT_SIZE 		0x4000 // 16kB
 
 /* task pagetables base-address */
@@ -63,7 +65,7 @@
 /* hw definitions */
 #define HW_START 0x82020000
 #define HW_PAGE_SIZE 0x1000
-#define HW_SIZE 0x180000
+#define HW_SIZE 0x18000
 //#define HW_SIZE 0x0EAFFFFF
 
 /* os definitions */
