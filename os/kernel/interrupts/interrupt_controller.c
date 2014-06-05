@@ -93,22 +93,18 @@ void __identify_and_clear_source(int type){
 
 #pragma INTERRUPT(udef_handler, UDEF)
 interrupt void udef_handler() {
-	printf("udef_handler interrupt\n");
 }
 
 #pragma INTERRUPT(swi_handler, SWI)
 interrupt void swi_handler() {
-	printf("swi_handler interrupt\n");
 }
 
 #pragma INTERRUPT(pabt_handler, PABT)
 interrupt void pabt_handler() {
-	printf("pabt_handler interrupt\n");
 }
 
 #pragma INTERRUPT(dabt_handler, DABT)
 interrupt void dabt_handler() {
-	printf("dabt_handler interrupt\n");
 }
 
 
