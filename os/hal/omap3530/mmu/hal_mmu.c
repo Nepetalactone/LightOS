@@ -23,12 +23,19 @@ void hal_mmu_activate(void) {
 
 //size -> ram size in MB
 void set_ddr_memory(uint32_t size) {
-	BIT_SET(SDRC_MCFG, 0, 17);
+	uint32_t sdr_val = *(uint32_t*) SDRC_MCFG;
+	sdr_val &= 0xFFFC01FF; // reset size
+	sdr_val |= (size << 8);
+	*(uint32_t*) SDRC_MCFG = sdr_val;
+
+	//BIT_SET(SDRC_MCFG, 0, 17);
 }
 
 void hal_mmu_init(void) {
-	//hal_mmu_enable_write_buffer_asm();
-	set_ddr_memory(PHYSICAL_MEM_SIZE);
+	hal_mmu_enable_write_buffer_asm();
+
+	set_ddr_memory(SDRAM_RAM_SIZE_256);
+
 	hal_mmu_set_ttbr_ctrl_bits_asm(0x3); //First 3 bits != null OS/HW call else VM
 
 	initTablesAndRegions();
@@ -120,10 +127,9 @@ static void writeSectionToMemory(mmu_region_t* region) {
 	entry |= region->PT->dom << 5;
 	entry |= (region->CB & 0x3) << 2;
 	entry |= 0x12; //section entry
-	entry = 0x82004000;
 	uint32_t i;
 	for (i = region->numPages - 1; i >= 0; i--) {
-		*tablePos-- = 0x82004000; //entry + (i << 20);
+		*tablePos-- = entry + (i << 20);
 	}
 }
 

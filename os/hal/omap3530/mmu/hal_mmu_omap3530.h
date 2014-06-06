@@ -16,8 +16,7 @@
 #define MASTER 0x02 /* 4KB of virtual addresses */
 #define FINE 0x03   /* 1KB of virtual addresses */
 
-#define SDRC_MCFG	0x6D000080
-#define PHYSICAL_MEM_SIZE	256	//256 MB
+
 #define NANA 0x00
 #define RWNA 0x01
 #define RWRO 0x02
@@ -73,5 +72,8 @@
 #define OS_PAGE_SIZE 0x100
 #define OS_SIZE 0x01000000		// 16 MB
 
+/* sdram controller - ram-size (RAM address space size number of 2-MB chunks) */
+#define SDRC_MCFG	0x6D000080
+#define SDRAM_RAM_SIZE_256 0x80
 
 #endif /* HAL_MMU_OMAP3530_H_ */
