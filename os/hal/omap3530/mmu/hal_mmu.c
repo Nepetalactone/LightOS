@@ -129,7 +129,7 @@ static void writeSectionToMemory(mmu_region_t* region) {
 	entry |= region->PT->dom << 5;
 	entry |= (region->CB & 0x3) << 2;
 	entry |= 0x12; //section entry
-	uint32_t i;
+	int i;
 	for (i = region->numPages - 1; i >= 0; i--) {
 		*tablePos-- = entry + (i << 20);
 	}
