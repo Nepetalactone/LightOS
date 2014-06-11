@@ -13,6 +13,7 @@ void _timer_enable(base_address timer);
 void _timer_disable(base_address timer);
 
 
+//FIXME return uint to indicate whether the initialization was successful
 void timer_quick_init(base_address timer, uint32_t millisec, irq_interrupt_handler handler, trigger_mode mode){
 	if(is_timer_running(timer) || handler == NULL){
 			return;
