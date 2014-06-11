@@ -22,7 +22,7 @@ void hal_mmu_activate(void) {
 
 
 //size -> ram size in MB
-void set_ddr_memory(uint32_t size) {
+static void set_ddr_memory(uint32_t size) {
 	uint32_t sdr_val = *(uint32_t*) SDRC_MCFG;
 	sdr_val &= 0xFFFC01FF; // reset size
 	sdr_val |= (size << 8);
@@ -111,8 +111,10 @@ static void initTablesAndRegions() {
 	pagetableRegion.pAddress = PT_START;
 	pagetableRegion.PT = &masterTable;
 
-	writeSectionToMemory(&hwRegion);
+
 	writeSectionToMemory(&kernelRegion);
+	writeSectionToMemory(&hwRegion);
+
 	writeSectionToMemory(&pagetableRegion);
 }
 

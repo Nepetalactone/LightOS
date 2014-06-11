@@ -43,7 +43,7 @@
 
 /* master pagetable base-address */
 //#define MASTER_PT_START 0xA0000000
-#define MASTER_PT_START		0x84000000
+#define MASTER_PT_START		0x89500000
 #define MASTER_PT_SIZE 		0x4000 // 16kB
 
 /* task pagetables base-address */
@@ -53,7 +53,7 @@
 #define PT_START MASTER_PT_START
 #define PT_SIZE 0x4000
 #define PT_PAGE_SIZE 0x1000
-#define VM_START 0x90B40000
+#define VM_START 0x89500000
 
 /* task definitions */
 #define TASK_PT_SIZE 0x1000	// 4KB
@@ -68,12 +68,12 @@
 //#define HW_SIZE 0x0EAFFFFF
 
 /* os definitions */
-#define OS_START 0x91000000
+#define OS_START 0x8F800000
 #define OS_PAGE_SIZE 0x100
-#define OS_SIZE 0x01000000		// 16 MB
+#define OS_SIZE 0x800000		// 8 MB
 
 /* sdram controller - ram-size (RAM address space size number of 2-MB chunks) */
 #define SDRC_MCFG	0x6D000080
-#define SDRAM_RAM_SIZE_256 0x80
+#define SDRAM_RAM_SIZE_256 0x100
 
 #endif /* HAL_MMU_OMAP3530_H_ */
