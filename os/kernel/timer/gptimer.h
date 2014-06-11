@@ -78,6 +78,7 @@ void timer_enable_interrupt(base_address timer);
 void timer_disable_interrupt(base_address timer);
 uint8_t is_timer_running(base_address timer);
 void timer_enable_compare(base_address timer);
+base_address get_free_timer();
 
 
 #endif /* GPTIMER_H_ */

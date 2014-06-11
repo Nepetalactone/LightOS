@@ -6,6 +6,7 @@
 
 #define NR_TIMERS 12 //max number of GPTimer on the beagleboard is 11 (starting with 1)
 
+//holds information about whether the timer is free or in use
 static uint8_t timers[NR_TIMERS] = {2,0,0,0,0,0,0,0,0,0,0,0};
 
 uint8_t get_timer_nr(base_address timer_addr);
@@ -148,4 +149,40 @@ uint8_t get_timer_nr(base_address timer_addr){
 		default:
 			return 0;
 	}
+}
+
+//returns the base address of the first free timer, returns 0 if no timer is free
+base_address get_free_timer(){
+	int i;
+	for (i = 1; i < 11; i++){
+		if (timers[i] == 0){
+			switch (i) {
+			case 1:
+				return GPTIMER1;
+			case 2:
+				return GPTIMER2;
+			case 3:
+				return GPTIMER3;
+			case 4:
+				return GPTIMER4;
+			case 5:
+				return GPTIMER5;
+			case 6:
+				return GPTIMER6;
+			case 7:
+				return GPTIMER7;
+			case 8:
+				return GPTIMER8;
+			case 9:
+				return GPTIMER9;
+			case 10:
+				return GPTIMER10;
+			case 11:
+				return GPTIMER11;
+			default:
+				break;
+			}
+		}
+	}
+	return (base_address) 0;
 }
