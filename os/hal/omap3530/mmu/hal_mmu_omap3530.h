@@ -34,43 +34,60 @@
 /*	WB	=	write	back	cache	*/
 
 /* declare asm functions */
-//extern void hal_mmu_activate_asm();
-//extern void hal_mmu_enable_write_buffer_asm();
-//extern void hal_mmu_set_ttbr_ctrl_bits_asm();
+extern void hal_mmu_activate_asm();
+extern void hal_mmu_enable_write_buffer_asm();
+extern void hal_mmu_set_ttbr_ctrl_bits_asm(uint32_t ctrl_bits);
 //extern void hal_mmu_set_ttbr_0_asm();
-//extern void hal_mmu_set_ttbr_1_asm();
+extern void hal_mmu_set_ttbr_1_asm(uint32_t ttbr_address);
+extern void hal_mmu_set_domain(uint32_t domain_type);
 
-
-/* master pagetable base-address */
-//#define MASTER_PT_START 0xA0000000
-#define MASTER_PT_START		0x89500000
-#define MASTER_PT_SIZE 		0x4000 // 16kB
-
-/* task pagetables base-address */
-#define TASKS_PT_START		MASTER_PT_START + MASTER_PT_SIZE
-
-/* pagetable definitions */
-#define PT_START MASTER_PT_START
-#define PT_SIZE 0x4000
-#define PT_PAGE_SIZE 0x1000
-#define VM_START 0x89500000
-
-/* task definitions */
-#define TASK_PT_SIZE 0x1000	// 4KB
-#define TASK_PAGE_SIZE 0x400 // 1KB
-#define TASK_SIZE 0x2000 //8KB
-#define TASKS_START TASKS_PT_START + PT_SIZE /* base address of tasks */
+#define MAX_L2_TABLES	1024
+#define MAX_PROCESS_COUNT	100
 
 /* hw definitions */
-#define HW_START 0x82020000
-#define HW_PAGE_SIZE 0x1000
-#define HW_SIZE 0x18000
-//#define HW_SIZE 0x0EAFFFFF
+#define HW_START 			0x48000000
+#define HW_PAGE_SIZE 		0x1000 // 4KB
+#define HW_SIZE 			0x1000000 // 16 MB
 
 /* os definitions */
-#define OS_START 0x8F800000
-#define OS_PAGE_SIZE 0x100
-#define OS_SIZE 0x800000		// 8 MB
+#define KERNEL_START		0x82000000
+#define KERNEL_SIZE			0x800000		// 8 MB
+#define KERNEL_SECTION_SIZE	0x100000
+
+/* master pagetable base-address */
+#define PAGE_TABLE_REGION_SIZE			0x500000	//5MB
+
+//start page table region
+#define OS_L1_PT_START		(KERNEL_START + KERNEL_SIZE)
+#define OS_L1_PT_SIZE 		0x4000 // 16kB
+
+/* task pagetables base-address */
+#define TASK_L1_PT_START			(OS_L1_PT_START + OS_L1_PT_SIZE)
+#define TASK_L1_PT_SIZE 			0x4000	// 16KB
+
+/* 1 MASTER PT for each process*/
+#define TASK_L2_PT_START			TASK_L1_PT_START + (TASK_L1_PT_SIZE * MAX_PROCESS_COUNT)
+#define TASK_L2_PT_SIZE				0x400	// 1KB
+#define TASK_L2_PT_END				TASK_L2_PT_START + (MAX_L2_TABLES * TASK_L2_SIZE)
+
+
+/* task definitions */
+#define TASKS_START 		TASK_L2_PT_START + (MAX_L2_TABLES * TASK_L2_PT_SIZE) /* base address of tasks */
+#define TASK_PAGE_SIZE 		0x400 // 1KB L2 Page-Table
+#define TASK_REGION_SIZE 	0x53FFFFF //82 MB
+//#define TASK_SIZE 0x2000 //8KB
+
+/* pagetable definitions */
+//#define TASK_L2_START 		(TASK_L1_PT_START + OS_MASTER_PT_SIZE)
+//#define PT_SIZE 			0x4000
+//#define PT_PAGE_SIZE 		0x1000
+
+//#define VM_START 0x89500000
+
+
+
+//#define OS_PAGE_SIZE 	0x100
+
 
 /* sdram controller - ram-size (RAM address space size number of 2-MB chunks) */
 #define SDRC_MCFG	0x6D000080

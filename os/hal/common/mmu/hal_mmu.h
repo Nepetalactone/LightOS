@@ -10,26 +10,34 @@
 
 #include <inttypes.h>
 
-
-
-typedef struct {
-	unsigned int vAddress;
-	unsigned int ptAddress;
-	unsigned int masterPtAddress;
-	unsigned int type;
-	unsigned int dom; // domain
-} mmu_pagetable_t;
+#define MAX_L2_TABLES 1024
 
 typedef struct {
-	unsigned int vAddress;
-	unsigned int pageSize;
-	unsigned int numPages;
-	unsigned int AP;
-	unsigned int CB;
-	unsigned int pAddress;
-	mmu_pagetable_t *PT;
+	uint32_t vAddress;
+	uint32_t ptAddress;
+	uint32_t masterPtAddress;
+	uint32_t type;
+	uint32_t dom; // domain
+
+} mmu_l2_pagetable_t;
+
+typedef struct {
+	uint32_t vAddress;
+	uint32_t ptAddress;
+	uint32_t type;
+	uint32_t dom; // domain
+	mmu_l2_pagetable_t mmu_l2_tables[MAX_L2_TABLES];
+} mmu_master_pagetable_t;
+
+typedef struct {
+	uint32_t vAddress;
+	uint32_t pageSize;
+	uint32_t numPages;
+	uint32_t AP;
+	uint32_t CB;
+	uint32_t pAddress;
+	mmu_master_pagetable_t *PT;
 } mmu_region_t;
-
 
 
 void hal_mmu_activate(void);
@@ -37,9 +45,6 @@ void hal_mmu_init(void);
 
 void hal_mmu_addProcess(uint16_t processId, uint8_t processSize);
 void hal_mmu_removeProcess(uint16_t processId) ;
-
-
-
 
 
 #endif /* HAL_MMU_H_ */

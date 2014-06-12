@@ -46,6 +46,7 @@ typedef struct process {
 	hw_stack_frame_t hw_stack;
 	sw_stack_frame_t sw_stack;
 	process_table_t proc_table;
+
 } process_t;
 
 void proc_led_off();
