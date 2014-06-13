@@ -82,7 +82,7 @@ extern void hal_mmu_set_domain(uint32_t domain_type);
 //#define PT_SIZE 			0x4000
 //#define PT_PAGE_SIZE 		0x1000
 
-//#define VM_START 0x89500000
+#define VM_START 0x00
 
 
 

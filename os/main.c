@@ -44,8 +44,6 @@ int main(void) {
 	mmu_init();
 	mmu_activate();
 
-
-
 	volatile int x=0;
 	while(1)
 	{

@@ -96,7 +96,7 @@ static void initTablesAndRegions() {
 	hwRegion.PT = &masterTable;
 
 	mmu_region_t taskRegion;
-	taskRegion.vAddress = TASKS_START;
+	taskRegion.vAddress = TASKS_START; //TASKS_START;
 	taskRegion.pageSize = TASK_PAGE_SIZE;		//Page size 4KB
 	taskRegion.numPages = TASK_REGION_SIZE / TASK_PAGE_SIZE;
 	taskRegion.AP = RWRW;
@@ -135,7 +135,12 @@ static void initTablesAndRegions() {
 
 	writeSectionToMemory(&hwRegion);
 	writeSectionToMemory(&kernelRegion);
-	//writeSectionToMemory(&hwRegion);
+
+	writeSectionToMemory(&master_pt_region);
+	writeSectionToMemory(&pt_l2_region);
+	writeTableToMemory(&taskRegion);
+
+
 
 	//writeSectionToMemory(&master_pt_region);
 }
@@ -159,14 +164,15 @@ static void writeSectionToMemory(mmu_region_t* region) {
 
 static void writeTableToMemory(mmu_region_t* region) {
 	uint32_t* tablePos = (uint32_t*) region->PT->ptAddress;
-	tablePos += region->vAddress >> 18;
+	tablePos += region->vAddress >> 20;
 	tablePos += region->numPages - 1;
 	tablePos = (uint32_t*)((uint32_t)tablePos & 0xFFFFFFFC);
 
 	uint32_t entry = region->pAddress & 0xFFFFFC00;
-	entry |= region->PT->dom << 5;
+	entry |= region->PT->dom >> 4;
 	entry |= (region->CB & 0x3) << 2;
-	entry |= 0x1; //first level descriptor
+	entry &= 0xFFFFFFFD;
+	entry |= 0x1 ; //0b01 -> coarse table descriptor
 
 	int i;
 	for (i = region->numPages - 1; i >= 0; i--) {
