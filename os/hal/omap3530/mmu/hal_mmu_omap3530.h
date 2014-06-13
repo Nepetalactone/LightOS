@@ -16,6 +16,8 @@
 #define MASTER 0x02 /* 4KB of virtual addresses */
 #define FINE 0x03   /* 1KB of virtual addresses */
 
+#define SMALL_PAGE_SIZE 		0x1000
+#define SECTION_PAGE_SIZE		0x100000
 
 #define NANA 0x00
 #define RWNA 0x01
@@ -37,12 +39,14 @@
 extern void hal_mmu_activate_asm();
 extern void hal_mmu_enable_write_buffer_asm();
 extern void hal_mmu_set_ttbr_ctrl_bits_asm(uint32_t ctrl_bits);
-//extern void hal_mmu_set_ttbr_0_asm();
+extern void hal_mmu_set_ttbr_0_asm(uint32_t ttbr_address, uint32_t context_id);
 extern void hal_mmu_set_ttbr_1_asm(uint32_t ttbr_address);
 extern void hal_mmu_set_domain(uint32_t domain_type);
 
 #define MAX_L2_TABLES	1024
 #define MAX_PROCESS_COUNT	100
+
+#define DOMAIN 0
 
 /* hw definitions */
 #define HW_START 			0x48000000
@@ -82,8 +86,8 @@ extern void hal_mmu_set_domain(uint32_t domain_type);
 //#define PT_SIZE 			0x4000
 //#define PT_PAGE_SIZE 		0x1000
 
-#define VM_START 0x00
-
+//#define VM_START 0x00
+#define VM_TASK_START 0x00004000
 
 
 //#define OS_PAGE_SIZE 	0x100
