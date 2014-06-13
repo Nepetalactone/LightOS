@@ -107,8 +107,8 @@ static void initTablesAndRegions() {
 
 	mmu_region_t taskRegion;
 	taskRegion.vAddress = TASKS_START; //TASKS_START;
-	taskRegion.pageSize = TASK_PAGE_SIZE;		//Page size 4KB
-	taskRegion.numPages = TASK_REGION_SIZE / TASK_PAGE_SIZE;
+	taskRegion.pageSize = SMALL_PAGE_SIZE;		//Page size 4KB
+	taskRegion.numPages = TASK_REGION_SIZE / SMALL_PAGE_SIZE;
 	taskRegion.AP = RWRW;
 	taskRegion.CB = cb;
 	taskRegion.pAddress = TASKS_START;
