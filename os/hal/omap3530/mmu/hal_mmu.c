@@ -88,8 +88,8 @@ static void initTablesAndRegions() {
 
 	mmu_region_t hwRegion;
 	hwRegion.vAddress = HW_START;
-	hwRegion.pageSize = HW_PAGE_SIZE;		//Page size 4KB
-	hwRegion.numPages = HW_SIZE / HW_PAGE_SIZE;
+	hwRegion.pageSize = 0x100000; //HW_PAGE_SIZE;		//Page size 4KB
+	hwRegion.numPages = HW_SIZE / 0x100000;// HW_PAGE_SIZE;
 	hwRegion.AP = RWRW;
 	hwRegion.CB = cb;
 	hwRegion.pAddress = HW_START;
@@ -107,8 +107,8 @@ static void initTablesAndRegions() {
 
 	mmu_region_t kernelRegion;
 	kernelRegion.vAddress = KERNEL_START;
-	kernelRegion.pageSize = KERNEL_SECTION_SIZE;
-	kernelRegion.numPages = KERNEL_SIZE / KERNEL_SECTION_SIZE;
+	kernelRegion.pageSize = 0x100000;// KERNEL_SECTION_SIZE;
+	kernelRegion.numPages = KERNEL_SIZE / 0x100000;//KERNEL_SECTION_SIZE;
 	kernelRegion.AP = RWNA;
 	kernelRegion.CB = WB;
 	kernelRegion.pAddress = KERNEL_START;
@@ -137,8 +137,8 @@ static void initTablesAndRegions() {
 	writeSectionToMemory(&kernelRegion);
 
 	writeSectionToMemory(&master_pt_region);
-	writeSectionToMemory(&pt_l2_region);
-	writeTableToMemory(&taskRegion);
+	//writeSectionToMemory(&pt_l2_region);
+	//writeTableToMemory(&taskRegion);
 
 
 
