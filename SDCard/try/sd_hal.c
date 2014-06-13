@@ -264,8 +264,7 @@ static uint32_t sendACmd51();
 // the information about the current card
 static CARD_INFO cardInfo;
 
-uint32_t
-sdHalInit()
+uint32_t sdHalInit()
 {
 	enableIfaceAndFunctionalClock();
 
@@ -307,7 +306,7 @@ sdHalInit()
 	// clear all and set card-interrupt enable
 	MMCHS_ISE = MMCHS_ISE_CIRQ_SIGEN_BIT;
 
-	// TODO: the next only when card is inserted!
+	// NOTE: the next only when card is inserted!
 	*/
 
 	sendInitStream();
@@ -327,8 +326,7 @@ sdHalInit()
 	return 0;
 }
 
-uint32_t
-sdHalReadBlocks( uint32_t block, uint32_t nblk, uint8_t* buffer )
+uint32_t sdHalReadBlocks( uint32_t block, uint32_t nblk, uint8_t* buffer )
 {
 	// NOTE: see OMAP35x.pdf page 3168
 
@@ -593,9 +591,11 @@ sendInitStream( void )
 	BIT_SET( MMCHS_CON, MMCHS_CON_INIT_BIT );
 	MMCHS_CMD = 0x0;
 
+	uint64_t waiting = 0;
 	// WAIT 1ms to allow card initializing internal state
-	uint64_t sysMillis = getSysMillis();
-	while ( 1 > getSysMillis() - sysMillis ) { }
+	//uint64_t sysMillis = getSysMillis();
+	//while ( 1 > getSysMillis() - sysMillis ) {}
+	while(waiting++ < 100000){}
 
 	// end initialization sequence
 	BIT_CLEAR( MMCHS_CON, MMCHS_CON_INIT_BIT );
@@ -806,7 +806,7 @@ configTransferSpeed()
 
 	if ( sendCmd6( arg ) )
 	{
-		// TODO: handle differently, switch to cardInfo.tranSpeed
+		//switch to cardInfo.tranSpeed
 		return 1;
 	}
 
