@@ -17,6 +17,7 @@
 #define FINE 0x03   /* 1KB of virtual addresses */
 
 #define SMALL_PAGE_SIZE 		0x1000
+#define SECTION_PAGE_SIZE		0x100000
 
 
 #define NANA 0x00

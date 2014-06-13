@@ -27,8 +27,6 @@ static void set_ddr_memory(uint32_t size) {
 	sdr_val &= 0xFFFC01FF; // reset size
 	sdr_val |= (size << 8);
 	*(uint32_t*) SDRC_MCFG = sdr_val;
-
-	//BIT_SET(SDRC_MCFG, 0, 17);
 }
 
 void hal_mmu_init(void) {
@@ -98,8 +96,8 @@ static void initTablesAndRegions() {
 
 	mmu_region_t hwRegion;
 	hwRegion.vAddress = HW_START;
-	hwRegion.pageSize = HW_PAGE_SIZE;		//Page size 4KB
-	hwRegion.numPages = HW_SIZE / HW_PAGE_SIZE;
+	hwRegion.pageSize = SECTION_PAGE_SIZE;		//Page size 4KB
+	hwRegion.numPages = HW_SIZE / SECTION_PAGE_SIZE;
 	hwRegion.AP = RWRW;
 	hwRegion.CB = cb;
 	hwRegion.pAddress = HW_START;
@@ -117,8 +115,8 @@ static void initTablesAndRegions() {
 
 	mmu_region_t kernelRegion;
 	kernelRegion.vAddress = KERNEL_START;
-	kernelRegion.pageSize = KERNEL_SECTION_SIZE;
-	kernelRegion.numPages = KERNEL_SIZE / KERNEL_SECTION_SIZE;
+	kernelRegion.pageSize = SECTION_PAGE_SIZE;
+	kernelRegion.numPages = KERNEL_SIZE / SECTION_PAGE_SIZE;
 	kernelRegion.AP = RWNA;
 	kernelRegion.CB = WB;
 	kernelRegion.pAddress = KERNEL_START;
@@ -146,13 +144,9 @@ static void initTablesAndRegions() {
 	writeSectionToMemory(&hwRegion);
 	writeSectionToMemory(&kernelRegion);
 
-	writeSectionToMemory(&master_pt_region);
-	writeSectionToMemory(&pt_l2_region);
-	writeTableToMemory(&taskRegion);
-
-
-
 	//writeSectionToMemory(&master_pt_region);
+	//writeSectionToMemory(&pt_l2_region);
+	//writeTableToMemory(&taskRegion);
 }
 
 static void writeSectionToMemory(mmu_region_t* region) {
