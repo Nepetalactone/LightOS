@@ -5,7 +5,6 @@
 
 
 
-
 ;r0 = sp old process, r1 = lr old process, r2 = sp new process
 context_switch_asm:
 	STMEA 	r0!,{r1-r7} ;user registers							PUSH 7 values
@@ -33,5 +32,3 @@ init_process_asm:
 	MOV 	PC,LR
 
 
-empty:
-	NOP

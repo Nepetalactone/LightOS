@@ -33,7 +33,7 @@ void init_scheduler(){
 
 void start_scheduling(){
 	process_t* process = (process_t*)malloc(sizeof(process_t));
-	process_stack_t* stack = (process_stack_t*)malloc(sizeof(process_stack_t) * 10);
+	process_stack_t* stack = (process_stack_t*)malloc(sizeof(process_stack_t));
 
 
 	process->name = "idle";
@@ -64,7 +64,7 @@ void __idle_process(){
 
 process_t* process_create(char* process_name, void* entry_point){
 	process_t* process = (process_t*)malloc(sizeof(process_t));
-	process_stack_t* stack = (process_stack_t*)malloc(sizeof(process_stack_t) * 10);
+	process_stack_t* stack = (process_stack_t*)malloc(sizeof(process_stack_t));
 
 
 	process->name = process_name;
@@ -116,6 +116,9 @@ void run_next_process(void* lr){
 	if(*times_switched % 10 == 0){
 		volatile uint64_t asd = *times_switched;
 		current_process->state = READY;
+		if(*times_switched == 60){
+			*times_switched = 0;
+		}
 
 	}
 	current_process->state = READY;
