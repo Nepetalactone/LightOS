@@ -16,6 +16,8 @@
 #define MASTER 0x02 /* 4KB of virtual addresses */
 #define FINE 0x03   /* 1KB of virtual addresses */
 
+#define SMALL_PAGE_SIZE 		0x1000
+
 
 #define NANA 0x00
 #define RWNA 0x01
@@ -37,12 +39,14 @@
 extern void hal_mmu_activate_asm();
 extern void hal_mmu_enable_write_buffer_asm();
 extern void hal_mmu_set_ttbr_ctrl_bits_asm(uint32_t ctrl_bits);
-//extern void hal_mmu_set_ttbr_0_asm();
+extern void hal_mmu_set_ttbr_0_asm(uint32_t ttbr_address, uint32_t context_id);
 extern void hal_mmu_set_ttbr_1_asm(uint32_t ttbr_address);
 extern void hal_mmu_set_domain(uint32_t domain_type);
 
 #define MAX_L2_TABLES	1024
 #define MAX_PROCESS_COUNT	100
+
+#define DOMAIN 0
 
 /* hw definitions */
 #define HW_START 			0x48000000
@@ -59,13 +63,13 @@ extern void hal_mmu_set_domain(uint32_t domain_type);
 
 //start page table region
 #define OS_L1_PT_START		(KERNEL_START + KERNEL_SIZE)
-#define OS_L1_PT_SIZE 		0x4000 // 16kB
+#define OS_L1_PT_SIZE 		0x4000 // 16kB //TODO adapt because of n
 
 /* task pagetables base-address */
 #define TASK_L1_PT_START			(OS_L1_PT_START + OS_L1_PT_SIZE)
-#define TASK_L1_PT_SIZE 			0x4000	// 16KB
+#define TASK_L1_PT_SIZE 			0x4000	// 16KB // TODO adapt because of n
 
-/* 1 MASTER PT for each process*/
+/* L2 PTs for each process*/
 #define TASK_L2_PT_START			TASK_L1_PT_START + (TASK_L1_PT_SIZE * MAX_PROCESS_COUNT)
 #define TASK_L2_PT_SIZE				0x400	// 1KB
 #define TASK_L2_PT_END				TASK_L2_PT_START + (MAX_L2_TABLES * TASK_L2_SIZE)
@@ -73,20 +77,10 @@ extern void hal_mmu_set_domain(uint32_t domain_type);
 
 /* task definitions */
 #define TASKS_START 		TASK_L2_PT_START + (MAX_L2_TABLES * TASK_L2_PT_SIZE) /* base address of tasks */
-#define TASK_PAGE_SIZE 		0x400 // 1KB L2 Page-Table
 #define TASK_REGION_SIZE 	0x53FFFFF //82 MB
-//#define TASK_SIZE 0x2000 //8KB
 
-/* pagetable definitions */
-//#define TASK_L2_START 		(TASK_L1_PT_START + OS_MASTER_PT_SIZE)
-//#define PT_SIZE 			0x4000
-//#define PT_PAGE_SIZE 		0x1000
-
-#define VM_START 0x00
-
-
-
-//#define OS_PAGE_SIZE 	0x100
+// start of virtual memory (tasks)
+#define VM_TASK_START 0x00004000
 
 
 /* sdram controller - ram-size (RAM address space size number of 2-MB chunks) */

@@ -54,24 +54,34 @@ void hal_mmu_init(void) {
  */
 void hal_mmu_addProcess(uint16_t processId, uint8_t processSize) {
 
-	/*mmu_l2_pagetable_t processTable;
-	processTable.masterPtAddress =  TASK_PT_START + (uint32_t) processId * TASK_L1_PT_SIZE + TASK_L2_; //L1
-	processTable.ptAddress = processTable.masterPtAddress + TASK_L1_PT_SIZE; //L2
-	processTable.vAddress = VM_START;
+	mmu_master_pagetable_t task_l1_table;
+	task_l1_table.vAddress = VM_TASK_START;
+	task_l1_table.dom = DOMAIN;
+	task_l1_table.type = MASTER;
+	task_l1_table.ptAddress = TASK_L1_PT_START + processId * TASK_L1_PT_SIZE;
 
-	processTable.type = COARSE;
-	processTable.dom = 0;
 
-	mmu_l2_pagetable_t processRegion;
-	processRegion.vAddress = VM_START;
-	processRegion.pageSize = TASK_PAGE_SIZE;
-	processRegion.numPages = processSize / TASK_PAGE_SIZE;
-	processRegion.AP = RWRW;
-	processRegion.CB = WB;
-	processRegion.pAddress = TASKS_START + (processId * TASK_SIZE);
-	processRegion.PT = &processTable;
+	// 1024 l2 pagetables are possible --> 1024 * 1mb
+	uint32_t nr_of_pages = processSize / SMALL_PAGE_SIZE;
 
-	writeTableToMemory(&processRegion);*/
+	if (nr_of_pages <= 256) {
+		// only one l2 pt is used
+		mmu_l2_pagetable_t task_l2_table;
+		task_l2_table.dom = DOMAIN;
+		task_l2_table.type = COARSE;
+		task_l2_table.vAddress = VM_TASK_START;
+		task_l2_table.masterPtAddress = task_l1_table.ptAddress;
+		task_l2_table.ptAddress = TASK_L2_PT_START + processId * TASK_L2_PT_SIZE;
+
+		task_l1_table.mmu_l2_tables[0] = task_l2_table;
+	} else {
+		// split pages to several l2 pagetables
+		// actually only one l2 pagetable --> 1mb max
+	}
+
+	//writeSectionToMemory(&taskRegion);
+	//writeTableToMemory(&task_l1_table);
+
 }
 
 void hal_mmu_removeProcess(uint16_t processId) {
@@ -84,7 +94,7 @@ static void initTablesAndRegions() {
 	masterTable.vAddress = OS_L1_PT_START;
 	//masterTable.masterPtAddress = MASTER_PT_START;
 	masterTable.type = MASTER;
-	masterTable.dom = 0;
+	masterTable.dom = DOMAIN;
 
 	mmu_region_t hwRegion;
 	hwRegion.vAddress = HW_START;
