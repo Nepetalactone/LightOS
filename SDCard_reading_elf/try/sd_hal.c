@@ -3,6 +3,7 @@
  *
  *  Created on: 11.06.2014
  *      Author: phil
+ *      (c) Jonathan Thaler
  */
 
 
@@ -592,8 +593,7 @@ void sendInitStream( void )
 	clearAllInterruptsStatus();
 }
 
-uint32_t
-identifyCard( void )
+uint32_t identifyCard( void )
 {
 	// NOTE: see OMAP35x.pdf page 3164, starterware and sd_spec 2.0
 
@@ -758,8 +758,7 @@ cardIdentified:
 	return 0;
 }
 
-uint32_t
-configBusWidth()
+uint32_t configBusWidth()
 {
 	uint8_t selectedBusWidth = 0x0;
 
@@ -788,14 +787,12 @@ configBusWidth()
 	return 0;
 }
 
-uint32_t
-configTransferSpeed()
+uint32_t configTransferSpeed()
 {
 	uint32_t arg = ( ( SD_SWITCH_MODE & SD_CMD6_GRP1_SEL ) | ( SD_CMD6_GRP1_HS ) );
 
 	if ( sendCmd6( arg ) )
 	{
-		//switch to cardInfo.tranSpeed
 		return 1;
 	}
 
@@ -832,8 +829,7 @@ configTransferSpeed()
 	return 0;
 }
 
-uint32_t
-readTransferBuffer( uint32_t nBytes, uint8_t* buffer )
+uint32_t readTransferBuffer( uint32_t nBytes, uint8_t* buffer )
 {
 	uint32_t status = 0;
 
@@ -900,8 +896,7 @@ readTransferBuffer( uint32_t nBytes, uint8_t* buffer )
 	return status;
 }
 
-uint32_t
-awaitCommandResponse()
+uint32_t awaitCommandResponse()
 {
 	// NOTE: for dependencies between error flags and command complete in MMCHS_STAT see page 3157f
 
@@ -952,8 +947,7 @@ awaitCommandResponse()
 	}
 }
 
-uint32_t
-awaitInternalClockStable( uint32_t retries )
+uint32_t awaitInternalClockStable( uint32_t retries )
 {
 	uint32_t i = 0;
 
@@ -968,8 +962,7 @@ awaitInternalClockStable( uint32_t retries )
 	return 1;
 }
 
-uint32_t
-resetMMCIDataLine( uint32_t retries )
+uint32_t resetMMCIDataLine( uint32_t retries )
 {
 	uint32_t i = 0;
 
@@ -986,8 +979,7 @@ resetMMCIDataLine( uint32_t retries )
 	return 1;
 }
 
-uint32_t
-resetMMCICmdLine( uint32_t retries )
+uint32_t resetMMCICmdLine( uint32_t retries )
 {
 	uint32_t i = 0;
 
@@ -1004,38 +996,32 @@ resetMMCICmdLine( uint32_t retries )
 	return 1;
 }
 
-uint32_t
-isCommandComplete( void )
+uint32_t isCommandComplete( void )
 {
 	return BIT_CHECK( MMCHS_STAT, MMCHS_STAT_CC_BIT );
 }
 
-uint32_t
-isCommandTimeout( void )
+uint32_t isCommandTimeout( void )
 {
 	return BIT_CHECK( MMCHS_STAT, MMCHS_STAT_CTO_BIT );
 }
 
-uint32_t
-isTransferComplete( void )
+uint32_t isTransferComplete( void )
 {
 	return BIT_CHECK( MMCHS_STAT, MMCHS_STAT_TC_BIT );
 }
 
-uint32_t
-isDataTimeout( void )
+uint32_t isDataTimeout( void )
 {
 	return BIT_CHECK( MMCHS_STAT, MMCHS_STAT_DTO_BIT );
 }
 
-uint32_t
-isBufferReadReady( void )
+uint32_t isBufferReadReady( void )
 {
 	return BIT_CHECK( MMCHS_STAT, MMCHS_STAT_BRR_BIT );
 }
 
-uint32_t
-awaitDataLineAvailable( uint32_t retries )
+uint32_t awaitDataLineAvailable( uint32_t retries )
 {
 	uint32_t i = 0;
 
@@ -1051,47 +1037,40 @@ awaitDataLineAvailable( uint32_t retries )
 	return 1;
 }
 
-void
-clearAllInterruptsStatus( void )
+void clearAllInterruptsStatus( void )
 {
 	// clear all interrupts by writing 1 to every bit in STAT-register
 	MMCHS_STAT = 0xFFFFFFFF;
 }
 
-void
-clearBufferReadReady( void )
+void clearBufferReadReady( void )
 {
 	MMCHS_STAT = MMCHS_STAT_BRR_BIT;
 }
 
-void
-clearCommandComplete( void )
+void clearCommandComplete( void )
 {
 	MMCHS_STAT = MMCHS_STAT_CC_BIT;
 }
 
-void
-clearTransferComplete( void )
+void clearTransferComplete( void )
 {
 	MMCHS_STAT = MMCHS_STAT_TC_BIT;
 }
 
-void
-clearInterruptBits( uint32_t bits )
+void clearInterruptBits( uint32_t bits )
 {
 	MMCHS_STAT = bits;
 }
 
 // NOTE: timeout must be in range of 13 to 27
-void
-setDataTimeout( uint32_t timeout )
+void setDataTimeout( uint32_t timeout )
 {
 	BIT_CLEAR( MMCHS_SYSCTL, MMCHS_SYSCTL_DTO_MASK );
 	MMCHS_SYSCTL |= ((((timeout) - 13) & 0xF) << MMCHS_SYSCTL_DTO_BIT_INDEX);
 }
 
-uint32_t
-isCardBusy()
+uint32_t isCardBusy()
 {
 	uint32_t busyBit = BIT_CHECK( MMCHS_RSP10, MMCHS_RSP10_BUSY_BIT );
 	uint32_t busyFlag = busyBit == 0;
@@ -1106,8 +1085,7 @@ isCardBusy()
  * type:	bc
  * resp:	-
  */
-uint32_t
-sendCmd0( void )
+uint32_t sendCmd0( void )
 {
 	// NOTE: this command resets the MMC card (see OMAP35x.pdf page 3180)
 
@@ -1123,8 +1101,7 @@ sendCmd0( void )
  * type:	bcr
  * resp:	R2
  */
-uint32_t
-sendCmd2( void )
+uint32_t sendCmd2( void )
 {
 	// NOTE: This command asks the MMC card to send its CID register's content (see OMAP35x.pdf page 3182)
 
@@ -1140,8 +1117,7 @@ sendCmd2( void )
  * type:	bcr
  * resp:	R6
  */
-uint32_t
-sendCmd3( void )
+uint32_t sendCmd3( void )
 {
 	// NOTE: This command sets MMC card address (see Table 22-19). Useful when MMCHS controller switches to addressed mode (see OMAP35x.pdf page 3182)
 
@@ -1153,8 +1129,7 @@ sendCmd3( void )
 }
 
 // NOTE: reserved for I/O cards (refer to the "SDIO Card Specification")
-uint32_t
-sendCmd5( void )
+uint32_t sendCmd5( void )
 {
 	// NOTE: This command asks a SDIO card to send its operating conditions. This command will fail if there is no SDIO card (see OMAP35x.pdf page 3180)
 
@@ -1180,8 +1155,7 @@ sendCmd5( void )
  * 			[7:4] function group 2 for command system
  * 			[3:0] function group 1 for access mode
  */
-uint32_t
-sendCmd6( uint32_t arg )
+uint32_t sendCmd6( uint32_t arg )
 {
 	// NOTE: Setting Data Bus Width to arg
 	// NOTE: see sd_spec 2.0 page 42: 4.3.10 Switch Function Command
@@ -1206,8 +1180,7 @@ sendCmd6( uint32_t arg )
  * resp:	R1b
  * arg:		[31:16] RCA
  */
-uint32_t
-sendCmd7( void )
+uint32_t sendCmd7( void )
 {
 	// NOTE: see OMAP35x.pdf page 3184
 
@@ -1226,8 +1199,7 @@ sendCmd7( void )
  * resp:	R7
  * arg:		[31:12]reserved bits, [11:8]supply voltage(VHS) [7:0]check pattern
  */
-uint32_t
-sendCmd8( void )
+uint32_t sendCmd8( void )
 {
 	// NOTE: This command asks a SD card version 2.X to send its operating conditions (see OMAP35x.pdf page 3180f)
 	// NOTE: see sd_spec 2.0 page 51 4.3.13 Send Interface Condition Command (CMD8)
@@ -1246,8 +1218,7 @@ sendCmd8( void )
  * resp:	R2
  * arg:		[31:16] RCA
  */
-uint32_t
-sendCmd9( void )
+uint32_t sendCmd9( void )
 {
 	// NOTE: This command asks the card to send its csd register's content
 
@@ -1265,8 +1236,7 @@ sendCmd9( void )
  * resp:	R1b (busy!)
  * arg:		[31:0] stuff bits
  */
-uint32_t
-sendCmd12( void )
+uint32_t sendCmd12( void )
 {
 	// NOTE: seems to work without it for now
 
@@ -1288,8 +1258,7 @@ sendCmd12( void )
  * resp:	R1
  * arg:		[31:0] block length
  */
-uint32_t
-sendCmd16()
+uint32_t sendCmd16()
 {
 	// NOTE: Issuing CMD16 allows to set the block length (see OMAP35x.pdf page 3186)
 
@@ -1308,8 +1277,7 @@ sendCmd16()
  * resp:	R1
  * arg:		[31:0] data address: Data address is in byte units in a Standard Capacity SD Memory Card and in block (512 Byte) units in a High Capacity SD Memory Card.
  */
-uint32_t
-sendCmd17( uint32_t addr )
+uint32_t sendCmd17( uint32_t addr )
 {
 	MMCHS_IE = MMCHS_IE_CERR_BIT | MMCHS_IE_CIE_BIT | MMCHS_IE_CCRC_BIT | MMCHS_IE_CC_BIT | MMCHS_IE_CTO_BIT | MMCHS_IE_CEB_BIT | MMCHS_IE_TC_BIT | MMCHS_IE_BRR_BIT | MMCHS_IE_DTO_BIT | MMCHS_IE_DCRC_BIT | MMCHS_IE_DEB_BIT;
 	MMCHS_ARG = addr;	// address
@@ -1328,8 +1296,7 @@ sendCmd17( uint32_t addr )
  * resp:	R1
  * arg:		[31:0] data address: Data address is in byte units in a Standard Capacity SD Memory Card and in block (512 Byte) units in a High Capacity SD Memory Card.
  */
-uint32_t
-sendCmd18( uint32_t addr, uint32_t nblk )
+uint32_t sendCmd18( uint32_t addr, uint32_t nblk )
 {
 	// NOTE: Issuing CMD18 starts the finite, multiple block read transfer. (see OMAP35x.pdf page 3187)
 
@@ -1351,8 +1318,7 @@ sendCmd18( uint32_t addr, uint32_t nblk )
  * resp:	R1
  * arg:		[31:2] stuff bits, [1:0] bus width
  */
-uint32_t
-sendACmd6( uint8_t busWidth )
+uint32_t sendACmd6( uint8_t busWidth )
 {
 	// send APP_CMD to notify card that next command will be application specific
 	if ( sendCmd55() )
@@ -1377,8 +1343,7 @@ sendACmd6( uint8_t busWidth )
  * resp:	R3
  * arg:		[31]reserved bit [30]HCS(OCR[30]) [29:24]reserved bits [23:0] VDD Voltage Window(OCR[23:0])
  */
-uint32_t
-sendACmd41( uint8_t hcsFlag )
+uint32_t sendACmd41( uint8_t hcsFlag )
 {
 	// send APP_CMD to notify card that next command will be application specific
 	if ( sendCmd55() )
@@ -1401,8 +1366,7 @@ sendACmd41( uint8_t hcsFlag )
  * resp:	R1
  * arg:		[31:0] stuff bits
  */
-uint32_t
-sendACmd51()
+uint32_t sendACmd51()
 {
 	// send APP_CMD to notify card that next command will be application specific
 	if ( sendCmd55() )
@@ -1427,8 +1391,7 @@ sendACmd51()
  * resp:	R1
  * arg:		[31:16] RCA
  */
-uint32_t
-sendCmd55( void )
+uint32_t sendCmd55( void )
 {
 	// This is a special command used to prevent the card that the following command is going to be an application one (see OMAP35x.pdf page 3181)
 

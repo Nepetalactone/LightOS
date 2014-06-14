@@ -3,6 +3,7 @@
  *
  *  Created on: 11.06.2014
  *      Author: phil
+ *  (c) Jonathan Thaler
  */
 #include "fat32.h"
 
