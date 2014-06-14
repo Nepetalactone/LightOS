@@ -70,14 +70,28 @@ void hal_mmu_addProcess(uint16_t processId, uint8_t processSize) {
 		task_l2_table.vAddress = VM_TASK_START;
 		task_l2_table.masterPtAddress = task_l1_table.ptAddress;
 		task_l2_table.ptAddress = TASK_L2_PT_START + processId * TASK_L2_PT_SIZE;
+		task_l2_table.numPages = nr_of_pages;
 
 		task_l1_table.mmu_l2_tables[0] = task_l2_table;
+
+		mmu_region_t taskRegion;
+		taskRegion.vAddress = TASKS_START; //TASKS_START;
+		taskRegion.pageSize = SMALL_PAGE_SIZE;
+		taskRegion.numPages = TASK_REGION_SIZE / TASK_PAGE_SIZE;
+		taskRegion.AP = RWRW;
+		taskRegion.CB = cb;
+		taskRegion.pAddress = TASKS_START;
+		taskRegion.PT = &task_l1_table;
+
+		writeTableToMemory(&taskRegion);
+
+
+		writeSmallPagesToMemory(&task_l2_table);
 	} else {
 		// split pages to several l2 pagetables
 		// actually only one l2 pagetable --> 1mb max
 	}
 
-	//writeSectionToMemory(&taskRegion);
 	//writeTableToMemory(&task_l1_table);
 
 }
@@ -92,31 +106,21 @@ static void initTablesAndRegions() {
 	masterTable.vAddress = OS_L1_PT_START;
 	//masterTable.masterPtAddress = MASTER_PT_START;
 	masterTable.type = MASTER;
-	masterTable.dom = DOMAIN;
+	masterTable.dom = 0;
 
 	mmu_region_t hwRegion;
 	hwRegion.vAddress = HW_START;
-	hwRegion.pageSize = SECTION_PAGE_SIZE;		//Page size 4KB
-	hwRegion.numPages = HW_SIZE / SECTION_PAGE_SIZE;
+	hwRegion.pageSize = SECTION_PAGE_SIZE; //HW_PAGE_SIZE;		//Page size 4KB
+	hwRegion.numPages = HW_SIZE / SECTION_PAGE_SIZE;// HW_PAGE_SIZE;
 	hwRegion.AP = RWRW;
 	hwRegion.CB = cb;
 	hwRegion.pAddress = HW_START;
 	hwRegion.PT = &masterTable;
 
-	mmu_region_t taskRegion;
-	taskRegion.vAddress = TASKS_START; //TASKS_START;
-	taskRegion.pageSize = SMALL_PAGE_SIZE;		//Page size 4KB
-	taskRegion.numPages = TASK_REGION_SIZE / SMALL_PAGE_SIZE;
-	taskRegion.AP = RWRW;
-	taskRegion.CB = cb;
-	taskRegion.pAddress = TASKS_START;
-	taskRegion.PT = &masterTable;
-
-
 	mmu_region_t kernelRegion;
 	kernelRegion.vAddress = KERNEL_START;
-	kernelRegion.pageSize = SECTION_PAGE_SIZE;
-	kernelRegion.numPages = KERNEL_SIZE / SECTION_PAGE_SIZE;
+	kernelRegion.pageSize = SECTION_PAGE_SIZE;// KERNEL_SECTION_SIZE;
+	kernelRegion.numPages = KERNEL_SIZE / SECTION_PAGE_SIZE;//KERNEL_SECTION_SIZE;
 	kernelRegion.AP = RWNA;
 	kernelRegion.CB = WB;
 	kernelRegion.pAddress = KERNEL_START;
@@ -134,8 +138,8 @@ static void initTablesAndRegions() {
 
 	mmu_region_t pt_l2_region;
 	pt_l2_region.vAddress = TASK_L2_PT_START;
-	pt_l2_region.pageSize = TASK_L2_PT_SIZE;
-	pt_l2_region.numPages = PAGE_TABLE_REGION_SIZE / TASK_L1_PT_SIZE;
+	pt_l2_region.pageSize = SECTION_PAGE_SIZE;
+	pt_l2_region.numPages = PAGE_TABLE_REGION_SIZE / SECTION_PAGE_SIZE;
 	pt_l2_region.AP = RWNA;
 	pt_l2_region.CB = WB;
 	pt_l2_region.pAddress = TASK_L2_PT_START;
@@ -144,9 +148,8 @@ static void initTablesAndRegions() {
 	writeSectionToMemory(&hwRegion);
 	writeSectionToMemory(&kernelRegion);
 
-	//writeSectionToMemory(&master_pt_region);
-	//writeSectionToMemory(&pt_l2_region);
-	//writeTableToMemory(&taskRegion);
+	writeSectionToMemory(&master_pt_region);
+	writeSectionToMemory(&pt_l2_region);
 }
 
 static void writeSectionToMemory(mmu_region_t* region) {
@@ -182,4 +185,13 @@ static void writeTableToMemory(mmu_region_t* region) {
 	for (i = region->numPages - 1; i >= 0; i--) {
 		*tablePos-- = entry + (i << 10);
 	}
+}
+
+static void writeSmallPagesToMemory(mmu_l2_pagetable_t table) {
+	uint32_t* tablePos = (uint32_t*) table->ptAddress;
+	tablePos += table->vAddress << 20;
+	tablePos += table->numPages - 1;
+	tablePos = (uint32_t*)((uint32_t) tablePos & 0xFFFFFFFC);
+
+	//uint32_t entry = table->
 }

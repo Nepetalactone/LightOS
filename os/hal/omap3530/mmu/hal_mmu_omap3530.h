@@ -18,7 +18,7 @@
 
 #define SMALL_PAGE_SIZE 		0x1000
 #define SECTION_PAGE_SIZE		0x100000
-
+#define COARSE_PAGETABLE_SIZE   0x400
 
 #define NANA 0x00
 #define RWNA 0x01
@@ -64,13 +64,13 @@ extern void hal_mmu_set_domain(uint32_t domain_type);
 
 //start page table region
 #define OS_L1_PT_START		(KERNEL_START + KERNEL_SIZE)
-#define OS_L1_PT_SIZE 		0x4000 // 16kB //TODO adapt because of n
+#define OS_L1_PT_SIZE 		0x4000 // 16kB
 
 /* task pagetables base-address */
 #define TASK_L1_PT_START			(OS_L1_PT_START + OS_L1_PT_SIZE)
-#define TASK_L1_PT_SIZE 			0x4000	// 16KB // TODO adapt because of n
+#define TASK_L1_PT_SIZE 			0x4000	// 16KB
 
-/* L2 PTs for each process*/
+/* 1 MASTER PT for each process*/
 #define TASK_L2_PT_START			TASK_L1_PT_START + (TASK_L1_PT_SIZE * MAX_PROCESS_COUNT)
 #define TASK_L2_PT_SIZE				0x400	// 1KB
 #define TASK_L2_PT_END				TASK_L2_PT_START + (MAX_L2_TABLES * TASK_L2_SIZE)
@@ -78,10 +78,20 @@ extern void hal_mmu_set_domain(uint32_t domain_type);
 
 /* task definitions */
 #define TASKS_START 		TASK_L2_PT_START + (MAX_L2_TABLES * TASK_L2_PT_SIZE) /* base address of tasks */
+#define TASK_PAGE_SIZE 		0x400 // 1KB L2 Page-Table
 #define TASK_REGION_SIZE 	0x53FFFFF //82 MB
+//#define TASK_SIZE 0x2000 //8KB
 
-// start of virtual memory (tasks)
+/* pagetable definitions */
+//#define TASK_L2_START 		(TASK_L1_PT_START + OS_MASTER_PT_SIZE)
+//#define PT_SIZE 			0x4000
+//#define PT_PAGE_SIZE 		0x1000
+
+//#define VM_START 0x00
 #define VM_TASK_START 0x00004000
+
+
+//#define OS_PAGE_SIZE 	0x100
 
 
 /* sdram controller - ram-size (RAM address space size number of 2-MB chunks) */
