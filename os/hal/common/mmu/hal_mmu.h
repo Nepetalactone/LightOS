@@ -13,31 +13,33 @@
 #define MAX_L2_TABLES 1024
 
 typedef struct {
-	uint32_t vAddress;
 	uint32_t ptAddress;
 	uint32_t masterPtAddress;
-	uint32_t type;
-	uint32_t dom; // domain
-	uint32_t numPages;
-} mmu_l2_pagetable_t;
+} mmu_pagetable_t;
 
 typedef struct {
 	uint32_t vAddress;
-	uint32_t ptAddress;
+	uint32_t pAddress;
+	uint32_t AP0;
+	uint32_t AP1;
+	uint32_t AP2;
+	uint32_t AP3;
+	uint32_t CB;
 	uint32_t type;
-	uint32_t dom; // domain
-	mmu_l2_pagetable_t mmu_l2_tables[MAX_L2_TABLES];
-} mmu_master_pagetable_t;
+	mmu_pagetable_t *PT;
+} mmu_second_level_desc_t;
+
+
 
 typedef struct {
 	uint32_t vAddress;
-	uint32_t pageSize;
-	uint32_t numPages;
+	uint32_t pAddress;
 	uint32_t AP;
 	uint32_t CB;
-	uint32_t pAddress;
-	mmu_master_pagetable_t *PT;
-} mmu_region_t;
+	uint32_t type;
+	uint32_t dom; // domain
+	mmu_pagetable_t *PT;
+} mmu_first_level_desc_section_t;
 
 
 void hal_mmu_activate(void);

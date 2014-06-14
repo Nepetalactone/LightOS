@@ -13,7 +13,7 @@
 /* pagetable descriptor size */
 #define FAULT 0x00  /* associated virtual addresses are unmapped */
 #define COARSE 0x01 /* 64KB of virtual addresses */
-#define MASTER 0x02 /* 4KB of virtual addresses */
+#define SECTION 0x02 /* 4KB of virtual addresses */
 #define FINE 0x03   /* 1KB of virtual addresses */
 
 #define SMALL_PAGE_SIZE 		0x1000
