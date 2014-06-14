@@ -15,3 +15,7 @@ void mmu_activate(void) {
 void mmu_init(void) {
 	hal_mmu_init();
 }
+
+void mmu_init_process(uint16_t processId, uint8_t processSize) {
+	hal_mmu_addProcess(processId, processSize);
+}

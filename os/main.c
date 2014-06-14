@@ -43,6 +43,7 @@ int main(void) {
 	//_enable_interrupts();
 	mmu_init();
 	mmu_activate();
+	mmu_init_process(1, 8);
 
 	volatile int x=0;
 	while(1)

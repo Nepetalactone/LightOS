@@ -18,6 +18,7 @@
 
 #define SMALL_PAGE_SIZE 		0x1000
 #define SECTION_PAGE_SIZE		0x100000
+#define COARSE_PAGETABLE_SIZE   0x400
 
 #define NANA 0x00
 #define RWNA 0x01

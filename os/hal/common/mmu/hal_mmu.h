@@ -18,7 +18,7 @@ typedef struct {
 	uint32_t masterPtAddress;
 	uint32_t type;
 	uint32_t dom; // domain
-
+	uint32_t numPages;
 } mmu_l2_pagetable_t;
 
 typedef struct {
