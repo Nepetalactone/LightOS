@@ -42,6 +42,8 @@ typedef struct {
 
 typedef struct process {
 	process_id procId;
+	uint16_t size;
+	uint32_t pt_address;
 	process_state_t state;
 	hw_stack_frame_t hw_stack;
 	sw_stack_frame_t sw_stack;

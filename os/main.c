@@ -43,7 +43,12 @@ int main(void) {
 	//_enable_interrupts();
 	mmu_init();
 	mmu_activate();
-	mmu_init_process(1, 8);
+
+	process_t* proc = malloc(sizeof(proc));
+	proc->procId = 1;
+	proc->size = 16;
+
+	mmu_init_process(proc);
 
 	volatile int x=0;
 	while(1)

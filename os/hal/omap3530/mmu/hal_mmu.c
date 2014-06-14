@@ -13,9 +13,9 @@
  *
  */
 static void initTablesAndRegions();
-static void writeSectionsToMemory(mmu_first_level_desc_section_t* section, uint32_t numOfSections);
-static void writeCoarsePageTablesToMemory(mmu_first_level_desc_section_t* region);
-//static void writeSmallPagesToMemory(mmu_coarse_pagetable_t table);
+static void writeSectionsToMemory(mmu_first_level_desc_t* section, uint32_t numOfSections);
+static void write_coarse_page_table_to_memory(mmu_first_level_desc_t* desc, uint32_t num_of_pages);
+static void write_small_pages_to_memory(mmu_second_level_desc_t* desc, uint32_t nr_of_pages);
 
 void hal_mmu_activate(void) {
 	hal_mmu_activate_asm();
@@ -51,43 +51,46 @@ void hal_mmu_init(void) {
  * processSize in kB (4kB pages)
  *
  */
-void hal_mmu_addProcess(uint16_t processId, uint8_t processSize) {
-/*
+void hal_mmu_addProcess(process_t* proc) {
+	//L1 Table
 	mmu_pagetable_t task_l1_table;
-	task_l1_table.vAddress = VM_TASK_START;
-	//task_l1_table.dom = DOMAIN;
-	task_l1_table.type = COARSE;
-	task_l1_table.ptAddress = TASK_L1_PT_START + processId * TASK_L1_PT_SIZE;
-
+	task_l1_table.ptAddress = TASK_L1_PT_START + proc->procId * TASK_L1_PT_SIZE;
+	proc->pt_address = (uint32_t) &task_l1_table;
 
 	// 1024 l2 pagetables are possible --> 1024 * 1mb
-	uint32_t nr_of_pages = processSize / SMALL_PAGE_SIZE;
+	uint32_t nr_of_pages = (proc->size *1024) / SMALL_PAGE_SIZE;
 
 	if (nr_of_pages <= 256) {
-		// only one l2 pt is used
+		// L1 entry
+		mmu_first_level_desc_t coarse_entry;
+		//TODO fix adresses L1 L2 Tables
+		//coarse_entry.vAddress = TASK_START + (COARSE_PAGE_SIZE * proc->procId); //TASKS_START;
+		//coarse_entry.pAddress = TASK_START + (COARSE_PAGE_SIZE * proc->procId);
+		coarse_entry.PT = &task_l1_table;
+		coarse_entry.dom = DOMAIN;
+		coarse_entry.type = COARSE;
 
-		mmu_coarse_pagetable_t task_l2_table;
-		task_l2_table.dom = DOMAIN;
-		task_l2_table.type = COARSE;
-		task_l2_table.vAddress = VM_TASK_START;
+		write_coarse_page_table_to_memory(&coarse_entry, nr_of_pages);
+
+		//L2 Table
+		mmu_pagetable_t task_l2_table;
 		task_l2_table.masterPtAddress = task_l1_table.ptAddress;
-		task_l2_table.ptAddress = TASK_L2_PT_START + processId * TASK_L2_PT_SIZE;
-		task_l2_table.numPages = nr_of_pages;
+		task_l2_table.ptAddress = TASK_L2_PT_START + proc->procId * TASK_L2_PT_SIZE;
 
-		task_l1_table.mmu_l2_tables[0] = task_l2_table;
+		//L2 entry
+		mmu_second_level_desc_t small_page_entry;
+		//small_page_entry.vAddress = TASK_START + proc->procId * SMALL_PAGE_SIZE; //TASKS_START;
+		//small_page_entry.pAddress = TASK_START + proc->procId * SMALL_PAGE_SIZE;
+		small_page_entry.AP0 = RWRW;
+		small_page_entry.AP1 = RWRW;
+		small_page_entry.AP2 = RWRW;
+		small_page_entry.AP3 = RWRW;
+		small_page_entry.CB = WB;
+		small_page_entry.PT = &task_l1_table;
+		small_page_entry.type = SMALL;
+		small_page_entry.first_level_desc = &coarse_entry;
 
-		mmu_first_level_desc_section_t taskRegion;
-		taskRegion.vAddress = TASKS_START; //TASKS_START;
-		taskRegion.pageSize = SMALL_PAGE_SIZE;
-		taskRegion.numPages = TASK_REGION_SIZE / TASK_PAGE_SIZE;
-		taskRegion.AP = RWRW;
-		taskRegion.CB = cb;
-		taskRegion.pAddress = TASKS_START;
-		taskRegion.PT = &task_l1_table;
-
-		//writeCoarsePageTablesToMemory(&taskRegion);
-
-
+		write_small_pages_to_memory(&small_page_entry, nr_of_pages);
 		//writeSmallPagesToMemory(&task_l2_table);
 	} else {
 		// split pages to several l2 pagetables
@@ -95,18 +98,18 @@ void hal_mmu_addProcess(uint16_t processId, uint8_t processSize) {
 	}
 
 	//writeTableToMemory(&task_l1_table);
-*/
 }
 
 void hal_mmu_removeProcess(uint16_t processId) {
 	//TODO: remove region and table
 }
 
+
 static void initTablesAndRegions() {
 	mmu_pagetable_t masterTable;
 	masterTable.ptAddress = OS_L1_PT_START;
 
-	mmu_first_level_desc_section_t hw_section;
+	mmu_first_level_desc_t hw_section;
 	hw_section.type = SECTION;
 	hw_section.dom = DOMAIN;
 	hw_section.vAddress = HW_START;
@@ -117,7 +120,7 @@ static void initTablesAndRegions() {
 	writeSectionsToMemory(&hw_section, (HW_SIZE / SECTION_PAGE_SIZE));
 
 
-	mmu_first_level_desc_section_t kernel_section;
+	mmu_first_level_desc_t kernel_section;
 	kernel_section.type = SECTION;
 	kernel_section.dom = DOMAIN;
 	kernel_section.vAddress = KERNEL_START;
@@ -127,7 +130,7 @@ static void initTablesAndRegions() {
 	kernel_section.PT = &masterTable;
 	writeSectionsToMemory(&kernel_section, (KERNEL_SIZE / SECTION_PAGE_SIZE));
 
-	mmu_first_level_desc_section_t master_pt_section;
+	mmu_first_level_desc_t master_pt_section;
 	master_pt_section.type = SECTION;
 	master_pt_section.dom = DOMAIN;
 	master_pt_section.vAddress = TASK_L1_PT_START;
@@ -138,7 +141,7 @@ static void initTablesAndRegions() {
 	writeSectionsToMemory(&master_pt_section, (PAGE_TABLE_REGION_SIZE / TASK_L1_PT_SIZE));
 
 
-	mmu_first_level_desc_section_t pt_l2_section;
+	mmu_first_level_desc_t pt_l2_section;
 	pt_l2_section.type = SECTION;
 	pt_l2_section.dom = DOMAIN;
 	pt_l2_section.vAddress = TASK_L2_PT_START;
@@ -152,7 +155,7 @@ static void initTablesAndRegions() {
 /*
  * write a pagetable containing only sections to memory
  */
-static void writeSectionsToMemory(mmu_first_level_desc_section_t* section, uint32_t numOfSections) {
+static void writeSectionsToMemory(mmu_first_level_desc_t* section, uint32_t numOfSections) {
 	uint32_t* tablePos = (uint32_t*) section->PT->ptAddress;
 	tablePos += section->vAddress >> 20;
 	tablePos += numOfSections - 1;
@@ -169,33 +172,50 @@ static void writeSectionsToMemory(mmu_first_level_desc_section_t* section, uint3
 	}
 }
 
-/*
 
-static void writeCoarsePageTablesToMemory(mmu_first_level_desc_section_t* region) {
-	uint32_t* tablePos = (uint32_t*) region->PT->ptAddress;
-	tablePos += region->vAddress >> 20;
-	tablePos += region->numPages - 1;
+static void write_coarse_page_table_to_memory(mmu_first_level_desc_t* desc, uint32_t nr_of_pages) {
+	uint32_t* tablePos = (uint32_t*) desc->PT->ptAddress;
+	tablePos += desc->vAddress >> 20;
+	tablePos += nr_of_pages - 1;
 	tablePos = (uint32_t*)((uint32_t)tablePos & 0xFFFFFFFC);
 
-	uint32_t entry = region->pAddress & 0xFFFFFC00;
-	entry |= region->PT->dom >> 4;
-	entry |= (region->CB & 0x3) << 2;
+	uint32_t entry = desc->pAddress & 0xFFFFFC00;
+	entry |= desc->dom >> 4;
+	//entry |= (desc->CB & 0x3) << 2;
 	entry &= 0xFFFFFFFD;
 	entry |= 0x1 ; //0b01 -> coarse table descriptor
 
 	int i;
-	for (i = region->numPages - 1; i >= 0; i--) {
+	for (i = nr_of_pages - 1; i >= 0; i--) {
 		*tablePos-- = entry + (i << 10);
 	}
 }
-*/
-/*
-static void writeSmallPagesToMemory(mmu_coarse_pagetable_t table) {
-	uint32_t* tablePos = (uint32_t*) table->ptAddress;
-	tablePos += table->vAddress << 20;
-	tablePos += table->numPages - 1;
-	tablePos = (uint32_t*)((uint32_t) tablePos & 0xFFFFFFFC);
 
+
+static void write_small_pages_to_memory(mmu_second_level_desc_t* desc, uint32_t nr_of_pages) {
+	uint32_t* tablePos = (uint32_t*) desc->PT->ptAddress;
+	uint32_t vAddr = desc->first_level_desc->vAddress;
+	vAddr &= 0x1FF000;
+	vAddr = vAddr >> 10;
+
+	tablePos += vAddr;
+	tablePos = (uint32_t*)((uint32_t)tablePos & 0xFFFFFFFC);
+
+	uint32_t entry = desc->first_level_desc->pAddress & 0xFFFFF000;
+	entry |= desc->AP3 << 10;
+	entry |= desc->AP2 << 8;
+	entry |= desc->AP1 << 6;
+	entry |= desc->AP0 << 4;
+
+	entry |= desc->CB << 2;
+
+	//tablePos += desc->vAddress >> 20;
+	//tablePos += nr_of_pages - 1;
+	//tablePos = (uint32_t*)((uint32_t) tablePos & 0xFFFFFFFC);
+	int i;
+	for (i = nr_of_pages -1; i >= 0; i--) {
+		*tablePos-- = entry + (i << 12);
+	}
 	//uint32_t entry = table->
 }
-*/
+

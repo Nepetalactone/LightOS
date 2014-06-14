@@ -15,6 +15,7 @@
 #define COARSE 0x01 /* 64KB of virtual addresses */
 #define SECTION 0x02 /* 4KB of virtual addresses */
 #define FINE 0x03   /* 1KB of virtual addresses */
+#define SMALL 0x02
 
 #define SMALL_PAGE_SIZE 		0x1000
 #define SECTION_PAGE_SIZE		0x100000
