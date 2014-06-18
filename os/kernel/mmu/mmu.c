@@ -8,8 +8,14 @@
 #include "mmu.h"
 #include "../../hal/common/mmu/hal_mmu.h"
 
-void mmu_start(void) {
-	hal_mmu_start();
+void mmu_activate(void) {
+	hal_mmu_activate();
 }
 
+void mmu_init(void) {
+	hal_mmu_init();
+}
 
+void mmu_init_process(process_t* proc) {
+	hal_mmu_addProcess(proc);
+}

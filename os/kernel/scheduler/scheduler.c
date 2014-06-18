@@ -20,15 +20,15 @@ process_t* temp;
 
 process_t* procs[3];
 volatile uint32_t counter = 0;
-volatile uint64_t* times_switched = 0;
+uint32_t times_switched = 0;
 
 void init_scheduler(){
 	//process_ready_queue = createQueue();
 	//process_table = createQueue();
 	//TODO adjust scheduling timer TCRR value
 	timer_quick_init(scheduling_timer,0x00200000, run_next_process,trigger_OverflowMatch);
-	times_switched = (uint64_t*)malloc(sizeof(uint64_t));//FIXME REMOVE
-	*times_switched = 0;
+	//times_switched = (uint64_t*)malloc(sizeof(uint64_t));//FIXME REMOVE
+	times_switched = 0;
 }
 
 void start_scheduling(){
@@ -65,7 +65,6 @@ void __idle_process(){
 process_t* process_create(char* process_name, void* entry_point){
 	process_t* process = (process_t*)malloc(sizeof(process_t));
 	process_stack_t* stack = (process_stack_t*)malloc(sizeof(process_stack_t));
-
 
 	process->name = process_name;
 	process->pID = process_count;
@@ -112,14 +111,10 @@ void run_next_process(void* lr){
 	//if(process_ready_queue->size == 0){
 	//	return; //no other ready processes
 	//}
-	*times_switched+=1;
-	if(*times_switched % 10 == 0){
-		volatile uint64_t asd = *times_switched;
+	times_switched+=1;
+	if(times_switched % 50 == 0){
+		//volatile uint64_t asd = *times_switched;
 		current_process->state = READY;
-		if(*times_switched == 60){
-			*times_switched = 0;
-		}
-
 	}
 	current_process->state = READY;
 	//process_ready_queue->enqueue(process_ready_queue,current_process);

@@ -20,6 +20,8 @@ typedef struct  {
 	char* name;
 	void* sp;
 	void* pc;
+	uint32_t pt_address;
+	uint16_t size;
 } process_t;
 
 

@@ -9,10 +9,7 @@
 #include "../timer/gptimer.h"
 
 irq_interrupt_handler handlers[MAX_INTERRUPT_VECTORS];
-
-
 uint32_t active_interrupt = 0;
-
 
 void dummy_handler();
 void dummy_handler(){
@@ -25,7 +22,6 @@ void init_interrupt_controller(){
 		handlers[i] = dummy_handler;
 	}
 	//TODO initialize interrupt handling
-
 }
 
 void enable_all_interrupts(){
@@ -115,7 +111,6 @@ void irq_handler() {
 	_handle_current_interrupt();
 }
 
-
 //#pragma INTERRUPT(fiq_handler, FIQ)
 //interrupt
 void fiq_handler(void* lr) {
@@ -124,5 +119,3 @@ void fiq_handler(void* lr) {
 	reset_fiq();
 	timer_reset_counter(GPTIMER4);
 }
-
-

@@ -26,7 +26,3 @@ irq_handler_asm:
     POP     {r0-r3, r12}              ; Restore AAPCS registers
 
     RFEFD   sp!                       ; Return from the SVC mode stack
-
-
-
-
