@@ -286,8 +286,8 @@ uint32_t fat32Close( file_id fileId )
 		return 1;
 	}
 
-	kfree( fd->currentFatSectorBuffer );
-	kfree( fd->currentClusterBuffer );
+	free( fd->currentFatSectorBuffer );
+	free( fd->currentClusterBuffer );
 
 	memset( fd, 0, sizeof( FILE_DESCRIPTOR ) );
 

@@ -112,7 +112,8 @@ loadTaskFromFile( const char* fileName )
 
 	fat32Size( taskImageFile, &fileSize );
 
-	fileBuffer = ( uint8_t* ) kmalloc( fileSize );
+	//fileBuffer = ( uint8_t* ) kmalloc( fileSize );
+
 	if ( 0 == fileBuffer )
 	{
 		return 1;
@@ -238,7 +239,7 @@ closeAndExit:
 
 	if ( fileBuffer )
 	{
-		kfree( fileBuffer );
+		free( fileBuffer );
 	}
 
 	return ret;

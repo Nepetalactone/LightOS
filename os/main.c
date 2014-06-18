@@ -31,7 +31,7 @@ int main(){
 	init_scheduler(GPTIMER4);
 	mmu_init_process(process_create("procA", &proc_led_on));
 	mmu_init_process(process_create("procB", &proc_led_off));
-	//loadTaskFromFile("sys/blink.out");
+	loadTaskFromFile("sys/blink.out");
 	_enable_interrupts();
 	start_scheduling();
 }

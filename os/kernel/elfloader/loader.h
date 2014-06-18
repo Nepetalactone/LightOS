@@ -9,7 +9,7 @@
 #define LOADER_H_
 
 
-#include "../sdcard/common.h"
+#include "../arch/command.h"
 
 uint32_t loadTaskFromFile( const char* fileName );
 
