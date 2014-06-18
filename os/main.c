@@ -13,13 +13,14 @@ void asdf(){
 
 int main(){
 	_disable_interrupts();
-
+//TODO tobi clear warnings
 	mmu_init();
 	mmu_activate();
 
 	reset_interrupt_module();
 	init_interrupt_controller();
 
+	//TODO move to interrupt controller
 	uint32_t i = 0;
 	while(i < 95){
 

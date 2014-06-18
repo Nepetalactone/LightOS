@@ -71,6 +71,7 @@ process_t* process_create(char* process_name, void* entry_point){
 	process->sp = (void*)stack;
 	process->pc = entry_point;
 	process->state = READY;
+	process->size = 16; //16KB for process
 
 	procs[process_count] = process;
 	process_count++;
@@ -126,5 +127,8 @@ void run_next_process(void* lr){
 	//process_t* next_process = process_ready_queue->dequeue(process_ready_queue);
 	temp = current_process;
 	current_process = next_process;
+
+	mmu_start_process(current_process);
+
 	context_switch_asm(temp->sp,lr, next_process->sp);
 }

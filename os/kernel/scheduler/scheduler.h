@@ -6,6 +6,7 @@
 #include "../../utils/queue.h"
 #include "../arch/address.h"
 #include "process.h"
+#include "../mmu/mmu.h"
 
 
 #define MAX_PROCESSES 100

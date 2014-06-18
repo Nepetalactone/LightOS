@@ -47,6 +47,11 @@ void hal_mmu_init(void) {
 	hal_mmu_set_ttbr_1_asm(ttbr1);
 	hal_mmu_set_domain(0x3);
 }
+
+
+
+
+
 /*
  * processSize in kB (4kB pages)
  *
@@ -69,6 +74,7 @@ void hal_mmu_addProcess(process_t* proc) {
 		coarse_entry.PT = &task_l1_table;
 		coarse_entry.dom = DOMAIN;
 		coarse_entry.type = COARSE;
+		coarse_entry.vAddress = VM_TASK_START;
 
 		write_coarse_page_table_to_memory(&coarse_entry, nr_of_pages);
 
@@ -86,10 +92,9 @@ void hal_mmu_addProcess(process_t* proc) {
 		small_page_entry.AP2 = RWRW;
 		small_page_entry.AP3 = RWRW;
 		small_page_entry.CB = WB;
-		small_page_entry.PT = &task_l1_table;
+		small_page_entry.PT = &task_l2_table;
 		small_page_entry.type = SMALL;
 		small_page_entry.first_level_desc = &coarse_entry;
-
 		write_small_pages_to_memory(&small_page_entry, nr_of_pages);
 		//writeSmallPagesToMemory(&task_l2_table);
 	} else {
@@ -100,10 +105,16 @@ void hal_mmu_addProcess(process_t* proc) {
 	//writeTableToMemory(&task_l1_table);
 }
 
+void hal_mmu_start_process(process_t* proc) {
+	// set ttbr reg for process
+	// flush tlb (via asid)
+	hal_mmu_set_ttbr_0_asm(proc->pt_address, proc->pID);
+
+}
+
 void hal_mmu_removeProcess(uint16_t processId) {
 	//TODO: remove region and table
 }
-
 
 static void initTablesAndRegions() {
 	mmu_pagetable_t masterTable;
@@ -181,7 +192,6 @@ static void writeSectionsToMemory(mmu_first_level_desc_t* section, uint32_t numO
 	}
 }
 
-
 static void write_coarse_page_table_to_memory(mmu_first_level_desc_t* desc, uint32_t nr_of_pages) {
 	uint32_t* tablePos = (uint32_t*) desc->PT->ptAddress;
 	tablePos += desc->vAddress >> 20;
@@ -199,7 +209,6 @@ static void write_coarse_page_table_to_memory(mmu_first_level_desc_t* desc, uint
 		*tablePos-- = entry + (i << 10);
 	}
 }
-
 
 static void write_small_pages_to_memory(mmu_second_level_desc_t* desc, uint32_t nr_of_pages) {
 	uint32_t* tablePos = (uint32_t*) desc->PT->ptAddress;
