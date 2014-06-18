@@ -52,6 +52,7 @@ void hal_mmu_init(void);
 
 void hal_mmu_addProcess(process_t* proc);
 void hal_mmu_removeProcess(uint16_t processId) ;
+void hal_mmu_start_process(process_t* proc);
 
 
 #endif /* HAL_MMU_H_ */

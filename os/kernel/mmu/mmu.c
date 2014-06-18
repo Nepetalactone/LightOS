@@ -19,3 +19,7 @@ void mmu_init(void) {
 void mmu_init_process(process_t* proc) {
 	hal_mmu_addProcess(proc);
 }
+
+void mmu_start_process(process_t* proc) {
+	hal_mmu_start_process(proc);
+}

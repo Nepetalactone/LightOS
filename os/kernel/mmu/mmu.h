@@ -17,7 +17,7 @@ void mmu_init(void);
 
 /* mmu process handling */
 void mmu_init_process(process_t* proc);
-void mmu_start_process(uint16_t processId);
+void mmu_start_process(process_t* proc);
 void mmu_kill_process(uint16_t processId);
 
 

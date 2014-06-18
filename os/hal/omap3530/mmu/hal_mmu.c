@@ -70,7 +70,7 @@ void hal_mmu_addProcess(process_t* proc) {
 		coarse_entry.dom = DOMAIN;
 		coarse_entry.type = COARSE;
 
-		write_coarse_page_table_to_memory(&coarse_entry, nr_of_pages);
+		write_coarse_page_table_to_memory(&coarse_entry, nr_of_pages); // l1
 
 		//L2 Table
 		mmu_pagetable_t task_l2_table;
@@ -86,7 +86,7 @@ void hal_mmu_addProcess(process_t* proc) {
 		small_page_entry.AP2 = RWRW;
 		small_page_entry.AP3 = RWRW;
 		small_page_entry.CB = WB;
-		small_page_entry.PT = &task_l1_table;
+		small_page_entry.PT = &task_l2_table;
 		small_page_entry.type = SMALL;
 		small_page_entry.first_level_desc = &coarse_entry;
 
@@ -98,6 +98,11 @@ void hal_mmu_addProcess(process_t* proc) {
 	}
 
 	//writeTableToMemory(&task_l1_table);
+}
+
+void hal_mmu_start_process(process_t* proc) {
+	// set ttbr reg for process
+	// flush tlb (via asid)
 }
 
 void hal_mmu_removeProcess(uint16_t processId) {
