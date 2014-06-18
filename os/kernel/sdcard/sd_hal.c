@@ -9,7 +9,7 @@
 
 #include "sd_hal.h"
 
-#include "common.h"
+#include "../arch/command.h"
 
 #include <string.h>
 // module-local data //////////////////////////////////////////////
@@ -392,9 +392,9 @@ void enableIfaceAndFunctionalClock( void )
 	// NOTE: see OMAP35x.pdf at page 3178
 
 	// 1. Enable the interface clock for the MMCHS1 controller
-	BIT_SET( CM_ICLKEN1_CORE, CM_EN_MMCHS1_BIT );
+	_BIT_SET( CM_ICLKEN1_CORE, CM_EN_MMCHS1_BIT );
 	// 2. Enable the functional clock for the MMCHS1 controller
-	BIT_SET( CM_FCLKEN1_CORE, CM_EN_MMCHS1_BIT );
+	_BIT_SET( CM_FCLKEN1_CORE, CM_EN_MMCHS1_BIT );
 }
 
 uint32_t softwareReset()
@@ -403,7 +403,7 @@ uint32_t softwareReset()
 	uint32_t i = 0;
 
 	// 1. trigger module reset
-	BIT_SET( MMCHS_SYSCONFIG, MMCHS_SYSCONFIG_SOFTRESET_BIT );
+	_BIT_SET( MMCHS_SYSCONFIG, MMCHS_SYSCONFIG_SOFTRESET_BIT );
 
 	// 2. await finishing of module reset
 	for ( i = 0xFF; i > 0; --i )
@@ -422,7 +422,7 @@ uint32_t resetLines( uint32_t lines )
 {
 	uint32_t i = 0;
 
-	BIT_SET( MMCHS_SYSCTL, lines );
+	_BIT_SET( MMCHS_SYSCTL, lines );
 
 	for ( i = 0xFF; i > 0; --i )
 	{
@@ -439,19 +439,19 @@ void selectSupportedVoltage( uint32_t voltage )
 {
 	// NOTE: see OMAP35x.pdf page 3160f and at page 3178
 
-	BIT_CLEAR( MMCHS_CAPA, 0x7000000 );
-	BIT_SET( MMCHS_CAPA, voltage );
+	_BIT_CLEAR( MMCHS_CAPA, 0x7000000 );
+	_BIT_SET( MMCHS_CAPA, voltage );
 }
 
 void systemConfig( uint32_t flags )
 {
-	BIT_CLEAR( MMCHS_SYSCONFIG, MMCHS_SYSCONFIG_AUTOIDLE_BIT |
+	_BIT_CLEAR( MMCHS_SYSCONFIG, MMCHS_SYSCONFIG_AUTOIDLE_BIT |
 			MMCHS_SYSCONFIG_SOFTRESET_BIT |
 			MMCHS_SYSCONFIG_ENAWAKEUP_BIT |
 			MMCHS_SYSCONFIG_SIDLE_BITS |
 			MMCHS_SYSCONFIG_CLCKACT_BITS );
 
-	BIT_SET( MMCHS_SYSCONFIG, flags );
+	_BIT_SET( MMCHS_SYSCONFIG, flags );
 }
 
 void setBusWidth( uint32_t busWidth )
@@ -460,24 +460,24 @@ void setBusWidth( uint32_t busWidth )
 
 	if ( BUS_WIDTH_8BIT == busWidth )
 	{
-		BIT_SET( MMCHS_CON, MMCHS_CON_DW8_BIT );
+		_BIT_SET( MMCHS_CON, MMCHS_CON_DW8_BIT );
 	}
 	else if ( BUS_WIDTH_4BIT == busWidth )
 	{
-		BIT_CLEAR( MMCHS_CON, MMCHS_CON_DW8_BIT );
-		BIT_SET( MMCHS_HCTL, MMCHS_HCTL_DTW_BIT );
+		_BIT_CLEAR( MMCHS_CON, MMCHS_CON_DW8_BIT );
+		_BIT_SET( MMCHS_HCTL, MMCHS_HCTL_DTW_BIT );
 	}
 	else if ( BUS_WIDTH_1BIT == busWidth )
 	{
-		BIT_CLEAR( MMCHS_CON, MMCHS_CON_DW8_BIT );
-		BIT_CLEAR( MMCHS_HCTL, MMCHS_HCTL_DTW_BIT );
+		_BIT_CLEAR( MMCHS_CON, MMCHS_CON_DW8_BIT );
+		_BIT_CLEAR( MMCHS_HCTL, MMCHS_HCTL_DTW_BIT );
 	}
 }
 
 void setBusVoltage( uint32_t voltage )
 {
-	BIT_CLEAR( MMCHS_HCTL, MMCHS_HCTL_SDVS_33V_BIT );
-	BIT_SET( MMCHS_HCTL, voltage );
+	_BIT_CLEAR( MMCHS_HCTL, MMCHS_HCTL_SDVS_33V_BIT );
+	_BIT_SET( MMCHS_HCTL, voltage );
 }
 
 uint32_t setBusPower( bool enable )
@@ -486,7 +486,7 @@ uint32_t setBusPower( bool enable )
 	{
 		uint32_t i = 0;
 
-		BIT_SET( MMCHS_HCTL, MMCHS_HCTL_SDBP_BIT );
+		_BIT_SET( MMCHS_HCTL, MMCHS_HCTL_SDBP_BIT );
 
 		for ( i = 0xFF; i > 0; --i )
 		{
@@ -500,7 +500,7 @@ uint32_t setBusPower( bool enable )
 	}
 	else
 	{
-		BIT_CLEAR( MMCHS_HCTL, MMCHS_HCTL_SDBP_BIT );
+		_BIT_CLEAR( MMCHS_HCTL, MMCHS_HCTL_SDBP_BIT );
 	}
 
 	return 0;
@@ -547,7 +547,7 @@ uint32_t setBusFrequency( uint32_t freq_in, uint32_t freq_out, bool bypass )
         }
 
         /* Enable clock to the card */
-        BIT_SET( MMCHS_SYSCTL, MMCHS_SYSCTL_CEN_BIT );
+        _BIT_SET( MMCHS_SYSCTL, MMCHS_SYSCTL_CEN_BIT );
     }
 
     return 0;
@@ -558,7 +558,7 @@ uint32_t setInternalClock( bool enable )
 	if ( enable )
 	{
 		// await Internal clock stable
-		BIT_SET( MMCHS_SYSCTL, MMCHS_SYSCTL_ICE_BIT );
+		_BIT_SET( MMCHS_SYSCTL, MMCHS_SYSCTL_ICE_BIT );
 		if ( awaitInternalClockStable( 0xFF ) )
 		{
 			return 1;
@@ -566,7 +566,7 @@ uint32_t setInternalClock( bool enable )
 	}
 	else
 	{
-		BIT_CLEAR( MMCHS_SYSCTL, MMCHS_SYSCTL_ICE_BIT );
+		_BIT_CLEAR( MMCHS_SYSCTL, MMCHS_SYSCTL_ICE_BIT );
 	}
 
 	return 0;
@@ -575,9 +575,9 @@ uint32_t setInternalClock( bool enable )
 void sendInitStream( void )
 {
 	/* Enable the command completion status to be set */
-	BIT_SET( MMCHS_IE, MMCHS_IE_CC_BIT );
+	_BIT_SET( MMCHS_IE, MMCHS_IE_CC_BIT );
 	 /* Initiate the INIT command */
-	BIT_SET( MMCHS_CON, MMCHS_CON_INIT_BIT );
+	_BIT_SET( MMCHS_CON, MMCHS_CON_INIT_BIT );
 	MMCHS_CMD = 0x0;
 
 	uint64_t waiting = 0;
@@ -587,7 +587,7 @@ void sendInitStream( void )
 	while(waiting++ < 100000){}
 
 	// end initialization sequence
-	BIT_CLEAR( MMCHS_CON, MMCHS_CON_INIT_BIT );
+	_BIT_CLEAR( MMCHS_CON, MMCHS_CON_INIT_BIT );
 	// clear all status
 	clearAllInterruptsStatus();
 }
@@ -965,7 +965,7 @@ uint32_t resetMMCIDataLine( uint32_t retries )
 {
 	uint32_t i = 0;
 
-	BIT_SET( MMCHS_SYSCTL, MMCHS_SYSCTL_SRD_BIT );
+	_BIT_SET( MMCHS_SYSCTL, MMCHS_SYSCTL_SRD_BIT );
 
 	for ( i = retries; i > 0; --i )
 	{
@@ -982,7 +982,7 @@ uint32_t resetMMCICmdLine( uint32_t retries )
 {
 	uint32_t i = 0;
 
-	BIT_SET( MMCHS_SYSCTL, MMCHS_SYSCTL_SRC_BIT );
+	_BIT_SET( MMCHS_SYSCTL, MMCHS_SYSCTL_SRC_BIT );
 
 	for ( i = retries; i > 0; --i )
 	{
@@ -1065,7 +1065,7 @@ void clearInterruptBits( uint32_t bits )
 // NOTE: timeout must be in range of 13 to 27
 void setDataTimeout( uint32_t timeout )
 {
-	BIT_CLEAR( MMCHS_SYSCTL, MMCHS_SYSCTL_DTO_MASK );
+	_BIT_CLEAR( MMCHS_SYSCTL, MMCHS_SYSCTL_DTO_MASK );
 	MMCHS_SYSCTL |= ((((timeout) - 13) & 0xF) << MMCHS_SYSCTL_DTO_BIT_INDEX);
 }
 

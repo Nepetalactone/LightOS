@@ -8,7 +8,7 @@
 #ifndef FAT32_H_
 #define FAT32_H_
 
-#include "common.h"
+#include "../arch/command.h"
 
 typedef int32_t file_id;
 

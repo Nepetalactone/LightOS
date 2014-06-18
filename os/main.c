@@ -5,6 +5,7 @@
 #include "kernel/scheduler/process.h"
 #include "kernel/scheduler/scheduler.h"
 #include "kernel/mmu/mmu.h"
+#include "kernel/elfloader/loader.h"
 
 
 void asdf(){
@@ -23,7 +24,6 @@ int main(){
 	//TODO move to interrupt controller
 	uint32_t i = 0;
 	while(i < 95){
-
 		BIT_CLEAR(MPU_INTC,ILR(i),0);
 		i++;
 	}
@@ -31,7 +31,7 @@ int main(){
 	init_scheduler(GPTIMER4);
 	mmu_init_process(process_create("procA", &proc_led_on));
 	mmu_init_process(process_create("procB", &proc_led_off));
-
+	//loadTaskFromFile("sys/blink.out");
 	_enable_interrupts();
 	start_scheduling();
 }
