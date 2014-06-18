@@ -254,10 +254,10 @@ uint32_t fat32Open( const char* filePath, file_id* fileId )
 	fd->dirEntry = entry;
 	fd->currentCluster = entry->startClusterNumber;
 
-	fd->currentFatSectorBuffer; //=kmalloc( _fat32Bps.bytes_per_sector );
+	//fd->currentFatSectorBuffer =kmalloc( _fat32Bps.bytes_per_sector );
 	memset( fd->currentFatSectorBuffer, 0, _fat32Bps.bytes_per_sector );
 
-	fd->currentClusterBuffer; //= kmalloc( _clusterBufferSize );
+	//fd->currentClusterBuffer = kmalloc( _clusterBufferSize );
 	memset( fd->currentClusterBuffer, 0, _clusterBufferSize );
 
 	*fileId = fId;
@@ -478,7 +478,7 @@ uint32_t loadFsRoot( void )
 
 	// allocate memory to hold one complete cluster
 	_clusterBufferSize = _fat32Bps.bytes_per_sector * _fat32Bps.sectors_per_cluster;
-	_clusterBuffer; //= kmalloc( _clusterBufferSize );
+	//_clusterBuffer = kmalloc( _clusterBufferSize );
 	memset( _clusterBuffer, 0, _clusterBufferSize );
 
 	if ( loadDirectory( _clusterBegin_lba, &_fsRoot ) )
@@ -507,7 +507,7 @@ void readDirectory( uint8_t* buffer, DIR_ENTRY* dir )
 	uint32_t childIndex = 0;
 
 	dir->childrenCount = countChildren( buffer );
-	dir->children; //= kmalloc( dir->childrenCount * sizeof( DIR_ENTRY ) );
+	//dir->children = kmalloc( dir->childrenCount * sizeof( DIR_ENTRY ) );
 	memset( dir->children, 0, dir->childrenCount * sizeof( DIR_ENTRY ) );
 
 	for ( i = 0; i < _bytesPerCluster; i += 32 )
