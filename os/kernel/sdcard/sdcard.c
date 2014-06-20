@@ -19,6 +19,19 @@ uint32_t sdcard_init(){
 	// 1. trigger module reset
 	BIT_SET(MMCHS1, SYSCONFIG, 1);
 	WFC_BIT(MMCHS1, SYSSTATUS, 0);
+
+
+	//TODO Write 0x0000 0000 in the mmchs_cmd register
+	sdcard_write_command(MMCHS1, 0x00000000);
+	volatile int i = 0;
+
+	while (i < 100000) {
+		i++;
+	}
+
+
+	sdcard_init_end(MMCHS1);
+
 	return 0;
 }
 
