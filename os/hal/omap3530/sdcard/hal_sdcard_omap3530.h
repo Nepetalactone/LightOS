@@ -92,6 +92,31 @@
 
 
 
+typedef enum {
+	LOW = 0x5,
+	MED = 0x6,
+	HIGH = 0x7
+} voltage_level;
 
+
+typedef enum {
+	SHORT = 0x0,
+	LONG = 0x1
+} transfer_width;
+
+void sdcard_soft_reset(base_address mmc_register);
+void sdcard_wake_up(void);
+void sdcard_bus_config(void);
+void sdcard_set_voltage(voltage_level level);
+void sdcard_bus_conf(base_address mmc_register);
+void sdcard_enable_functional_clock(void);
+void sdcard_enable_interface_clock(void);
+void sdcard_write_command(base_address mmc_register, uint32_t value);
+void sdcard_clear_command_state(base_address mmc_register);
+void sdcard_init_end(base_address mmc_register);
+void sdcard_clear_stat_register(base_address mmc_register);
+void sdcard_set_power_on(base_address mmc_register);
+void sdcard_set_power_off(base_address mmc_register);
+void sdcard_set_data_transfer_width(base_address mmc_register, transfer_width width);
 
 #endif /* HAL_SDCARD_OMAP3530_H_ */

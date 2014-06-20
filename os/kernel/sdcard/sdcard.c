@@ -3,31 +3,36 @@
 #include "sdcard.h"
 #include "../../hal/omap3530/power/hal_power.h"
 #include "../arch/command.h"
+#include "../../hal/omap3530/sdcard/hal_sdcard_omap3530.h"
 
+uint32_t sdcard_module_init(base_address mmc_register){
 
-uint32_t sdcard_init(){
+	//Initialization page 3160 - configure interface and functional clocks
+	sdcard_enable_interface_clock();
+	sdcard_enable_functional_clock();
 
-	// NOTE: see OMAP35x.pdf at page 3178
+	//Software reset of the SD host controller
+	sdcard_soft_reset(mmc_register);
 
-	// 1. Enable the interface clock for the MMCHS1 controller
-	BIT_SET( CORE_CM, ICLKEN1_CORE, 6 );
-	// 2. Enable the functional clock for the MMCHS1 controller
-	//BIT_SET( CM_FCLKEN1_CORE, CM_EN_MMCHS1_BIT );
-
-
-	//TODO Write 0x0000 0000 in the mmchs_cmd register
-	sdcard_write_command(MMCHS1, 0x00000000);
+	//wait 1 ms
 	volatile int i = 0;
 
 	while (i < 100000) {
 		i++;
 	}
+	//TODO Write 0x0000 0000 in the mmchs_cmd register
+	sdcard_write_command(mmc_register, 0x00000000);
+	sdcard_init_end(mmc_register);
 
-
-	sdcard_init_end(MMCHS1);
-
+	init_bus_configuration(mmc_register);
 	return 0;
 }
 
 
+void init_bus_configuration(base_address mmc_register) {
+	sdcard_bus_config();
+	sdcard_set_voltage(MED);
+	sdcard_set_power_on();
+	sdcard_set_data_transfer_width(mmc_register, SHORT);
 
+}
