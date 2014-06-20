@@ -18,9 +18,9 @@ void dummy_handler(){
 
 void init_interrupt_controller(){
 	uint32_t i;
-	/*for(i = 0; i < NR_INTERRUPTS; i++){
+	for(i = 0; i < NR_INTERRUPTS; i++){
 		handlers[i] = dummy_handler;
-	}*/
+	}
 	//TODO initialize interrupt handling
 }
 
