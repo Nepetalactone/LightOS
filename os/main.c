@@ -6,6 +6,7 @@
 #include "kernel/scheduler/scheduler.h"
 #include "kernel/mmu/mmu.h"
 
+
 void asdf(){
 	timer_reset_counter(GPTIMER4);
 }
@@ -26,9 +27,6 @@ int main(){
 	}
 
 	_enable_interrupts();
-	if (fat32Init() == 1) {
-		return 1;
-	}
 
 
 
@@ -40,7 +38,6 @@ int main(){
 	//mmu_init_process(process_create("procA", &proc_led_on));
 	//mmu_init_process(process_create("procB", &proc_led_off));
 
-	loadTaskFromFile("sys/blink.out");
 
 	start_scheduling();
 }
