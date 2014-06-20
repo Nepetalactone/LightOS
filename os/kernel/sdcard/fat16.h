@@ -16,10 +16,9 @@
 #define FAT16_DIRECTORY_ENTRY 32
 #define FAT16_FAT_ENTRY 2
 
+#define CLUSTER_BASE_NR 0x02
 
-
-
-//DIRECTORIES
+/* DIRECTORY AND FILE */
 #define FILENAME 				(offset)	0x00
 #define FILE_EXTENSION 			(offset) 	0x08
 #define FILE_ATTRIBUTES 		(offset) 	0x0b
@@ -48,6 +47,13 @@ typedef struct {
 	uint32_t file_size;
 } entry;
 
+/* FILE NAME MODIFIERS */
+#define UNUSED 0x00
+#define SPECIAL_CHAR_USED_IN_FILENAME 0x05
+#define DELETED 0xE5
+#define DIRECTORY 0x2E
+/* FILE NAME MODIFIERS END */
+
 /* FILE ATTRIBUTES  */
 #define FAT16_READONLY 		0x01
 #define FAT16_HIDDEN 		0x02
@@ -55,6 +61,11 @@ typedef struct {
 #define FAT16_VOLUME_LABEL 	0x08
 #define FAT16_SUBDIRECTORY 	0x10
 #define FAT16_ARCHIVE 		0x20
+/* FILE ATTRIBUTES END */
+
+/* DIRECTORY AND FILE END */
+
+
 
 
 
