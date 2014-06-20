@@ -13,6 +13,7 @@ void asdf(){
 }
 
 int main(){
+
 	_disable_interrupts();
 //TODO tobi clear warnings
 	//mmu_init();
