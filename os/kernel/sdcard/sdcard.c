@@ -6,6 +6,18 @@
 #include "../arch/command.h"
 #include "../../hal/omap3530/sdcard/hal_sdcard_omap3530.h"
 
+
+
+void init_bus_configuration(base_address mmc_register) {
+	sdcard_bus_config();
+	sdcard_set_voltage(MED);
+	sdcard_set_power_on(mmc_register);
+
+	sdcard_set_data_transfer_width(mmc_register, SHORT);
+
+}
+
+
 uint32_t sdcard_module_init(base_address mmc_register){
 
 	//Initialization page 3160 - configure interface and functional clocks
@@ -30,11 +42,3 @@ uint32_t sdcard_module_init(base_address mmc_register){
 }
 
 
-void init_bus_configuration(base_address mmc_register) {
-	sdcard_bus_config();
-	sdcard_set_voltage(MED);
-	sdcard_set_power_on();
-
-	sdcard_set_data_transfer_width(mmc_register, SHORT);
-
-}

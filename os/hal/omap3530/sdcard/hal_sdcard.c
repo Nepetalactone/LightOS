@@ -35,10 +35,9 @@ void sdcard_set_power_on(base_address mmc_register) {
 	WFW_BIT(mmc_register, HCTL, 8);
 }
 
-void sdcard_set_power_off() {
+void sdcard_set_power_off(base_address mmc_register) {
 	BIT_CLEAR(mmc_register, HCTL, 8);
 }
-
 
 void sdcard_set_voltage(voltage_level level) {
 	switch (level){
