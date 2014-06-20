@@ -41,4 +41,5 @@
 #define CLKSTCTRL_CORE 	(offset) 0x0048
 #define CLKSTST_CORE 	(offset) 0x004C
 
+
 #endif /* POWERMANAGEMENT_H_ */
