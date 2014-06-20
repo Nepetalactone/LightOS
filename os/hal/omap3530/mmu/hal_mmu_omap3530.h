@@ -103,4 +103,15 @@ extern void hal_mmu_set_domain(uint32_t domain_type);
 #define SDRC_MCFG	0x6D000080
 #define SDRAM_RAM_SIZE_256 0x100
 
+
+
+
+
+
+
+
+
+
+
+
 #endif /* HAL_MMU_OMAP3530_H_ */
