@@ -2,6 +2,7 @@
 #include <stdint.h>
 #include "sdcard.h"
 #include "../../hal/omap3530/power/hal_power.h"
+#include "../../hal/omap3530/sdcard/hal_sdcard_omap3530.h"
 #include "../arch/command.h"
 
 

@@ -39,4 +39,5 @@ typedef uint8_t bool;
 #define WFW_REG(base,off,val)		while(*address(base,off) != val){/*WAIT UNTIL REGISTER IS SET*/}
 #define WFC_REG(base,off)			while(*address(base,off) != 0){/*WAIT UNTIL REGISTER IS CLEARED*/}
 
+
 #endif
