@@ -21,11 +21,11 @@ typedef uint8_t bool;
  * val = value to write to register
  *
  */
-#define BIT_SET(base,off,pos)		*((address)(base + off))  |= (1 << pos);
-#define BIT_CLEAR(base,off,pos)		*((address)(base + off))  &= ~(1 << pos);
-#define BIT_TOGGLE(base,off,pos)	*((address)(base + off)) ^= (1 << position);
-#define BIT_READ(base,off,pos)		*((address)(base + off)) & (1 << pos);
-#define BIT_READ_MASK(base,off,range) *((address)(base + off)) &= range
+#define BIT_SET(base,off,pos)			*((address)(base + off))  |= (1 << pos);
+#define BIT_CLEAR(base,off,pos)			*((address)(base + off))  &= ~(1 << pos);
+#define BIT_TOGGLE(base,off,pos)		*((address)(base + off)) ^= (1 << position);
+#define BIT_READ(base,off,pos)			*((address)(base + off)) & (1 << pos);
+#define BIT_READ_MASK(base,off,range) 	*((address)(base + off)) &= range
 
 #define REG_SET(base,off,val)		*((address)(base + off)) = val;
 #define REG_CLEAR(base,off)			*((address)(base + off)) = 0x0;
@@ -38,8 +38,5 @@ typedef uint8_t bool;
 #define WFC_BIT(base,off,pos)		while(*address(base,off) & (1 << pos)){/*WAIT UNTIL BIT IS CLEARED*/}
 #define WFW_REG(base,off,val)		while(*address(base,off) != val){/*WAIT UNTIL REGISTER IS SET*/}
 #define WFC_REG(base,off)			while(*address(base,off) != 0){/*WAIT UNTIL REGISTER IS CLEARED*/}
-
-#define READ_REGISTER( addr ) (*(volatile uint32_t *)( addr ))
-#define READ_REGISTER_OFFSET( base, offset ) (*(volatile uint32_t *)((base)+(offset)))
 
 #endif
