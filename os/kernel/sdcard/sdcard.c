@@ -33,6 +33,7 @@ void init_bus_configuration(base_address mmc_register) {
 	sdcard_bus_config();
 	sdcard_set_voltage(MED);
 	sdcard_set_power_on();
+
 	sdcard_set_data_transfer_width(mmc_register, SHORT);
 
 }
