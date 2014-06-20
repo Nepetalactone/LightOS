@@ -15,23 +15,33 @@ void asdf(){
 int main(){
 	_disable_interrupts();
 //TODO tobi clear warnings
-	mmu_init();
-	mmu_activate();
-
+	//mmu_init();
+	//mmu_activate();
 	reset_interrupt_module();
 	init_interrupt_controller();
 
-	//TODO move to interrupt controller
 	uint32_t i = 0;
 	while(i < 95){
 		BIT_CLEAR(MPU_INTC,ILR(i),0);
 		i++;
 	}
 
-	init_scheduler(GPTIMER4);
-	mmu_init_process(process_create("procA", &proc_led_on));
-	mmu_init_process(process_create("procB", &proc_led_off));
-	loadTaskFromFile("sys/blink.out");
 	_enable_interrupts();
+	if (fat32Init() == 1) {
+		return 1;
+	}
+
+
+
+	//TODO move to interrupt controller
+
+	//_enable_interrupts();
+
+	//init_scheduler(GPTIMER4);
+	//mmu_init_process(process_create("procA", &proc_led_on));
+	//mmu_init_process(process_create("procB", &proc_led_off));
+
+	loadTaskFromFile("sys/blink.out");
+
 	start_scheduling();
 }

@@ -48,10 +48,6 @@ void hal_mmu_init(void) {
 	hal_mmu_set_domain(0x3);
 }
 
-
-
-
-
 /*
  * processSize in kB (4kB pages)
  *
@@ -59,6 +55,7 @@ void hal_mmu_init(void) {
 void hal_mmu_addProcess(process_t* proc) {
 	//L1 Table
 	mmu_pagetable_t task_l1_table;
+
 	task_l1_table.ptAddress = TASK_L1_PT_START + proc->pID * TASK_L1_PT_SIZE;
 	proc->pt_address = (uint32_t) &task_l1_table;
 
@@ -159,7 +156,6 @@ static void initTablesAndRegions() {
 	master_pt_section.pAddress = TASK_L1_PT_START;
 	master_pt_section.PT = &masterTable;
 	writeSectionsToMemory(&master_pt_section, (PAGE_TABLE_REGION_SIZE / TASK_L1_PT_SIZE));
-
 
 	mmu_first_level_desc_t pt_l2_section;
 	pt_l2_section.type = SECTION;
