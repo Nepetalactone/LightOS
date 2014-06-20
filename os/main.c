@@ -5,8 +5,6 @@
 #include "kernel/scheduler/process.h"
 #include "kernel/scheduler/scheduler.h"
 #include "kernel/mmu/mmu.h"
-#include "kernel/elfloader/loader.h"
-
 
 void asdf(){
 	timer_reset_counter(GPTIMER4);
