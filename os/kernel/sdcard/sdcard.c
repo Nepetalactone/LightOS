@@ -1,7 +1,7 @@
 
 #include <stdint.h>
 #include "sdcard.h"
-#include "../power/powermanagement.h"
+#include "../../hal/omap3530/power/hal_power.h"
 #include "../arch/command.h"
 
 
@@ -13,12 +13,6 @@ uint32_t sdcard_init(){
 	BIT_SET( CORE_CM, ICLKEN1_CORE, 6 );
 	// 2. Enable the functional clock for the MMCHS1 controller
 	//BIT_SET( CM_FCLKEN1_CORE, CM_EN_MMCHS1_BIT );
-
-
-
-	// 1. trigger module reset
-	BIT_SET(MMCHS1, SYSCONFIG, 1);
-	WFC_BIT(MMCHS1, SYSSTATUS, 0);
 
 
 	//TODO Write 0x0000 0000 in the mmchs_cmd register

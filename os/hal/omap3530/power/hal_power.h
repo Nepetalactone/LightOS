@@ -1,12 +1,5 @@
-/*
- * powermanagement.h
- *
- *  Created on: 20.06.2014
- *      Author: max power
- */
-
-#ifndef POWERMANAGEMENT_H_
-#define POWERMANAGEMENT_H_
+#ifndef HAL_POWER_H_
+#define HAL_POWER_H_
 
 //S. 452
 /*================================CM Instance Summary========================*/
@@ -42,4 +35,10 @@
 #define CLKSTST_CORE 	(offset) 0x004C
 
 
-#endif /* POWERMANAGEMENT_H_ */
+#define ENABLE_SDCARD_INTERFACE_CLOCK 		BIT_SET(CORE_CM, ICLKEN1_CORE, 6)
+#define DISABLE_SDCARD_INTERFACE_CLOCK 		CLEAR_SET(CORE_CM, ICLKEN1_CORE, 6)
+#define ENABLE_SDCARD_FUNCTIONAL_CLOCK		BIT_SET(CORE_CM, FCLKEN1_CORE, 24)
+#define DISABLE_SDCARD_FUNCTIONAL_CLOCK		CLEAR_SET(CORE_CM, FCLKEN1_CORE, 24)
+
+
+#endif /* HAL_POWER_H_ */
