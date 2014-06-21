@@ -111,15 +111,15 @@ void _timer_disable(base_address timer){
 
 void timer_enable_interrupt(base_address timer) {
 	//TODO: TIER Modes..
-	BIT_SET(GPTIMER4,TIER,0);
-	BIT_SET(GPTIMER4,TIER,1);
-	BIT_SET(GPTIMER4,TIER,2);
+	BIT_SET(timer,TIER,0);
+	BIT_SET(timer,TIER,1);
+	BIT_SET(timer,TIER,2);
 }
 
 void timer_disable_interrupt(base_address timer) {
-	BIT_SET(GPTIMER4,TIER,0);
-	BIT_SET(GPTIMER4,TIER,1);
-	BIT_SET(GPTIMER4,TIER,2);
+	BIT_SET(timer,TIER,0);
+	BIT_SET(timer,TIER,1);
+	BIT_SET(timer,TIER,2);
 }
 
 uint8_t get_timer_nr(base_address timer_addr){

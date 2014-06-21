@@ -11,6 +11,7 @@
 
 #include "../scheduler/process.h"
 #include "../timer/gptimer.h"
+#include "../scheduler/scheduler.h"
 
 //====================================Timercalls====================================
 
@@ -26,10 +27,13 @@ void release_timer(base_address timer);
 uint32_t fork();
 
 //Creates a new process
-uint32_t new_process();
+uint32_t new_process(char* processName, void* entryPoint);
 
 //Terminates the specified process
-uint32_t terminate_process(process_id id);
+uint32_t terminate_process_by_id(process_id id);
+
+//Terminates the specified process
+uint32_t terminate_process_by_name(char* name);
 
 //====================================Memorycalls===================================
 

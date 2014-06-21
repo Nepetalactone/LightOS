@@ -83,11 +83,25 @@ process_t* process_create(char* process_name, void* entry_point){
 }
 
 void process_kill_name(char* name){
-
+	//TODO change to queue
+	int i;
+	for (i = 0; i < 3; i++){
+		process_t* curProc = procs[i];
+		if (curProc->name == name){
+			__kill(curProc);
+		}
+	}
 }
 
 void process_kill_pid(uint32_t pid){
-
+	//TODO change to queue
+	int i;
+	for (i = 0; i < 3; i++){
+		process_t* curProc = procs[i];
+		if (curProc->pID == pid){
+			__kill(curProc);
+		}
+	}
 }
 
 void __ctx_switch_cleanup();
