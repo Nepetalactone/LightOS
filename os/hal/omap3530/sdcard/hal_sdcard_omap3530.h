@@ -119,4 +119,18 @@ void sdcard_set_power_on(base_address mmc_register);
 void sdcard_set_power_off(base_address mmc_register);
 void sdcard_set_data_transfer_width(base_address mmc_register, transfer_width width);
 
+/*
+ * MMC Card Identification commands
+ */
+void sdcard_send_cmd0(void);
+void sdcard_send_cmd1(void);
+void sdcard_send_cmd2(void);
+void sdcard_send_cmd3(void);
+void sdcard_send_cmd5(void);
+void sdcard_send_cmd8(void);
+void sdcard_send_cmd55(void);
+/*
+ * MMC Card Identification commands END
+ */
+
 #endif /* HAL_SDCARD_OMAP3530_H_ */

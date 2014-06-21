@@ -8,7 +8,7 @@
 
 
 
-void init_bus_configuration(base_address mmc_register) {
+void sdcard_init_bus_configuration(base_address mmc_register) {
 	sdcard_bus_config();
 	sdcard_set_voltage(MED);
 	sdcard_set_power_on(mmc_register);
@@ -16,6 +16,20 @@ void init_bus_configuration(base_address mmc_register) {
 	sdcard_set_data_transfer_width(mmc_register, SHORT);
 
 }
+
+void sdcard_card_identification() {
+	sdcard_send_cmd0();
+	sdcard_send_cmd5();
+	sdcard_send_cmd8();
+	sdcard_send_cmd55();
+	sdcard_send_cmd1();
+	sdcard_send_cmd2();
+	sdcard_send_cmd3();
+}
+
+
+
+
 
 
 uint32_t sdcard_module_init(base_address mmc_register){
