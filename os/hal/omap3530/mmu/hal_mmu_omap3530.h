@@ -53,7 +53,7 @@ extern void hal_mmu_set_domain(uint32_t domain_type);
 /* hw definitions */
 #define HW_START 			0x48000000
 #define HW_PAGE_SIZE 		0x1000 // 4KB
-#define HW_SIZE 			0x1000000 // 16 MB
+#define HW_SIZE 			0x2000000 // 32 MB
 
 #define INT_VEC				0x40200000
 #define INT_VEC_SIZE		0x10000
